@@ -1,4 +1,4 @@
-PhingTasks
+PhingScripts
 ===========
 
-Common Phing Tasks to build our extensions
+Common Phing Scripts to build our extensions
