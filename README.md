@@ -1,4 +1,4 @@
-PhingScript
+PhingTasks
 ===========
 
-Phing Scripts to build Free and Pro packages
+Common Phing Tasks to build our extensions
