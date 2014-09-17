@@ -1,5 +1,5 @@
 {
-    "name": "Alledia/AllediaBuilder",
+    "name": "alledia/allediabuilder",
     "description": "Builder scripts for Alledia/OSTraining extensions",
     "license": "GPL-2+",
     "keywords": ["alledia", "builder", "phing"],
