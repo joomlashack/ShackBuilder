@@ -1,4 +1,4 @@
-PhingScripts
+Alledia Builder
 ===========
 
-Common Phing Scripts to build our extensions
+Common Build Scripts to build our extensions
