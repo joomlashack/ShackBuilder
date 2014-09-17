@@ -1,0 +1,16 @@
+{
+    "name": "Alledia/AllediaBuilder",
+    "description": "Builder scripts for Alledia/OSTraining extensions",
+    "license": "GPL-2+",
+    "keywords": ["alledia", "builder", "phing"],
+    "homepage": "https://github.com/OSTraining/AllediaBuilder",
+    "authors": [
+        {
+            "name": "Alledia",
+            "email": "hello@alledia.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3"
+    }
+}

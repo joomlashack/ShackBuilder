@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Symlinker" default="">
+    <!-- Create symlinks for the extension in development environments -->
+    <target name="symlink">
+        <if>
+            <equals arg1="${is_pro}" arg2="0" />
+            <then>
+                <!-- Free package -->
+
+            </then>
+            <else>
+                <!-- Pro package -->
+            </else>
+        </if>
+    </target>
+</project>
