@@ -8,9 +8,6 @@
     <taskdef name="setversion" classname="SetversionTask"/>
     <taskdef name="getversion" classname="GetVersionTask"/>
 
-    <!-- Display basic information -->
-    <echo message="Version ${build.version} for Joomla! extensions"/>
-
     <!-- Properties -->
     <propertiesfromcomposer file="${phing.dir}/../composer.json" />
 
@@ -19,10 +16,13 @@
     <property name="dir.packages" value="${dir.root}/phing/packages" />
     <property name="dir.packages.tmp" value="${dir.packages}/tmp" />
     <property name="dir.source" value="${dir.root}/src" />
-    <property name="dir.source.free" value="${dir.root}/free/src" />
+    <property name="dir.source.free" value="${dir.root}/src/free/src" />
     <property name="dir.source.pro" value="${dir.source}" />
     <property name="app.name.short" value="${composer.extra.element-short}" />
     <property name="app.name.long" value="${composer.extra.element}" />
+
+    <!-- Display basic information -->
+    <echo message="Version ${build.version} for Joomla! extensions"/>
 
     <!-- Parse the manifest file and get properties -->
     <property name="app.manifest" value="${dir.source}/${app.name.short}.xml" />
