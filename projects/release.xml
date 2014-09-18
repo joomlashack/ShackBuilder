@@ -35,7 +35,48 @@
                     <delete file="${dir.packages}/${package.file}"/>
                 </then>
             </if>
-            <zip destfile="${dir.packages}/${package.file}" includeemptydirs="true" basedir="${dir.source}"/>
+
+            <if>
+                <equals arg1="${composer.extra.package-type}" arg2="free"/>
+                <!-- Free extensions -->
+                <then>
+                    <!-- Pack the source folder -->
+                    <zip destfile="${dir.packages}/${package.file}" includeemptydirs="true" basedir="${dir.source}"/>
+                </then>
+                <!-- Pro Extensions -->
+                <else>
+                    <!-- Prepare the temporary folder -->
+                    <if>
+                        <available file="${dir.packages.tmp}" type="dir"/>
+                        <then>
+                            <delete dir="${dir.packages.tmp}"/>
+                        </then>
+                    </if>
+                    <mkdir dir="${dir.packages.tmp}"/>
+
+                    <!-- Copy the free source folder to a temporary location -->
+                    <copy todir="${dir.packages.tmp}">
+                        <fileset dir="${dir.source.free}" id="free-code">
+                            <include name="**"/>
+                        </fileset>
+                    </copy>
+
+                    <!-- Copy the pro source overriding the existent free code -->
+                    <copy todir="${dir.packages.tmp}" overwrite="true">
+                        <fileset dir="${dir.source.pro}" id="pro-code">
+                            <include name="**"/>
+                        </fileset>
+                    </copy>
+
+                    <!-- Pack the tmp folder -->
+                    <zip destfile="${dir.packages}/${package.file}" includeemptydirs="true" basedir="${dir.packages.tmp}"/>
+
+                    <!-- Remove tmp folder -->
+                    <delete dir="${dir.packages.tmp}"/>
+                </else>
+            </if>
+
+
         </target>
 
         <!-- Update creation date in Joomla manifest file -->

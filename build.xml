@@ -17,7 +17,10 @@
     <property name="build.version" value="2.0.0" />
     <property name="dir.root" value="${phing.dir}/.." />
     <property name="dir.packages" value="${dir.root}/phing/packages" />
+    <property name="dir.packages.tmp" value="${dir.packages}/tmp" />
     <property name="dir.source" value="${dir.root}/src" />
+    <property name="dir.source.free" value="${dir.root}/free/src" />
+    <property name="dir.source.pro" value="${dir.source}" />
     <property name="app.name.short" value="${composer.extra.element-short}" />
     <property name="app.name.long" value="${composer.extra.element}" />
 
