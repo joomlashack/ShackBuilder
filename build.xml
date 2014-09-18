@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Build" default="">
-    <includepath classpath="tasks" />
+<project name="Alledia Joomla Phing Builder" default="">
 
-    <!-- Get properties from the composer.json file -->
+    <!-- Properties -->
+    <!-- Version for this build file -->
+    <property name="build.version" value="2.0.0"/>
+    <property name="project.root" value=".."/>
+    <property name="dir.packages" value="packages"/>
+
+    <!-- Include the external tasks -->
+    <includepath classpath="tasks" />
     <taskdef name="createsymlinks" classname="CreateSymlinksTask" />
     <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask" />
     <taskdef name="setversion" classname="SetversionTask"/>
     <taskdef name="getversion" classname="GetVersionTask"/>
 
-    <!-- Check if the extension is pro or free -->
-    <if>
-        <available file="${phing.dir}/../src/library/pro" type="dir" />
-        <then>
-            <property name="packagetype" value="pro" />
-        </then>
-        <else>
-            <property name="packagetype" value="free" />
-        </else>
-    </if>
+    <!-- Display basic information -->
+    <echo message="Version ${build.version} for Joomla! extensions"/>
+
+    <!-- Load properties from composer.json file -->
+    <propertiesfromcomposer file="${phing.dir}/../composer.json" />
 
     <import file="projects/symlinker.xml"/>
 </project>
