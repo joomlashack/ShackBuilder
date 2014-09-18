@@ -9,7 +9,7 @@
 require_once 'library/FileSystemTask.php';
 require_once 'library/Spyc.php';
 
-class CreateSymlinksTask extends FileSystemTask
+class UnlinkSymlinksTask extends FileSystemTask
 {
     /**
      * File with the symlinks map
@@ -92,7 +92,7 @@ class CreateSymlinksTask extends FileSystemTask
             throw new Exception("Invalid symlinks map file", 1);
         }
 
-        // Do we need to create directories?
+        // Do we need to remove created directories?
         if (isset($map['mkdir'])) {
             foreach ($map['mkdir'] as $dir) {
                 $path = realpath($this->basepath . '/' . $dir);
@@ -102,8 +102,7 @@ class CreateSymlinksTask extends FileSystemTask
                 }
 
                 $path = $this->basepath . '/' . $dir;
-                mkdir($path);
-                $this->log('Directory created: ' . $path);
+                $this->log('Directory unlinked: ' . $path);
             }
         }
 
@@ -126,9 +125,7 @@ class CreateSymlinksTask extends FileSystemTask
                 $this->remove($destinationPath);
             }
 
-            // Create the new symlink
-            symlink($sourcePath, $destinationPath);
-            $this->log('Symlink created: ' . $destinationPath);
+            $this->log('Symlink unlinked: ' . $destinationPath);
         }
     }
 }
