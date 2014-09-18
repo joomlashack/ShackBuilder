@@ -65,6 +65,7 @@
                     <copy todir="${dir.packages.tmp}" overwrite="true">
                         <fileset dir="${dir.source.pro}" id="pro-code">
                             <include name="**"/>
+                            <exclude name="free/**"/>
                         </fileset>
                     </copy>
 
