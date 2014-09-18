@@ -12,13 +12,6 @@ require_once 'library/Spyc.php';
 class CreateSymlinksTask extends Task
 {
     /**
-     * The message passed in the buildfile.
-     *
-     * @var string
-     */
-    private $message = null;
-
-    /**
      * File with the symlinks map
      *
      * @var string
@@ -38,17 +31,6 @@ class CreateSymlinksTask extends Task
      * @var string
      */
     protected $phingdir;
-
-    /**
-     * The setter for the attribute "message"
-     *
-     * @param string $str The message
-     * @return void
-     */
-    public function setMessage($str)
-    {
-        $this->message = $str;
-    }
 
     /**
      * The setter for the attribute "mapFile". It should point to
@@ -119,7 +101,9 @@ class CreateSymlinksTask extends Task
                     $this->remove($path);
                 }
 
-                mkdir($this->basepath . '/' . $dir);
+                $path = $this->basepath . '/' . $dir;
+                mkdir($path);
+                $this->log('Directory created: ' . $path);
             }
         }
 
@@ -157,8 +141,10 @@ class CreateSymlinksTask extends Task
     protected function remove($path)
     {
         if (is_link($path) || is_file($path)) {
+            $log = (is_link($path) ? 'Symlink' : 'File') . ' removed: ' . $path;
             $path = rtrim($path, '/');
             unlink($path);
+            $this->log($log);
         } elseif (is_dir($path)) {
             // Remove all child files and directories
             $items = array_diff(scandir($path), array('.','..'));
@@ -169,7 +155,10 @@ class CreateSymlinksTask extends Task
             }
 
             // Remove the empty directory
-            return rmdir($path);
+            $result = rmdir($path);
+            $this->log('Directory removed: ' . $path);
+
+            return $result;
         }
 
         return false;
