@@ -4,6 +4,7 @@
 
     <!-- Get properties from the composer.json file -->
     <taskdef name="createsymlinks" classname="CreateSymlinksTask" />
+    <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask" />
 
     <!-- Check if the extension is pro or free -->
     <if>
