@@ -67,5 +67,7 @@ class PropertiesFromComposerTask extends Task
 
         $name = 'composer';
         $setProperties($name, $json);
+
+        $this->log('Loaded composer.json data into properties');
     }
 }
