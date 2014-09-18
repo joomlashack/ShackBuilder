@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Alledia Joomla Phing Builder" default="">
 
-    <!-- Properties -->
-    <!-- Version for this build file -->
-    <property name="build.version" value="2.0.0"/>
-    <property name="project.root" value=".."/>
-    <property name="dir.packages" value="packages"/>
-
     <!-- Include the external tasks -->
     <includepath classpath="tasks" />
     <taskdef name="createsymlinks" classname="CreateSymlinksTask" />
@@ -17,8 +11,28 @@
     <!-- Display basic information -->
     <echo message="Version ${build.version} for Joomla! extensions"/>
 
-    <!-- Load properties from composer.json file -->
+    <!-- Properties -->
     <propertiesfromcomposer file="${phing.dir}/../composer.json" />
 
+    <property name="build.version" value="2.0.0" />
+    <property name="dir.root" value="${phing.dir}/.." />
+    <property name="dir.packages" value="${dir.root}/phing/packages" />
+    <property name="dir.source" value="${dir.root}/src" />
+    <property name="app.name.short" value="${composer.extra.element-short}" />
+    <property name="app.name.long" value="${composer.extra.element}" />
+
+    <!-- Parse the manifest file and get properties -->
+    <property name="app.manifest" value="${dir.source}/${app.name.short}.xml" />
+    <if>
+        <available file="${app.manifest}" property="app.manifest.exists" />
+        <then />
+        <else>
+            <property name="app.manifest" value="${dir.source}/${extension-type}_${app.name.short}.xml" override="true" />
+        </else>
+    </if>
+
+    <getversion file="${app.manifest}" property="app.version"/>
+
+    <import file="projects/release.xml"/>
     <import file="projects/symlinker.xml"/>
 </project>
