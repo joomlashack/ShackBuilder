@@ -3,7 +3,7 @@
     <property name="builder.version" value="3.0.0"/>
 
     <!-- Include the external tasks -->
-    <includepath classpath="${phingscripts.path}/src/tasks"/>
+    <includepath classpath="${builder.path}/src/tasks"/>
     <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask"/>
     <taskdef name="setversion" classname="SetversionTask"/>
     <taskdef name="getversion" classname="GetVersionTask"/>
@@ -34,6 +34,6 @@
 
     <getversion file="${project.manifest}" property="project.version"/>
 
-    <import file="${phingscripts.path}/src/projects/release.xml"/>
-    <import file="${phingscripts.path}/src/projects/symlinker.xml"/>
+    <import file="${builder.path}/src/projects/release.xml"/>
+    <import file="${builder.path}/src/projects/symlinker.xml"/>
 </project>

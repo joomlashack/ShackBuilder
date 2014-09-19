@@ -59,9 +59,9 @@ All folders needs to have the same parent folder and be named as the repository 
 
 Create a new file on the main project root folder, name as `build.global.properties` file you will set the global properties for the phing script.
 
-    phingscripts.path=/Volumes/Projects/repositories/PhingScripts
+    builder.path=/Volumes/Projects/repositories/PhingScripts
 
-For now, you just need to set the PhingScripts path.
+For now, you just need to set the builder path.
 
 ### Phing script for each project
 
@@ -72,7 +72,7 @@ Add a `build.xml` file to the repository root folder, with this basic markup:
     <project name="OSYouTube-Pro Builder" default="">
         <property file="../build.global.properties" />
 
-        <import file="${phingscripts.path}/src/build.xml"/>
+        <import file="${builder.path}/src/build.xml"/>
     </project>
 
 Replace the `OurExtension1-Pro` with the repository (folde) name
