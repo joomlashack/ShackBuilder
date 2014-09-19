@@ -59,9 +59,9 @@ All folders needs to have the same parent folder and be named as the repository 
 
 Create a new file on the main project root folder, name as `build.global.properties` file you will set the global properties for the phing script.
 
-    builder.path=/Volumes/Projects/repositories/AllediaBuilder
+    builder.path=/path/to/AllediaBuilder/
 
-For now, you just need to set the builder path.
+For now, you just need to set the path to AllediaBuilder repository.
 
 ### Phing script for each project
 
