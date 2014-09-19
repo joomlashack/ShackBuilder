@@ -14,6 +14,7 @@ All folders needs to have the same parent folder and be named as the repository 
     ./
     |-- AllediaLibrary
     |-- OurExtension1
+    |    +-- packages
     |    |-- src
     |    |    +-- language
     |    |    +-- library
@@ -22,6 +23,7 @@ All folders needs to have the same parent folder and be named as the repository 
     |    |-- build.xml
     |
     |-- OurExtension1-Pro
+    |    +-- packages
     |    |-- src
     |    |    +-- language
     |    |    |-- library
@@ -31,6 +33,7 @@ All folders needs to have the same parent folder and be named as the repository 
     |    |-- build.xml
     |
     |-- OurExtension2
+    |    +-- packages
     |    |-- src
     |    |    +-- language
     |    |    +-- library
@@ -39,6 +42,7 @@ All folders needs to have the same parent folder and be named as the repository 
     |    |-- build.xml
     |
     |-- OurExtension2-Pro
+    |    +-- packages
     |    |-- src
     |    |    +-- language
     |    |    |-- library
