@@ -85,6 +85,24 @@ The **pro** extension package will be built grabbing the source from the free ex
 
 While building the pro extension, the builder will detect the respective free extension grabbing the property `extra.name` from the composer file.
 
+#### Language files
+
+Joomla is able to read by itself two language files .sys.ini. One should be located inside the extension, on the language folder. The other one will be placed inside the system language folder (which overrides the other one).
+
+For **free** extensions we just need one .sys.ini file, which will be located inside the extension folder and **not** listed on the manifest file.
+For **pro** extensions, we need two files. The file coming from the free extension and a custom file for the new language terms. The second one needs to placed inside a folder called `language-pro` (both files have the same name). This second language file **must be** listed on the manifest file, which will force it to be copied to the system's language folder, overriding the free language file.
+
+For **pro** version manifest:
+
+    <languages folder="language-pro">
+       <language tag="en-GB">en-GB/en-GB.plg_content_osyoutube.sys.ini</language>
+    </languages>
+
+    <files>
+        <folder>language</folder>
+        <folder>language-pro</folder>
+        ...
+
 ### Composer.json file
 
 All extensions needs to have a `composer.json` file on the root folder, wich is used by the phing scripts and deploy server to extract informations about your project.
@@ -113,24 +131,6 @@ All extensions needs to have a `composer.json` file on the root folder, wich is 
             "php"       : ">= 5.3"
         }
     }
-
-### Language files
-
-Joomla is able to read by itself two language files .sys.ini. One should be located inside the extension, on the language folder. The other one will be placed inside the system language folder (which overrides the other one).
-
-For **free** extensions we just need one .sys.ini file, which will be located inside the extension folder and **not** listed on the manifest file.
-For **pro** extensions, we need two files. The file coming from the free extension and a custom file for the new language terms. The second one needs to placed inside a folder called `language-pro` (both files have the same name). This second language file **must be** listed on the manifest file, which will force it to be copied to the system's language folder, overriding the free language file.
-
-For **pro** version manifest:
-
-    <languages folder="language-pro">
-       <language tag="en-GB">en-GB/en-GB.plg_content_osyoutube.sys.ini</language>
-    </languages>
-
-    <files>
-        <folder>language</folder>
-        <folder>language-pro</folder>
-        ...
 
 ## How to use
 
