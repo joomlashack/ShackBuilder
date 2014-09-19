@@ -9,7 +9,7 @@
 require_once 'FileSystemTask.php';
 require_once 'Spyc.php';
 
-class MappedSymlinks extends FileSystemTask
+class MappedSymlinksTask extends FileSystemTask
 {
     /**
      * Symlinks map
@@ -84,7 +84,6 @@ class MappedSymlinks extends FileSystemTask
      */
     public function init()
     {
-        $this->map = Spyc::YAMLLoad($this->mapFile);
     }
 
     /**
@@ -94,5 +93,10 @@ class MappedSymlinks extends FileSystemTask
      */
     public function main()
     {
+        $this->map = Spyc::YAMLLoad($this->mapFile);
+
+        if (!isset($this->map['symlinks'])) {
+            throw new Exception("Invalid symlinks map file", 1);
+        }
     }
 }

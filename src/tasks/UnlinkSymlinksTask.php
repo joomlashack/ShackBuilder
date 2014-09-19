@@ -17,14 +17,12 @@ class UnlinkSymlinksTask extends MappedSymlinksTask
      */
     public function main()
     {
-        if (!isset($this->map['symlinks'])) {
-            throw new Exception("Invalid symlinks map file", 1);
-        }
+        parent::main();
 
         // Do we need to remove created directories?
         if (isset($this->map['mkdir'])) {
             foreach ($this->map['mkdir'] as $dir) {
-                $path = realpath($this->basepath . '/' . $dir);
+                $path = realpath($this->destinationBasePath . '/' . $dir);
 
                 if (file_exists($path)) {
                     $this->remove($path);
@@ -37,18 +35,18 @@ class UnlinkSymlinksTask extends MappedSymlinksTask
             $destination = array_values($item)[0];
 
             // Normalise paths
-            $sourcePath      = realpath($this->phingdir . '/../' . $source);
-            $destinationPath = rtrim($this->basepath, '/') . '/' . $destination;
+            $source      = realpath($this->sourceBasePath . '/' . $source);
+            $destination = rtrim($this->destinationBasePath, '/') . '/' . $destination;
 
-            if (!file_exists($sourcePath)) {
-                throw new Exception("Symlink target not found: " . $this->phingdir . '/../' . $source, 1);
+            if (!file_exists($source)) {
+                throw new Exception("Symlink target not found: " . $this->sourceBasePath . '/' . $source, 1);
             }
 
             // Check if the destination exists and remove it
-            if (file_exists($destinationPath)) {
-                $destinationPath = rtrim($destinationPath, '/');
+            if (file_exists($destination)) {
+                $destination = rtrim($destination, '/');
 
-                $this->remove($destinationPath);
+                $this->remove($destination);
             }
         }
     }
