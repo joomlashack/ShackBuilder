@@ -76,7 +76,8 @@ class PropertiesFromComposerTask extends Task
             'joomla.component' => 'com',
             'joomla.package' => 'pkg',
             'joomla.file' => 'file',
-            'joomla.cli' => 'cli'
+            'joomla.cli' => 'cli',
+            'joomla.library' => 'lib'
         );
 
         if (!array_key_exists($json['type'], $types)) {
