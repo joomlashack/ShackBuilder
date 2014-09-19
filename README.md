@@ -12,7 +12,8 @@ Make sure you heve phing [installed and configured](http://www.phing.info/trac/w
 All folders needs to have the same parent folder and be named as the repository name:
 
     ./
-    |-- AllediaLibrary
+    +-- AllediaBuilder
+    +-- AllediaLibrary
     |-- OurExtension1
     |    +-- packages
     |    |-- src
@@ -51,7 +52,6 @@ All folders needs to have the same parent folder and be named as the repository 
     |    |-- composer.json
     |    |-- build.xml
     |
-    +-- PhingScripts
     |-- build.global.properties
 
 
