@@ -68,7 +68,7 @@ class PropertiesFromComposerTask extends Task
         $name = 'composer';
         $setProperties($name, $json);
 
-        // Set the extension-type property
+        // Set the project.license property
         $types = array(
             'joomla.plugin' => 'plg',
             'joomla.module' => 'mod',
@@ -83,7 +83,7 @@ class PropertiesFromComposerTask extends Task
             throw new Exception("Invalid Joomla Extension Type: " . $json['type'], 1);
         }
 
-        $this->project->setProperty('extension-type', $types[$json['type']]);
+        $this->project->setProperty('project.license', $types[$json['type']]);
 
         $this->log('Loaded composer.json data into properties');
     }

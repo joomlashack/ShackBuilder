@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Alledia Joomla Phing Builder" default="current-release">
+    <property name="builder.version" value="2.0.0"/>
+
+    <!-- Include the external tasks -->
+    <includepath classpath="${phingscripts.path}/src/tasks"/>
+    <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask"/>
+    <taskdef name="setversion" classname="SetversionTask"/>
+    <taskdef name="getversion" classname="GetVersionTask"/>
+
+    <!-- Properties -->
+    <property name="project.path" value="${project.basedir}"/>
+    <propertiesfromcomposer file="${project.path}/composer.json"/>
+
+    <property name="packages.path" value="${project.path}/packages"/>
+    <property name="packages.tmp.path" value="${packages.path}/tmp"/>
+    <property name="project.source.path" value="${project.path}/src"/>
+    <property name="project.source.free.path" value="${project.path}/../${composer.extra.name}/src"/>
+    <property name="project.name.short" value="${composer.extra.element-short}"/>
+    <property name="project.name.long" value="${composer.extra.element}"/>
+
+    <!-- Display basic information -->
+    <echo message="Version ${builder.version} for Joomla! extensions"/>
+
+    <!-- Parse the manifest file and get properties -->
+    <property name="project.manifest" value="${project.source.path}/${project.name.short}.xml"/>
+    <if>
+        <available file="${project.manifest}" property="project.manifest.exists"/>
+        <then/>
+        <else>
+            <property name="project.manifest" value="${project.source.path}/${project.license}_${project.name.short}.xml" override="true"/>
+        </else>
+    </if>
+
+    <getversion file="${project.manifest}" property="project.version"/>
+
+    <import file="${phingscripts.path}/src/projects/release.xml"/>
+    <import file="${phingscripts.path}/src/projects/symlinker.xml"/>
+</project>

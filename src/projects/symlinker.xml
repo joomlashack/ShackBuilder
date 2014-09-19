@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Symlinker" default="">
+
+    <taskdef name="createsymlinks" classname="CreateSymlinksTask" />
+    <taskdef name="unlinksynlinks" classname="UnlinkSymlinksTask" />
+
+    <property name="symlink.map.path" value="${project.path}/symlinks.yml"/>
+
+    <!-- Create symlinks for the extension in development environments -->
+    <target name="symlink">
+        <input propertyName="joomla.path" message="Joomla root path: "/>
+        <createsymlinks mapfile="${symlink.map.path}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
+    </target>
+
+    <!-- Remove symlinks for the extension in development environments -->
+    <target name="unlink">
+        <input propertyName="joomla.path" message="Joomla root path: "/>
+        <unlinksynlinks mapfile="${symlink.map.path}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
+    </target>
+
+</project>

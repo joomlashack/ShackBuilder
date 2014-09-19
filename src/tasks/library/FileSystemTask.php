@@ -37,10 +37,9 @@ class FileSystemTask extends Task
     protected function remove($path)
     {
         if (is_link($path) || is_file($path)) {
-            $log = (is_link($path) ? 'Symlink' : 'File') . ' removed: ' . $path;
             $path = rtrim($path, '/');
+            $this->log('Removing ' . (is_link($path) ? 'symlink' : 'file') . ': ' . $path);
             unlink($path);
-            $this->log($log);
         } elseif (is_dir($path)) {
             // Remove all child files and directories
             $items = array_diff(scandir($path), array('.','..'));
@@ -51,8 +50,8 @@ class FileSystemTask extends Task
             }
 
             // Remove the empty directory
+            $this->log('Removing directory: ' . $path);
             $result = rmdir($path);
-            $this->log('Directory removed: ' . $path);
 
             return $result;
         }
