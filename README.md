@@ -69,13 +69,13 @@ All the phing tasks should be inside this repository, and every project should i
 Add a `build.xml` file to the repository root folder, with this basic markup:
 
     <?xml version="1.0" encoding="UTF-8"?>
-    <project name="OSYouTube-Pro Builder" default="">
+    <project name="OurExtension1-Pro Builder" default="">
         <property file="../build.global.properties" />
 
         <import file="${builder.path}/src/build.xml"/>
     </project>
 
-Replace the `OurExtension1-Pro` with the repository (folde) name
+Replace the `OurExtension1-Pro` with the repository (folder) name
 
 ### Free and Pro extensions
 All **free** repositories should be named as the product name.
