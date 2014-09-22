@@ -14,6 +14,7 @@
 
     <property name="packages.path" value="${project.path}/packages"/>
     <property name="packages.tmp.path" value="${packages.path}/tmp"/>
+    <property name="installer.source.path" value="${project.path}/../AllediaInstaller/src"/>
     <property name="project.source.path" value="${project.path}/src"/>
     <property name="project.source.free.path" value="${project.path}/../${composer.extra.name}/src"/>
     <property name="project.name.short" value="${composer.extra.element-short}"/>

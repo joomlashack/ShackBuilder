@@ -28,6 +28,8 @@
         <!-- Create Package without identifying version info -->
         <target name="package" description="Create installation package file">
             <property name="package.path" value="${packages.path}/${package.file}"/>
+
+            <!-- Remove the package, if exists -->
             <available file="${package.path}" property="package.path.exists" value="1"/>
             <if>
                 <equals arg1="${package.path.exists}" arg2="1"/>
@@ -36,30 +38,34 @@
                 </then>
             </if>
 
+            <!-- Prepare the temporary folders -->
             <if>
-                <equals arg1="${composer.extra.package-license}" arg2="free"/>
-                <!-- Free extensions -->
+                <available file="${packages.tmp.path}" type="dir"/>
                 <then>
-                    <!-- Pack the source folder -->
-                    <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${project.source.path}"/>
+                    <delete dir="${packages.tmp.path}"/>
                 </then>
-                <!-- Pro Extensions -->
-                <else>
-                    <!-- Prepare the temporary folder -->
-                    <if>
-                        <available file="${packages.tmp.path}" type="dir"/>
-                        <then>
-                            <delete dir="${packages.tmp.path}"/>
-                        </then>
-                    </if>
-                    <mkdir dir="${packages.tmp.path}"/>
+            </if>
+            <mkdir dir="${packages.tmp.path}"/>
+            <mkdir dir="${packages.tmp.path}/installer"/>
 
-                    <!-- Copy the free source folder to a temporary location -->
-                    <copy todir="${packages.tmp.path}">
-                        <fileset dir="${project.source.free.path}" id="free-code">
-                            <include name="**"/>
-                        </fileset>
-                    </copy>
+            <!-- Copy the free source folder to a temporary location -->
+            <copy todir="${packages.tmp.path}">
+                <fileset dir="${project.source.free.path}" id="free-code">
+                    <include name="**"/>
+                </fileset>
+            </copy>
+
+            <!-- Copy the installer library -->
+            <copy todir="${packages.tmp.path}/installer">
+                <fileset dir="${installer.source.path}" id="installer-code">
+                    <include name="**"/>
+                </fileset>
+            </copy>
+
+            <!-- Pro extensions -->
+            <if>
+                <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+                <then>
 
                     <!-- Copy the pro source overriding the existent free code -->
                     <copy todir="${packages.tmp.path}" overwrite="true">
@@ -69,16 +75,14 @@
                         </fileset>
                     </copy>
 
-                    <!-- Pack the tmp folder -->
-                    <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
-
-                    <!-- Remove tmp folder -->
-                    <delete dir="${packages.tmp.path}"/>
-                </else>
+                </then>
             </if>
 
-            <!-- Changes -->
+            <!-- Pack the tmp folder -->
+            <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
 
+            <!-- Remove tmp folder -->
+            <delete dir="${packages.tmp.path}"/>
 
         </target>
 
