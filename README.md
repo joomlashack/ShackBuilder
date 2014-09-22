@@ -13,12 +13,14 @@ All folders needs to have the same parent folder and be named as the repository 
 
     ./
     +-- AllediaBuilder
+    +-- AllediaInstaller
     +-- AllediaLibrary
     |-- OurExtension1
     |    +-- packages
     |    |-- src
     |    |    +-- language
     |    |    +-- library
+    |    |    +-- views
     |    |    |-- ourextension1.xml
     |    |-- composer.json
     |    |-- build.xml
@@ -29,6 +31,7 @@ All folders needs to have the same parent folder and be named as the repository 
     |    |    +-- language
     |    |    |-- library
     |    |    |    +-- pro
+    |    |    +-- views
     |    |    |-- ourextension1.xml
     |    |-- composer.json
     |    |-- build.xml
@@ -38,6 +41,7 @@ All folders needs to have the same parent folder and be named as the repository 
     |    |-- src
     |    |    +-- language
     |    |    +-- library
+    |    |    +-- views
     |    |    |-- ourextension1.xml
     |    |-- composer.json
     |    |-- build.xml
@@ -48,6 +52,7 @@ All folders needs to have the same parent folder and be named as the repository 
     |    |    +-- language
     |    |    |-- library
     |    |    |    +-- pro
+    |    |    +-- views
     |    |    |-- ourextension1.xml
     |    |-- composer.json
     |    |-- build.xml
