@@ -84,6 +84,17 @@
             <!-- Remove tmp folder -->
             <delete dir="${packages.tmp.path}"/>
 
+            <!-- Show what are the branchs are being used for each sub project -->
+            <if>
+                <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+                <then>
+                    <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaLibrary,${composer.extra.name},${composer.extra.name}-Pro"/>
+                </then>
+                <else>
+                    <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaLibrary,${composer.extra.name}"/>
+                </else>
+            </if>
+            <checkbranch projectPath="${project.path}/../" projects="${projects}"/>
         </target>
 
         <!-- Update creation date in Joomla manifest file -->
