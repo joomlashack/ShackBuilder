@@ -89,10 +89,10 @@
         <if>
             <equals arg1="${composer.extra.package-license}" arg2="pro"/>
             <then>
-                <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaLibrary,${composer.extra.name},${composer.extra.name}-Pro"/>
+                <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaFramework,${composer.extra.name},${composer.extra.name}-Pro"/>
             </then>
             <else>
-                <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaLibrary,${composer.extra.name}"/>
+                <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaFramework,${composer.extra.name}"/>
             </else>
         </if>
         <checkbranch projectPath="${project.path}/../" projects="${projects}"/>

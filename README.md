@@ -14,7 +14,7 @@ All folders needs to have the same parent folder and be named as the repository 
     ./
     +-- AllediaBuilder
     +-- AllediaInstaller
-    +-- AllediaLibrary
+    +-- AllediaFramework
     |-- OurExtension1
     |    +-- packages
     |    |-- src
