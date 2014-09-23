@@ -84,7 +84,7 @@
             <!-- Remove tmp folder -->
             <delete dir="${packages.tmp.path}"/>
 
-            <!-- Show what are the branchs are being used for each sub project -->
+            <!-- Show what are the branches are being used for each sub project -->
             <if>
                 <equals arg1="${composer.extra.package-license}" arg2="pro"/>
                 <then>

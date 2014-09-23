@@ -53,7 +53,7 @@ class CheckBranchTask extends Task
     {
         $hasNonMaster = false;
         $offset = str_repeat(' ', 14);
-        $output = "=================[ Branchs ]=================\n\n";
+        $output = "=================[ Branches ]=================\n\n";
 
         if (isset($this->projects)) {
             foreach ($this->projects as $project) {
@@ -80,7 +80,7 @@ class CheckBranchTask extends Task
             $output .= "\n" . $offset . "(*) Non master repositories\n";
         }
 
-        $output .= $offset . "===============================================";
+        $output .= $offset . "=============================================";
 
         $this->log($output);
     }
