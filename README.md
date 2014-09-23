@@ -86,27 +86,23 @@ Replace the `OurExtension1-Pro` with the repository (folder) name
 All **free** repositories should be named as the product name.
 All **pro** repositories should start with the name of the free product, followed by **-Pro**. The local cloned folders, needs to have the same name as the repository, for both.
 
-The **pro** extension package will be built grabbing the source from the free extension, and copying over it the content from the pro source repository. The folders will be merged and files with the same name will be overwritten. So usually the pro repository will have the language files and manifest duplicated, but customized.
+The **pro** extension package will be built grabbing the source from the free extension, and copying over it the content from the pro source repository. The folders will be merged and files with the same name will be overwritten. So usually the pro repository will have the language files named with an extension prefix ".pro" and will be merged on the build time.
 
 While building the pro extension, the builder will detect the respective free extension grabbing the property `extra.name` from the composer file.
 
 #### Language files
 
-Joomla is able to read by itself two language files .sys.ini. One should be located inside the extension, on the language folder. The other one will be placed inside the system language folder (which overrides the other one).
+For both, pro and free extensions, the language files are located inside the `language/en-GB` folder. The files for the free version are named normally.
+The files for the pro version must have a `.pro` extension prefix, like: **en-GB.com_myextension.pro.sys.ini** or **en-GB.com_myextension.pro.ini**.
 
-For **free** extensions we just need one .sys.ini file, which will be located inside the extension folder and **not** listed on the manifest file.
-For **pro** extensions, we need two files. The file coming from the free extension and a custom file for the new language terms. The second one needs to placed inside a folder called `language-pro` (both files have the same name). This second language file **must be** listed on the manifest file, which will force it to be copied to the system's language folder, overriding the free language file.
+They doesn't should be listed as language on the manifest file and will be merged in the build time. But they must be declarad as a normal folder.
 
-For **pro** version manifest:
+On your development environment, you can use phing to merge the files:
 
-    <languages folder="language-pro">
-       <language tag="en-GB">en-GB/en-GB.plg_content_osyoutube.sys.ini</language>
-    </languages>
+    $ phing merge-language-dev
 
-    <files>
-        <folder>language</folder>
-        <folder>language-pro</folder>
-        ...
+This command will create merged language files inside the ./packages/dev/language/en-GB folder.
+If you are using the symlink task, it will run this task first and then link the merged file (for pro versions).
 
 ### Composer.json file
 
