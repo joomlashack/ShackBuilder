@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Release" default="current-release">
 
-    <taskdef name="mergefiles" classname="MergeFilesTask"/>
-
     <!-- Create New Release and package -->
     <target name="new-release" description="Update version/creation and create IDed package" depends="release">
         <if>

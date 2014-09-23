@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Release" default="current-release">
+
+    <!-- Create a temporary merged language file for local development with symlink -->
+    <target name="merge-language-dev" description="Create merged language files">
+        <property name="language.tmp.path" value="${packages.path}/dev/language/en-GB"/>
+        <property name="language.free.path" value="${project.source.free.path}/language/en-GB"/>
+        <property name="language.pro.path" value="${project.source.path}/language/en-GB"/>
+
+        <if>
+            <available file="${language.free.path}" type="dir"/>
+            <then>
+                <!-- Prepare the temporary folder for language -->
+                <if>
+                    <available file="${language.tmp.path}" type="dir"/>
+                    <then>
+                        <delete dir="${language.tmp.path}"/>
+                    </then>
+                </if>
+                <mkdir dir="${language.tmp.path}"/>
+
+                <!-- Copy the free source folder to a temporary location -->
+                <copy todir="${language.tmp.path}">
+                    <fileset dir="${language.free.path}" id="free-code">
+                        <include name="*.ini"/>
+                    </fileset>
+                </copy>
+
+                <!-- Pro extensions -->
+                <if>
+                    <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+                    <then>
+
+                        <!-- Copy the pro source overriding the existent free code -->
+                        <copy todir="${language.tmp.path}" overwrite="true">
+                            <fileset dir="${language.pro.path}" id="pro-code">
+                                <include name="*.ini"/>
+                            </fileset>
+                        </copy>
+
+                        <!-- Merge language files -->
+                        <mergefiles basepath="${language.tmp.path}" pattern=".pro." replace="."/>
+
+                        <echo message="Language files merged"/>
+                    </then>
+                </if>
+            </then>
+        </if>
+
+    </target>
+
+</project>

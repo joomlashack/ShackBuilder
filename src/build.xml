@@ -8,6 +8,7 @@
     <taskdef name="setversion" classname="SetversionTask"/>
     <taskdef name="getversion" classname="GetVersionTask"/>
     <taskdef name="checkbranch" classname="CheckBranchTask"/>
+    <taskdef name="mergefiles" classname="MergeFilesTask"/>
 
     <!-- Properties -->
     <property name="project.path" value="${project.basedir}"/>
@@ -36,6 +37,7 @@
 
     <getversion file="${project.manifest}" property="project.version"/>
 
+    <import file="${builder.path}/src/projects/development.xml"/>
     <import file="${builder.path}/src/projects/release.xml"/>
     <import file="${builder.path}/src/projects/symlinker.xml"/>
 </project>

@@ -8,12 +8,14 @@
 
     <!-- Create symlinks for the extension in development environments -->
     <target name="symlink">
+        <phingcall target="merge-language-dev" />
         <input propertyName="joomla.path" message="Joomla root path: "/>
         <createsymlinks mapfile="${symlink.map.path}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
     </target>
 
     <!-- Remove symlinks for the extension in development environments -->
     <target name="unlink">
+        <phingcall target="merge-language-dev" />
         <input propertyName="joomla.path" message="Joomla root path: "/>
         <unlinksynlinks mapfile="${symlink.map.path}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
     </target>
