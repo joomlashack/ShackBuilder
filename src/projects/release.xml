@@ -4,149 +4,149 @@
     <taskdef name="mergefiles" classname="MergeFilesTask"/>
 
     <!-- Create New Release and package -->
-        <target name="new-release" description="Update version/creation and create IDed package" depends="release">
-            <if>
-                <isset property="release.type"/>
+    <target name="new-release" description="Update version/creation and create IDed package" depends="release">
+        <if>
+            <isset property="release.type"/>
+            <then>
+                <setversion releasetype="${release.type}" file="${project.manifest}" property="project.version"/>
+                <phingcall target="update-creation"/>
+
+                <phingcall target="package">
+                    <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${project.version}.zip"/>
+                </phingcall>
+            </then>
+        </if>
+    </target>
+
+    <!-- Create Current Release and package -->
+    <target name="current-release" description="Generate package file for current version">
+        <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false"/>
+        <property name="manifest.version" value="" override="false"/>
+        <phingcall target="package">
+            <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
+        </phingcall>
+    </target>
+
+    <!-- Create Package without identifying version info -->
+    <target name="package" description="Create installation package file">
+        <property name="package.path" value="${packages.path}/${package.file}"/>
+
+        <!-- Remove the package, if exists -->
+        <available file="${package.path}" property="package.path.exists" value="1"/>
+        <if>
+            <equals arg1="${package.path.exists}" arg2="1"/>
+            <then>
+                <delete file="${packages.path}/${package.file}"/>
+            </then>
+        </if>
+
+        <!-- Prepare the temporary folders -->
+        <if>
+            <available file="${packages.tmp.path}" type="dir"/>
+            <then>
+                <delete dir="${packages.tmp.path}"/>
+            </then>
+        </if>
+        <mkdir dir="${packages.tmp.path}"/>
+        <mkdir dir="${packages.tmp.path}/installer"/>
+
+        <!-- Copy the free source folder to a temporary location -->
+        <copy todir="${packages.tmp.path}">
+            <fileset dir="${project.source.free.path}" id="free-code">
+                <include name="**"/>
+            </fileset>
+        </copy>
+
+        <!-- Copy the installer library -->
+        <copy todir="${packages.tmp.path}/installer">
+            <fileset dir="${installer.source.path}" id="installer-code">
+                <include name="**"/>
+            </fileset>
+        </copy>
+
+        <!-- Pro extensions -->
+        <if>
+            <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+            <then>
+
+                <!-- Copy the pro source overriding the existent free code -->
+                <copy todir="${packages.tmp.path}" overwrite="true">
+                    <fileset dir="${project.source.path}" id="pro-code">
+                        <include name="**"/>
+                    </fileset>
+                </copy>
+
+                <!-- Merge language files -->
+                <mergefiles basepath="${packages.tmp.path}/language/en-GB" pattern=".pro." replace="."/>
+            </then>
+        </if>
+
+        <!-- Pack the tmp folder -->
+        <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
+
+        <!-- Remove tmp folder -->
+        <delete dir="${packages.tmp.path}"/>
+
+        <!-- Show what are the branches are being used for each sub project -->
+        <if>
+            <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+            <then>
+                <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaLibrary,${composer.extra.name},${composer.extra.name}-Pro"/>
+            </then>
+            <else>
+                <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaLibrary,${composer.extra.name}"/>
+            </else>
+        </if>
+        <checkbranch projectPath="${project.path}/../" projects="${projects}"/>
+    </target>
+
+    <!-- Update creation date in Joomla manifest file -->
+    <target name="update-creation" description="Update creation date">
+        <tstamp prefix="creation"/>
+
+        <property name="creation.find" value=""><![CDATA[<creationDate>.*</creationDate>]]></property>
+        <property name="creation.replace" value=""><![CDATA[<creationDate>${creation.TODAY}</creationDate>]]></property>
+
+        <reflexive file="${project.manifest}">
+            <filterchain>
+                <replaceregexp>
+                    <!--suppress PhingDomInspection -->
+                    <regexp pattern="${creation.find}" replace="${creation.replace}"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <echo message="Creation Date: ${creation.TODAY}"/>
+    </target>
+
+    <target name="release" hidden="true">
+        <echo><![CDATA[
+            1. Major
+            2. Minor
+            3. Bugfix
+        ]]></echo>
+        <input
+            propertyName="release.id"
+            validArgs="0,1,2,3"
+            message="Release Type: "/>
+
+        <if>
+            <equals arg1="${release.id}" arg2="1"/>
+            <then>
+                <property name="release.type" value="major"/>
+            </then>
+            <elseif>
+                <equals arg1="${release.id}" arg2="2"/>
                 <then>
-                    <setversion releasetype="${release.type}" file="${project.manifest}" property="project.version"/>
-                    <phingcall target="update-creation"/>
-
-                    <phingcall target="package">
-                        <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${project.version}.zip"/>
-                    </phingcall>
+                    <property name="release.type" value="minor"/>
                 </then>
-            </if>
-        </target>
-
-        <!-- Create Current Release and package -->
-        <target name="current-release" description="Generate package file for current version">
-            <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false"/>
-            <property name="manifest.version" value="" override="false"/>
-            <phingcall target="package">
-                <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
-            </phingcall>
-        </target>
-
-        <!-- Create Package without identifying version info -->
-        <target name="package" description="Create installation package file">
-            <property name="package.path" value="${packages.path}/${package.file}"/>
-
-            <!-- Remove the package, if exists -->
-            <available file="${package.path}" property="package.path.exists" value="1"/>
-            <if>
-                <equals arg1="${package.path.exists}" arg2="1"/>
+            </elseif>
+            <elseif>
+                <equals arg1="${release.id}" arg2="3"/>
                 <then>
-                    <delete file="${packages.path}/${package.file}"/>
+                    <property name="release.type" value="bugfix"/>
                 </then>
-            </if>
-
-            <!-- Prepare the temporary folders -->
-            <if>
-                <available file="${packages.tmp.path}" type="dir"/>
-                <then>
-                    <delete dir="${packages.tmp.path}"/>
-                </then>
-            </if>
-            <mkdir dir="${packages.tmp.path}"/>
-            <mkdir dir="${packages.tmp.path}/installer"/>
-
-            <!-- Copy the free source folder to a temporary location -->
-            <copy todir="${packages.tmp.path}">
-                <fileset dir="${project.source.free.path}" id="free-code">
-                    <include name="**"/>
-                </fileset>
-            </copy>
-
-            <!-- Copy the installer library -->
-            <copy todir="${packages.tmp.path}/installer">
-                <fileset dir="${installer.source.path}" id="installer-code">
-                    <include name="**"/>
-                </fileset>
-            </copy>
-
-            <!-- Pro extensions -->
-            <if>
-                <equals arg1="${composer.extra.package-license}" arg2="pro"/>
-                <then>
-
-                    <!-- Copy the pro source overriding the existent free code -->
-                    <copy todir="${packages.tmp.path}" overwrite="true">
-                        <fileset dir="${project.source.path}" id="pro-code">
-                            <include name="**"/>
-                        </fileset>
-                    </copy>
-
-                    <!-- Merge language files -->
-                    <mergefiles basepath="${packages.tmp.path}/language/en-GB" pattern=".pro." replace="."/>
-                </then>
-            </if>
-
-            <!-- Pack the tmp folder -->
-            <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
-
-            <!-- Remove tmp folder -->
-            <delete dir="${packages.tmp.path}"/>
-
-            <!-- Show what are the branches are being used for each sub project -->
-            <if>
-                <equals arg1="${composer.extra.package-license}" arg2="pro"/>
-                <then>
-                    <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaLibrary,${composer.extra.name},${composer.extra.name}-Pro"/>
-                </then>
-                <else>
-                    <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaLibrary,${composer.extra.name}"/>
-                </else>
-            </if>
-            <checkbranch projectPath="${project.path}/../" projects="${projects}"/>
-        </target>
-
-        <!-- Update creation date in Joomla manifest file -->
-        <target name="update-creation" description="Update creation date">
-            <tstamp prefix="creation"/>
-
-            <property name="creation.find" value=""><![CDATA[<creationDate>.*</creationDate>]]></property>
-            <property name="creation.replace" value=""><![CDATA[<creationDate>${creation.TODAY}</creationDate>]]></property>
-
-            <reflexive file="${project.manifest}">
-                <filterchain>
-                    <replaceregexp>
-                        <!--suppress PhingDomInspection -->
-                        <regexp pattern="${creation.find}" replace="${creation.replace}"/>
-                    </replaceregexp>
-                </filterchain>
-            </reflexive>
-            <echo message="Creation Date: ${creation.TODAY}"/>
-        </target>
-
-        <target name="release" hidden="true">
-            <echo><![CDATA[
-                1. Major
-                2. Minor
-                3. Bugfix
-            ]]></echo>
-            <input
-                propertyName="release.id"
-                validArgs="0,1,2,3"
-                message="Release Type: "/>
-
-            <if>
-                <equals arg1="${release.id}" arg2="1"/>
-                <then>
-                    <property name="release.type" value="major"/>
-                </then>
-                <elseif>
-                    <equals arg1="${release.id}" arg2="2"/>
-                    <then>
-                        <property name="release.type" value="minor"/>
-                    </then>
-                </elseif>
-                <elseif>
-                    <equals arg1="${release.id}" arg2="3"/>
-                    <then>
-                        <property name="release.type" value="bugfix"/>
-                    </then>
-                </elseif>
-            </if>
-        </target>
+            </elseif>
+        </if>
+    </target>
 
 </project>
