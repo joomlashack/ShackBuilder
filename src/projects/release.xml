@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Release" default="current-release">
 
+    <taskdef name="mergefiles" classname="MergeFilesTask"/>
+
     <!-- Create New Release and package -->
         <target name="new-release" description="Update version/creation and create IDed package" depends="release">
             <if>
@@ -71,10 +73,11 @@
                     <copy todir="${packages.tmp.path}" overwrite="true">
                         <fileset dir="${project.source.path}" id="pro-code">
                             <include name="**"/>
-                            <exclude name="free/**"/>
                         </fileset>
                     </copy>
 
+                    <!-- Merge language files -->
+                    <mergefiles basepath="${packages.tmp.path}/language/en-GB" pattern=".pro." replace="."/>
                 </then>
             </if>
 
