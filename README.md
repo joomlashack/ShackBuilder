@@ -138,10 +138,30 @@ All extensions needs to have a `composer.json` file on the root folder, wich is 
 You can automatically pack other extensions while building the package. You just need to specify the related extensions on the manifest file, using this tag as example:
 
     <relatedExtensions>
-        <extension>AllediaFramework</extension>
-        <extension>AnotherExtension1</extension>
-        <extension>AnotherExtension2</extension>
+        <extension
+            type="library"
+            element="allediaframework"
+            uninstall="true">AllediaFramework</extension>
+
+        <extension
+            type="component"
+            element="anotherextension1"
+            uninstall="true">AnotherExtension1</extension>
+
+        <extension
+            type="plugin"
+            element="anyplugin"
+            folder="content"
+            publish="true"
+            uninstall="true"
+            ordering="first">AnyPlugin</extension>
     </relatedExtensions>
+
+#### Extension attributes
+
+* publish: force to publish the extension right after install it (only if it is new)
+* uninstall: flag to indicate that this extension should be uninstalled if the main extension is uninstalled
+* ordering: first, last, 1..n - only for plugins, it set an specific order
 
 ## How to use
 
