@@ -18,11 +18,20 @@
 
     <!-- Create Current Release and package -->
     <target name="current-release" description="Generate package file for current version">
-        <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false"/>
         <property name="manifest.version" value="" override="false"/>
         <phingcall target="package">
             <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
         </phingcall>
+    </target>
+
+    <!-- Pack the extension into a project -->
+    <target name="pack-related-extensions" description="Pack the related extensions">
+        <mkdir dir="${extensions.tmp.path}/${extension}"/>
+        <copy todir="${extensions.tmp.path}/${extension}">
+            <fileset dir="${repositories.path}/${extension}/src">
+                <include name="**"/>
+            </fileset>
+        </copy>
     </target>
 
     <!-- Create Package without identifying version info -->
@@ -46,7 +55,8 @@
             </then>
         </if>
         <mkdir dir="${packages.tmp.path}"/>
-        <mkdir dir="${packages.tmp.path}/installer"/>
+        <mkdir dir="${installer.tmp.path}"/>
+        <mkdir dir="${extensions.tmp.path}"/>
 
         <!-- Copy the free source folder to a temporary location -->
         <copy todir="${packages.tmp.path}">
@@ -56,11 +66,14 @@
         </copy>
 
         <!-- Copy the installer library -->
-        <copy todir="${packages.tmp.path}/installer">
+        <copy todir="${installer.tmp.path}">
             <fileset dir="${installer.source.path}" id="installer-code">
                 <include name="**"/>
             </fileset>
         </copy>
+
+        <!-- Pack related extensions -->
+        <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter=","/>
 
         <!-- Pro extensions -->
         <if>
@@ -83,7 +96,7 @@
         <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
 
         <!-- Remove tmp folder -->
-        <delete dir="${packages.tmp.path}"/>
+        <!-- <delete dir="${packages.tmp.path}"/> -->
 
         <!-- Show what are the branches are being used for each sub project -->
         <if>

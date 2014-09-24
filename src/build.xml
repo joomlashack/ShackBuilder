@@ -9,16 +9,20 @@
     <taskdef name="getversion" classname="GetVersionTask"/>
     <taskdef name="checkbranch" classname="CheckBranchTask"/>
     <taskdef name="mergefiles" classname="MergeFilesTask"/>
+    <taskdef name="getrelatedextensions" classname="RelatedExtensionsTask"/>
 
     <!-- Properties -->
     <property name="project.path" value="${project.basedir}"/>
     <propertiesfromcomposer file="${project.path}/composer.json"/>
 
+    <property name="repositories.path" value="${project.path}/.."/>
     <property name="packages.path" value="${project.path}/packages"/>
     <property name="packages.tmp.path" value="${packages.path}/tmp"/>
-    <property name="installer.source.path" value="${project.path}/../AllediaInstaller/src"/>
+    <property name="installer.source.path" value="${repositories.path}/AllediaInstaller/src"/>
+    <property name="installer.tmp.path" value="${packages.tmp.path}/installer"/>
+    <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
     <property name="project.source.path" value="${project.path}/src"/>
-    <property name="project.source.free.path" value="${project.path}/../${composer.extra.name}/src"/>
+    <property name="project.source.free.path" value="${repositories.path}/${composer.extra.name}/src"/>
     <property name="project.name.short" value="${composer.extra.element-short}"/>
     <property name="project.name.long" value="${composer.extra.element}"/>
 
@@ -34,6 +38,9 @@
             <property name="project.manifest" value="${project.source.path}/${project.license}_${project.name.short}.xml" override="true"/>
         </else>
     </if>
+    <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false" />
+
+    <getrelatedextensions file="${project.manifest}" property="project.relatedExtensions"/>
 
     <getversion file="${project.manifest}" property="project.version"/>
 
