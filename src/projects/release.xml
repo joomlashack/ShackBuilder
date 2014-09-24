@@ -92,6 +92,13 @@
             </then>
         </if>
 
+        <!-- PHP Lint -->
+        <phplint>
+            <fileset dir="${packages.tmp.path}">
+                <include name="**/*.php"/>
+            </fileset>
+        </phplint>
+
         <!-- Pack the tmp folder -->
         <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
 
