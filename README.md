@@ -133,6 +133,16 @@ All extensions needs to have a `composer.json` file on the root folder, wich is 
         }
     }
 
+### Related Extensions
+
+You can automatically pack other extensions while building the package. You just need to specify the related extensions on the manifest file, using this tag as example:
+
+    <relatedExtensions>
+        <extension>AllediaFramework</extension>
+        <extension>AnotherExtension1</extension>
+        <extension>AnotherExtension2</extension>
+    </relatedExtensions>
+
 ## How to use
 
 To build the extension packages, go inside the extension folder you want to build and run the command:
