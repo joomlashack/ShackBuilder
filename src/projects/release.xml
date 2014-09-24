@@ -26,12 +26,19 @@
 
     <!-- Pack the extension into a project -->
     <target name="pack-related-extensions" description="Pack the related extensions">
-        <mkdir dir="${extensions.tmp.path}/${extension}"/>
-        <copy todir="${extensions.tmp.path}/${extension}">
-            <fileset dir="${repositories.path}/${extension}/src">
-                <include name="**"/>
-            </fileset>
-        </copy>
+        <if>
+            <not>
+                <contains string="${extension}" substring="${"/>
+            </not>
+            <then>
+                <mkdir dir="${extensions.tmp.path}/${extension}"/>
+                <copy todir="${extensions.tmp.path}/${extension}">
+                    <fileset dir="${repositories.path}/${extension}/src">
+                        <include name="**"/>
+                    </fileset>
+                </copy>
+            </then>
+        </if>
     </target>
 
     <!-- Create Package without identifying version info -->
@@ -109,13 +116,13 @@
         <if>
             <equals arg1="${composer.extra.package-license}" arg2="pro"/>
             <then>
-                <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaFramework,${composer.extra.name},${composer.extra.name}-Pro"/>
+                <property name="projects" value="AllediaBuilder,AllediaInstaller,${composer.extra.name},${composer.extra.name}-Pro"/>
             </then>
             <else>
-                <property name="projects" value="AllediaBuilder,AllediaInstaller,AllediaFramework,${composer.extra.name}"/>
+                <property name="projects" value="AllediaBuilder,AllediaInstaller,${composer.extra.name}"/>
             </else>
         </if>
-        <checkbranch projectPath="${project.path}/../" projects="${projects}"/>
+        <checkbranch projectPath="${repositories.path}" projects="${projects},${project.relatedExtensions}"/>
     </target>
 
     <!-- Update creation date in Joomla manifest file -->

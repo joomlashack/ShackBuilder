@@ -70,13 +70,15 @@ class RelatedExtensionsTask extends Task
         $xml = simplexml_load_file($this->file);
         $extensions = array();
 
-        foreach ($xml->relatedExtensions->extension as $extension) {
-            $extensions[] = (string)$extension;
+        if (!empty($xml->relatedExtensions)) {
+            foreach ($xml->relatedExtensions->extension as $extension) {
+                $extensions[] = (string)$extension;
+            }
+
+            $extensions = implode(',', $extensions);
+            $this->project->setProperty($this->property, $extensions);
+
+            $this->log('Loaded related extensions into properties');
         }
-
-        $extensions = implode(',', $extensions);
-        $this->project->setProperty($this->property, $extensions);
-
-        $this->log('Loaded related extensions into properties');
     }
 }
