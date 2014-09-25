@@ -137,25 +137,31 @@ All extensions needs to have a `composer.json` file on the root folder, wich is 
 
 You can automatically pack other extensions while building the package. You just need to specify the related extensions on the manifest file, using this tag as example:
 
-    <relatedExtensions>
-        <extension
-            type="library"
-            element="allediaframework"
-            uninstall="true">AllediaFramework</extension>
+    <alledia>
+        ...
 
-        <extension
-            type="component"
-            element="anotherextension1"
-            uninstall="true">AnotherExtension1</extension>
+        <relatedExtensions>
+            <extension
+                type="library"
+                element="allediaframework"
+                uninstall="true">AllediaFramework</extension>
 
-        <extension
-            type="plugin"
-            element="anyplugin"
-            folder="content"
-            publish="true"
-            uninstall="true"
-            ordering="first">AnyPlugin</extension>
-    </relatedExtensions>
+            <extension
+                type="component"
+                element="anotherextension1"
+                uninstall="true">AnotherExtension1</extension>
+
+            <extension
+                type="plugin"
+                element="anyplugin"
+                folder="content"
+                publish="true"
+                uninstall="true"
+                ordering="first">AnyPlugin</extension>
+        </relatedExtensions>
+
+        ...
+    </alledia>
 
 If you already have a newer version installed for any related extension, it will be ignored. Otherwise, it will install or update.
 
@@ -168,19 +174,30 @@ If you already have a newer version installed for any related extension, it will
 ### Obsolete items
 
 *Needs refactoring*
+    <alledia>
+        ...
 
-    <obsoleteItems>
-        <folder>library</folder>
-        <filename>style.css</filename>
-        <extension
-            type="plugin"
-            element="osvimeo"
-            group="content">OSVimeo</extension>
-    </obsoleteItems>
+        <obsoleteItems>
+            <folder>library</folder>
+            <filename>style.css</filename>
+            <extension
+                type="plugin"
+                element="osvimeo"
+                group="content">OSVimeo</extension>
+        </obsoleteItems>
+
+        ...
+    </alledia>
 
 ### Publishing and reordering plugins automatically
 
-    <element publish="true" ordering="first">myplugin</element>
+    <alledia>
+        ...
+
+        <element publish="true" ordering="first">myplugin</element>
+
+        ...
+    </alledia>
 
 * publish: force to publish the extension right after install it (only if it is new)
 * ordering: first, last, 1..n - only for plugins, it set an specific order (only if it is new)
