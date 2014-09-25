@@ -99,7 +99,7 @@
         </if>
 
         <!-- PHP Lint -->
-        <phplint>
+        <phplint haltonfailure="true">
             <fileset dir="${packages.tmp.path}">
                 <include name="**/*.php"/>
             </fileset>
