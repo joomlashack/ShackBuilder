@@ -9,13 +9,42 @@
     <!-- Create symlinks for the extension in development environments -->
     <target name="symlink">
         <phingcall target="merge-language-dev" />
-        <input propertyName="joomla.path" message="Joomla root path: "/>
+
+        <if>
+            <available file="${packages.path}/.build.properties"/>
+            <then>
+                <property file="${packages.path}/.build.properties" />
+            </then>
+            <else>
+                <property name="joomla.path" value="" override="true" />
+            </else>
+        </if>
+        <input propertyName="joomla.path" message="Joomla root path: " defaultValue="${joomla.path}"/>
+
         <createsymlinks mapfile="${symlink.map.path}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
+
+        <!-- Stores the last symlinked path -->
+        <if>
+            <os family="unix"/>
+            <then>
+                <exec command="echo 'joomla.path=${joomla.path}' > ${packages.path}/.build.properties"/>
+            </then>
+        </if>
     </target>
 
     <!-- Remove symlinks for the extension in development environments -->
     <target name="unlink">
-        <input propertyName="joomla.path" message="Joomla root path: "/>
+        <if>
+            <available file="${packages.path}/.build.properties"/>
+            <then>
+                <property file="${packages.path}/.build.properties" />
+            </then>
+            <else>
+                <property name="joomla.path" value="" override="true" />
+            </else>
+        </if>
+        <input propertyName="joomla.path" message="Joomla root path: " defaultValue="${joomla.path}"/>
+
         <unlinksynlinks mapfile="${symlink.map.path}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
     </target>
 
