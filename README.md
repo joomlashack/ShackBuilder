@@ -163,7 +163,8 @@ If you already have a newer version installed for any related extension, it will
 
 * publish: force to publish the extension right after install it (only if it is new)
 * uninstall: flag to indicate that this extension should be uninstalled if the main extension is uninstalled
-* ordering: first, last, 1..n - only for plugins, it set an specific order
+* ordering: first, last, 1..n - only for plugins, it set an specific order (only if it is new)
+
 ### Obsolete items
 
 *Needs refactoring*
@@ -176,6 +177,38 @@ If you already have a newer version installed for any related extension, it will
             element="osvimeo"
             group="content">OSVimeo</extension>
     </obsoleteItems>
+
+### Publishing and reordering plugins automatically
+
+    <element publish="true" ordering="first">myplugin</element>
+
+* publish: force to publish the extension right after install it (only if it is new)
+* ordering: first, last, 1..n - only for plugins, it set an specific order (only if it is new)
+
+### Installer views
+
+These views are packed by the installer library and loaded by all extensions.
+
+    ./views
+    |   |-- installer
+    |   |   |-- header_default.php
+    |   |   |-- header_install.php
+    |   |   |-- header_update.php
+    |   |   |-- footer_default.php
+    |   |   |-- footer_install.php
+    |   |   |-- footer_update.php
+
+Your extensions can override any file and add a new one: body_*.
+
+    ./views
+    |   |-- installer
+    |   |   |-- body_default.php
+    |   |   |-- body_install.php
+    |   |   |-- body_update.php
+
+#### variables
+
+    $this->version, etc...
 
 ## How to use
 
