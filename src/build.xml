@@ -15,6 +15,7 @@
     <property name="project.path" value="${project.basedir}"/>
     <propertiesfromcomposer file="${project.path}/composer.json"/>
 
+    <property name="debug" value="0"/>
     <property name="repositories.path" value="${project.path}/.."/>
     <property name="packages.path" value="${project.path}/packages"/>
     <property name="packages.tmp.path" value="${packages.path}/tmp"/>

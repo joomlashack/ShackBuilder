@@ -109,7 +109,14 @@
         <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
 
         <!-- Remove tmp folder -->
-        <delete dir="${packages.tmp.path}"/>
+        <if>
+            <not>
+                <equals arg1="${debug}" arg2="1"/>
+            </not>
+            <then>
+                <delete dir="${packages.tmp.path}"/>
+            </then>
+        </if>
 
         <!-- Show what are the branches are being used for each sub project -->
         <if>
