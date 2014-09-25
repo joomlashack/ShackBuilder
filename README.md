@@ -164,6 +164,18 @@ If you already have a newer version installed for any related extension, it will
 * publish: force to publish the extension right after install it (only if it is new)
 * uninstall: flag to indicate that this extension should be uninstalled if the main extension is uninstalled
 * ordering: first, last, 1..n - only for plugins, it set an specific order
+### Obsolete items
+
+*Needs refactoring*
+
+    <obsoleteItems>
+        <folder>library</folder>
+        <filename>style.css</filename>
+        <extension
+            type="plugin"
+            element="osvimeo"
+            group="content">OSVimeo</extension>
+    </obsoleteItems>
 
 ## How to use
 
