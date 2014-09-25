@@ -19,7 +19,7 @@
     <property name="packages.path" value="${project.path}/packages"/>
     <property name="packages.tmp.path" value="${packages.path}/tmp"/>
     <property name="installer.source.path" value="${repositories.path}/AllediaInstaller/src"/>
-    <property name="installer.tmp.path" value="${packages.tmp.path}/installer"/>
+    <property name="installer.tmp.path" value="${packages.tmp.path}"/>
     <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
     <property name="project.source.path" value="${project.path}/src"/>
     <property name="project.source.free.path" value="${repositories.path}/${composer.extra.name}/src"/>
