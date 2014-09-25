@@ -157,6 +157,8 @@ You can automatically pack other extensions while building the package. You just
             ordering="first">AnyPlugin</extension>
     </relatedExtensions>
 
+If you already have a newer version installed for any related extension, it will be ignored. Otherwise, it will install or update.
+
 #### Extension attributes
 
 * publish: force to publish the extension right after install it (only if it is new)
