@@ -70,8 +70,8 @@ class RelatedExtensionsTask extends Task
         $xml = simplexml_load_file($this->file);
         $extensions = array();
 
-        if (!empty($xml->relatedExtensions)) {
-            foreach ($xml->relatedExtensions->extension as $extension) {
+        if (!empty($xml->alledia->relatedExtensions)) {
+            foreach ($xml->alledia->relatedExtensions->extension as $extension) {
                 $extensions[] = (string)$extension;
             }
 
