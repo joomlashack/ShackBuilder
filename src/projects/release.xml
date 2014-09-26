@@ -31,12 +31,14 @@
                 <contains string="${extension}" substring="${"/>
             </not>
             <then>
+                <!-- Run the related extension phing script -->
                 <mkdir dir="${extensions.tmp.path}/${extension}"/>
-                <copy todir="${extensions.tmp.path}/${extension}">
+                <exec command="cd ${repositories.path}/${extension}; phing current-release -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions}" logoutput="true" checkreturn="true"/>
+                <!-- <copy todir="${extensions.tmp.path}/${extension}">
                     <fileset dir="${repositories.path}/${extension}/src">
                         <include name="**"/>
                     </fileset>
-                </copy>
+                </copy> -->
             </then>
         </if>
     </target>
@@ -105,16 +107,21 @@
             </fileset>
         </phplint>
 
-        <!-- Pack the tmp folder -->
-        <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
-
-        <!-- Remove tmp folder -->
         <if>
-            <not>
-                <equals arg1="${debug}" arg2="1"/>
-            </not>
+            <equals arg1="${buildingdirectly}" arg2="1"/>
             <then>
-                <delete dir="${packages.tmp.path}"/>
+                <!-- Pack the tmp folder -->
+                <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
+
+                <!-- Remove tmp folder -->
+                <if>
+                    <not>
+                        <equals arg1="${debug}" arg2="1"/>
+                    </not>
+                    <then>
+                        <delete dir="${packages.tmp.path}"/>
+                    </then>
+                </if>
             </then>
         </if>
 

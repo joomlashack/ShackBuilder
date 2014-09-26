@@ -17,8 +17,6 @@
 
     <property name="debug" value="0"/>
     <property name="repositories.path" value="${project.path}/.."/>
-    <property name="packages.path" value="${project.path}/packages"/>
-    <property name="packages.tmp.path" value="${packages.path}/tmp"/>
     <property name="installer.source.path" value="${repositories.path}/AllediaInstaller/src"/>
     <property name="installer.tmp.path" value="${packages.tmp.path}"/>
     <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
@@ -26,6 +24,23 @@
     <property name="project.source.free.path" value="${repositories.path}/${composer.extra.name}/src"/>
     <property name="project.name.short" value="${composer.extra.element-short}"/>
     <property name="project.name.long" value="${composer.extra.element}"/>
+
+    <!-- Check if we are building the package directly or as a related extension -->
+    <!-- If it is a related extension, we will receive these properties from the command line -->
+    <if>
+        <not>
+            <isset property="packages.tmp.path"/>
+        </not>
+        <then>
+            <!-- We are building the package directly -->
+            <property name="packages.path" value="${project.path}/packages"/>
+            <property name="packages.tmp.path" value="${packages.path}/tmp"/>
+            <property name="buildingdirectly" value="1"/>
+        </then>
+        <else>
+            <property name="buildingdirectly" value="0"/>
+        </else>
+    </if>
 
     <!-- Display basic information -->
     <echo message="Version ${builder.version} for Joomla! extensions"/>
@@ -41,7 +56,7 @@
     </if>
     <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false" />
 
-    <getrelatedextensions file="${project.manifest}" property="project.relatedExtensions"/>
+    <getrelatedextensions file="${project.manifest}" property="project.relatedExtensions" ignoreRelatedExtensions="${ignoreRelatedExtensions}"/>
 
     <getversion file="${project.manifest}" property="project.version"/>
 

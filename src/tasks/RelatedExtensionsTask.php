@@ -25,6 +25,15 @@ class RelatedExtensionsTask extends Task
     protected $property;
 
     /**
+     * The CSV list of extensions to ignore, since they were
+     * build by the parent extension, in case this extension
+     * is related inside other extension. Avoid recursive build.
+     *
+     * @var string
+     */
+    protected $ignoreRelatedExtensions;
+
+    /**
      * The setter for the attribute "file". It should point to
      * the composer.json file
      *
@@ -52,6 +61,17 @@ class RelatedExtensionsTask extends Task
     }
 
     /**
+     * The setter for the attribute "ignoreRelatedExtensions"
+     *
+     * @param string $ignoreRelatedExtensions The CSV list of extensions to ignore
+     * @return void
+     */
+    public function setIgnoreRelatedExtensions($ignoreRelatedExtensions)
+    {
+        $this->ignoreRelatedExtensions = $ignoreRelatedExtensions;
+    }
+
+    /**
      * The init method
      *
      * @return void
@@ -75,6 +95,23 @@ class RelatedExtensionsTask extends Task
                 $extensions[] = (string)$extension;
             }
 
+            $ignore = array();
+            if (strpos($this->ignoreRelatedExtensions, '$') === 0) {
+                $this->ignoreRelatedExtensions = '';
+            }
+
+            if (!empty($this->ignoreRelatedExtensions)) {
+                $ignore = explode(',', $this->ignoreRelatedExtensions);
+            }
+
+            if (!empty($ignore)) {
+                $this->log('Ignored some related extensions: ' . $this->ignoreRelatedExtensions);
+            }
+
+            // Strip the extensions we should ignore
+            $extensions = array_diff($extensions, $ignore);
+
+            // Store on the property
             $extensions = implode(',', $extensions);
             $this->project->setProperty($this->property, $extensions);
 
