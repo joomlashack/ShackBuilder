@@ -34,11 +34,6 @@
                 <!-- Run the related extension phing script -->
                 <mkdir dir="${extensions.tmp.path}/${extension}"/>
                 <exec command="cd ${repositories.path}/${extension}; phing current-release -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions}" logoutput="true" checkreturn="true"/>
-                <!-- <copy todir="${extensions.tmp.path}/${extension}">
-                    <fileset dir="${repositories.path}/${extension}/src">
-                        <include name="**"/>
-                    </fileset>
-                </copy> -->
             </then>
         </if>
     </target>
