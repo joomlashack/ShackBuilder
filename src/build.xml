@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Alledia Joomla Phing Builder" default="current-release">
-    <property name="builder.version" value="3.0.0"/>
+    <property name="builder.version" value="3.0.1"/>
 
     <!-- Include the external tasks -->
     <includepath classpath="${builder.path}/src/tasks"/>
