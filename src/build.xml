@@ -18,8 +18,6 @@
     <property name="debug" value="0"/>
     <property name="repositories.path" value="${project.path}/.."/>
     <property name="installer.source.path" value="${repositories.path}/AllediaInstaller/src"/>
-    <property name="installer.tmp.path" value="${packages.tmp.path}"/>
-    <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
     <property name="project.source.path" value="${project.path}/src"/>
     <property name="project.source.free.path" value="${repositories.path}/${composer.extra.name}/src"/>
     <property name="project.name.short" value="${composer.extra.element-short}"/>
@@ -41,6 +39,9 @@
             <property name="buildingdirectly" value="0"/>
         </else>
     </if>
+
+    <property name="installer.tmp.path" value="${packages.tmp.path}"/>
+    <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
 
     <!-- Display basic information -->
     <echo message="Version ${builder.version} for Joomla! extensions"/>
