@@ -65,8 +65,10 @@ All folders needs to have the same parent folder and be named as the repository 
 Create a new file on the main project root folder, name as `build.global.properties` file you will set the global properties for the phing script.
 
     builder.path=/path/to/AllediaBuilder/
+    fix.jenkins.symlinks.path=/path/to/tmp/path/for/symlinks/
 
-For now, you just need to set the path to AllediaBuilder repository.
+For local development, you just need to set the path to AllediaBuilder repository.
+The ```fix.jenkins.symlinks.path``` property will be only required on the OSDeploy environment, where it needs to "fix" the different paths that Jenkins force the projects to have. So it will use the path to create the symlinks, simulating the normal path structure and redirect the build paths to there.
 
 ### Phing script for each project
 

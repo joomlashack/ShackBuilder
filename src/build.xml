@@ -15,8 +15,21 @@
     <property name="project.path" value="${project.basedir}"/>
     <propertiesfromcomposer file="${project.path}/composer.json"/>
 
+    <if>
+        <isset property="fix.jenkins.symlinks.path"/>
+        <then>
+            <!-- We are running on a Jenkins environment, so let's fix the paths creating symlinks for this project  -->
+            <symlink target="${project.path}" link="${fix.jenkins.symlinks.path}/${composer.extra.name}" overwrite="true"/>
+
+            <property name="repositories.path" value="${fix.jenkins.symlinks.path}"/>
+        </then>
+        <else>
+            <!-- We are running on a normal environment, so let's use the parent folder -->
+            <property name="repositories.path" value="${project.path}/.."/>
+        </else>
+    </if>
+
     <property name="debug" value="0"/>
-    <property name="repositories.path" value="${project.path}/.."/>
     <property name="installer.source.path" value="${repositories.path}/AllediaInstaller/src"/>
     <property name="project.source.path" value="${project.path}/src"/>
     <property name="project.source.free.path" value="${repositories.path}/${composer.extra.name}/src"/>
