@@ -53,7 +53,16 @@
         </else>
     </if>
 
-    <property name="installer.tmp.path" value="${packages.tmp.path}"/>
+    <if>
+        <equals arg1="${composer.type}" arg2="joomla.component"/>
+        <then>
+            <property name="installer.tmp.path" value="${packages.tmp.path}/admin"/>
+        </then>
+        <else>
+            <property name="installer.tmp.path" value="${packages.tmp.path}"/>
+        </else>
+    </if>
+
     <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
 
     <!-- Display basic information -->
