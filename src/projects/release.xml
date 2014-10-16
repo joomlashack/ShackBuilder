@@ -33,7 +33,7 @@
             <then>
                 <!-- Run the related extension phing script -->
                 <mkdir dir="${extensions.tmp.path}/${extension}"/>
-                <exec command="cd ${repositories.path}/${extension}; phing current-release -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions}" logoutput="true" checkreturn="true"/>
+                <exec command="phing -f ${repositories.path}/${extension}/build.xml current-release -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions}"/>
             </then>
         </if>
     </target>
