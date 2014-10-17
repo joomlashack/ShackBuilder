@@ -97,9 +97,9 @@ While building the pro extension, the builder will detect the respective free ex
 #### Language files
 
 For both, pro and free extensions, the language files are located inside the `language/en-GB` folder. The files for the free version are named normally.
-The files for the pro version must have a `.pro` extension prefix, like: **en-GB.com_myextension.pro.sys.ini** or **en-GB.com_myextension.pro.ini**.
+The files for the pro version must have a `.pro` extension prefix, like: `en-GB.com_myextension.pro.sys.ini` or `en-GB.com_myextension.pro.ini.
 
-They doesn't should be listed as language on the manifest file and will be merged in the build time. But they must be declarad as a normal folder.
+They doesn't should be listed as language on the manifest file and will be merged in the build time. But they must be declared as a normal folder.
 
 On your development environment, you can use phing to merge the files:
 
@@ -178,6 +178,7 @@ If you already have a newer version installed for any related extension, it will
 ### Obsolete items
 
 *Needs refactoring*
+
     <alledia>
         ...
 
