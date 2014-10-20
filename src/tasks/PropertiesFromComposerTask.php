@@ -61,7 +61,8 @@ class PropertiesFromComposerTask extends Task
                 }
 
             } else {
-                $self->project->setProperty($propertyName, $propertyValue);
+                $project = $self->getProject();
+                $project->setProperty($propertyName, $propertyValue);
             }
         };
 
@@ -87,5 +88,15 @@ class PropertiesFromComposerTask extends Task
         $this->project->setProperty('project.license', $types[$json['type']]);
 
         $this->log('Loaded composer.json data into properties');
+    }
+
+    /**
+     * Return the protect attribute project
+     *
+     * @return mixed
+     */
+    public function getProject()
+    {
+        return $this->project;
     }
 }
