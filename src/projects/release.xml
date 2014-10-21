@@ -82,11 +82,19 @@
         </if>
         <mkdir dir="${packages.tmp.path}"/>
 
-        <!-- Copy the installer library -->
+        <!-- Copy the installer library, if there is a custom installer script -->
         <if>
-            <equals arg1="${include.installer}" arg2="1"/>
+            <isset property="manifest.scriptfile"/>
             <then>
-                <property name="installer.source.path" value="${repositories.default.path}/AllediaInstaller/src"/>
+                <!-- Check if the installer library path is set -->
+                <if>
+                    <contains string="${project.AllediaInstaller.path}" substring="${"/>
+                    <then>
+                        <fail message="Missed the project.AllediaInstaller.path property"/>
+                    </then>
+                </if>
+
+                <property name="installer.source.path" value="${project.AllediaInstaller.path}/src"/>
 
                 <if>
                     <equals arg1="${composer.type}" arg2="joomla.component"/>
@@ -162,12 +170,20 @@
         <if>
             <equals arg1="${composer.extra.package-license}" arg2="pro"/>
             <then>
-                <property name="projects" value="AllediaBuilder,AllediaInstaller,${composer.extra.name},${composer.extra.name}-Pro"/>
+                <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro"/>
             </then>
             <else>
-                <property name="projects" value="AllediaBuilder,AllediaInstaller,${composer.extra.name}"/>
+                <property name="projects" value="AllediaBuilder,${composer.extra.name}"/>
             </else>
         </if>
+        <!-- Inject the installer on the projects property, if needed -->
+        <if>
+            <isset property="manifest.scriptfile"/>
+            <then>
+                <property name="projects" value="AllediaInstaller,${projects}" override="true"/>
+            </then>
+        </if>
+
         <checkbranch projectPath="${repositories.default.path}" projects="${projects},${project.relatedExtensions}"/>
     </target>
 

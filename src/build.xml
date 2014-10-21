@@ -18,16 +18,6 @@
     <property name="project.path" value="${project.basedir}"/>
     <propertiesfromcomposer file="${project.path}/composer.json"/>
 
-    <!-- Define default value for include.installer, if missed -->
-    <if>
-        <not>
-            <isset property="include.installer"/>
-        </not>
-        <then>
-            <property name="include.installer" value="1"/>
-        </then>
-    </if>
-
     <property name="repositories.default.path" value="${project.path}/.."/>
     <property name="project.source.path" value="${project.path}/src"/>
 
