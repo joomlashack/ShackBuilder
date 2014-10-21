@@ -2,6 +2,9 @@
 <project name="Alledia Joomla Phing Builder" default="current-release">
     <property name="builder.version" value="3.0.4"/>
 
+    <!-- Display basic information -->
+    <echo message="Version ${builder.version} for Joomla! extensions"/>
+
     <!-- Include the external tasks -->
     <includepath classpath="${builder.path}/src/tasks"/>
     <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask"/>
@@ -15,24 +18,29 @@
     <property name="project.path" value="${project.basedir}"/>
     <propertiesfromcomposer file="${project.path}/composer.json"/>
 
+    <!-- Define default value for include.installer, if missed -->
     <if>
-        <isset property="fix.jenkins.symlinks.path"/>
+        <not>
+            <isset property="include.installer"/>
+        </not>
         <then>
-            <!-- We are running on a Jenkins environment, so let's fix the paths creating symlinks for this project  -->
-            <symlink target="${project.path}" link="${fix.jenkins.symlinks.path}/${composer.extra.name}" overwrite="true"/>
-
-            <property name="repositories.path" value="${fix.jenkins.symlinks.path}"/>
+            <property name="include.installer" value="1"/>
         </then>
-        <else>
-            <!-- We are running on a normal environment, so let's use the parent folder -->
-            <property name="repositories.path" value="${project.path}/.."/>
-        </else>
     </if>
 
-    <property name="debug" value="0"/>
-    <property name="installer.source.path" value="${repositories.path}/AllediaInstaller/src"/>
+    <property name="repositories.default.path" value="${project.path}/.."/>
     <property name="project.source.path" value="${project.path}/src"/>
-    <property name="project.source.free.path" value="${repositories.path}/${composer.extra.name}/src"/>
+
+    <!-- Set the free extension path -->
+    <if>
+        <isset property="${project.${composer.extra.name}.path}"/>
+        <then>
+            <property name="project.free.source.path" value="${project.${composer.extra.name}.path}/src"/>
+        </then>
+        <else>
+            <property name="project.free.source.path" value="${repositories.default.path}/${composer.extra.name}/src"/>
+        </else>
+    </if>
     <property name="project.name.short" value="${composer.extra.element-short}"/>
     <property name="project.name.long" value="${composer.extra.element}"/>
 
@@ -52,21 +60,6 @@
             <property name="buildingdirectly" value="0"/>
         </else>
     </if>
-
-    <if>
-        <equals arg1="${composer.type}" arg2="joomla.component"/>
-        <then>
-            <property name="installer.tmp.path" value="${packages.tmp.path}/admin"/>
-        </then>
-        <else>
-            <property name="installer.tmp.path" value="${packages.tmp.path}"/>
-        </else>
-    </if>
-
-    <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
-
-    <!-- Display basic information -->
-    <echo message="Version ${builder.version} for Joomla! extensions"/>
 
     <!-- Parse the manifest file and get properties -->
     <property name="project.manifest" value="${project.source.path}/${project.name.short}.xml"/>

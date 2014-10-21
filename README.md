@@ -9,68 +9,30 @@ Common Build Scripts to build our extensions.
 
 Make sure you heve phing [installed and configured](http://www.phing.info/trac/wiki/Users/Installation).
 
-### Filesystem Structure
+### Phing properties
 
-All folders needs to have the same parent folder and be named as the repository name:
+Create a new file on your project folder, name as `build.properties`. By default the only required settings are:
 
-    ./
-    +-- AllediaBuilder
-    +-- AllediaInstaller
-    +-- AllediaFramework
-    |-- OurExtension1
-    |    +-- packages
-    |    |-- src
-    |    |    +-- language
-    |    |    +-- library
-    |    |    +-- views
-    |    |    |-- ourextension1.xml
-    |    |-- composer.json
-    |    |-- build.xml
-    |
-    |-- OurExtension1-Pro
-    |    +-- packages
-    |    |-- src
-    |    |    +-- language
-    |    |    |-- library
-    |    |    |    +-- pro
-    |    |    +-- views
-    |    |    |-- ourextension1.xml
-    |    |-- composer.json
-    |    |-- build.xml
-    |
-    |-- OurExtension2
-    |    +-- packages
-    |    |-- src
-    |    |    +-- language
-    |    |    +-- library
-    |    |    +-- views
-    |    |    |-- ourextension1.xml
-    |    |-- composer.json
-    |    |-- build.xml
-    |
-    |-- OurExtension2-Pro
-    |    +-- packages
-    |    |-- src
-    |    |    +-- language
-    |    |    |-- library
-    |    |    |    +-- pro
-    |    |    +-- views
-    |    |    |-- ourextension1.xml
-    |    |-- composer.json
-    |    |-- build.xml
-    |
-    |-- build.global.properties
+    builder.path=/path/to/AllediaBuilder/local/copy
+
+#### Optional properties
+
+##### Include installer library
+
+You can disable the installer for some kind of extensions like Joomla libraries. Joomla is not able to run any custom installer script for libraries, so we can ignore the instaler for them.
+The default value is 1.
+
+    include.installer=0
 
 
-### Phing global properties
+##### Alias for Related Extension's Path
 
-Create a new file on the main project root folder, name as `build.global.properties` file you will set the global properties for the phing script.
+If you extension has one or more related extension, you must set its local copy path alias:
 
-    builder.path=/path/to/AllediaBuilder/
-    fix.jenkins.symlinks.path=/path/to/tmp/path/for/symlinks/
+    project.AnotherExtensionName.path=/the/path/to/the/anotherextension
 
-For local development, you just need to set the path to AllediaBuilder repository.
-The ```fix.jenkins.symlinks.path``` property will be only required on the OSDeploy environment, where it needs to "fix" the different paths that Jenkins force the projects to have. So it will use the path to create the symlinks, simulating the normal path structure and redirect the build paths to there.
+You can set one line per related extension.
+
 
 ### Phing script for each project
 
@@ -78,13 +40,22 @@ All the phing tasks should be inside this repository, and every project should i
 Add a `build.xml` file to the repository root folder, with this basic markup:
 
     <?xml version="1.0" encoding="UTF-8"?>
-    <project name="OurExtension1-Pro Builder" default="">
-        <property file="../build.global.properties" />
+    <project name="Alledia Extension Builder" default="">
+        <if>
+            <available file="./build.properties" type="file" />
+            <then>
+                <property file="./build.properties" />
+            </then>
+            <else>
+                <fail message="Missed build.properties file on the project root folder. Duplicate the build.properties.dist file and customize with your settings" />
+            </else>
+        </if>
+
+        <fail unless="builder.path" message="Missed builder.path property" />
 
         <import file="${builder.path}/src/build.xml"/>
     </project>
 
-Replace the `OurExtension1-Pro` with the repository (folder) name
 
 ### Free and Pro extensions
 All **free** repositories should be named as the product name.

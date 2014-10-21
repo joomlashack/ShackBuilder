@@ -4,7 +4,7 @@
     <!-- Create a temporary merged language file for local development with symlink -->
     <target name="merge-language-dev" description="Create merged language files">
         <property name="language.tmp.path" value="${packages.path}/dev/language/en-GB"/>
-        <property name="language.free.path" value="${project.source.free.path}/language/en-GB"/>
+        <property name="language.free.path" value="${project.free.source.path}/language/en-GB"/>
         <property name="language.pro.path" value="${project.source.path}/language/en-GB"/>
 
         <if>
