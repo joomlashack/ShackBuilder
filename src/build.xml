@@ -14,7 +14,16 @@
     <taskdef name="getrelatedextensions" classname="RelatedExtensionsTask"/>
 
     <!-- Properties -->
-    <property name="project.path" value="${project.basedir}"/>
+    <!-- Try to get the project path from the build.properties, for deployment environment -->
+    <if>
+        <not>
+            <isset property="project.path"/>
+        </not>
+        <then>
+            <property name="project.path" value="${project.basedir}"/>
+        </then>
+    </if>
+
     <propertiesfromcomposer file="${project.path}/composer.json"/>
 
     <property name="repositories.default.path" value="${project.path}/.."/>
