@@ -6,11 +6,11 @@
         <if>
             <isset property="release.type"/>
             <then>
-                <setversion releasetype="${release.type}" file="${project.manifest}" property="project.version"/>
+                <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version"/>
                 <phingcall target="update-creation"/>
 
                 <phingcall target="package">
-                    <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${project.version}.zip"/>
+                    <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
                 </phingcall>
             </then>
         </if>
