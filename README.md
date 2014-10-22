@@ -19,11 +19,12 @@ Create a new file on your project folder, name as `build.properties`. By default
 
 ##### Alias for Related Extension's Path
 
-If you extension has one or more related extension, you must set its local copy path alias:
+If you extension has one or more related extension/project, you must set its local copy path alias:
 
     project.AnotherExtensionName.path=/the/path/to/the/anotherextension
 
-You can set one line per related extension.
+You can set one line per related extension. Use this to map the installer library or any other required project.
+Pro extensions, requires to set the path for the Free version, to be able to copy the files.
 
 
 ### Phing script for each project
