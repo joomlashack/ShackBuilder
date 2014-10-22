@@ -26,21 +26,28 @@
 
     <propertiesfromcomposer file="${project.path}/composer.json"/>
 
-    <property name="repositories.default.path" value="${project.path}/.."/>
     <property name="project.source.path" value="${project.path}/src"/>
+    <property name="project.name.short" value="${composer.extra.element-short}"/>
+    <property name="project.name.long" value="${composer.extra.element}"/>
 
     <!-- Set the free extension path -->
     <if>
-        <isset property="${project.${composer.extra.name}.path}"/>
+        <equals arg1="${composer.extra.package-license}" arg2="pro"/>
         <then>
-            <property name="project.free.source.path" value="${project.${composer.extra.name}.path}/src"/>
+            <if>
+                <isset property="project.${composer.extra.name}.path"/>
+                <then>
+                    <property name="project.free.source.path" value="${project.${composer.extra.name}.path}/src"/>
+                </then>
+                <else>
+                    <fail message="Missed project.${composer.extra.name}.path property"/>
+                </else>
+            </if>
         </then>
         <else>
-            <property name="project.free.source.path" value="${repositories.default.path}/${composer.extra.name}/src"/>
+            <property name="project.free.source.path" value="${project.source.path}"/>
         </else>
     </if>
-    <property name="project.name.short" value="${composer.extra.element-short}"/>
-    <property name="project.name.long" value="${composer.extra.element}"/>
 
     <!-- Check if we are building the package directly or as a related extension -->
     <!-- If it is a related extension, we will receive these properties from the command line -->

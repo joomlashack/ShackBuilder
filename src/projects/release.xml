@@ -184,7 +184,7 @@
             </then>
         </if>
 
-        <checkbranch projectPath="${repositories.default.path}" projects="${projects},${project.relatedExtensions}"/>
+        <checkbranch projects="${projects},${project.relatedExtensions}"/>
     </target>
 
     <!-- Update creation date in Joomla manifest file -->
