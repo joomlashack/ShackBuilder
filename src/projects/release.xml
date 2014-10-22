@@ -55,7 +55,7 @@
 
                 <!-- Run the related extension phing script -->
                 <mkdir dir="${extensions.tmp.path}/${extension}"/>
-                <exec command="phing -f ${extension.path}/build.xml current-release -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions}" logoutput="true" checkreturn="true"/>
+                <exec command="phing -f ${extension.path}/build.xml current-release -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
             </then>
         </if>
     </target>
