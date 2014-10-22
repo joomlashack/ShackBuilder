@@ -17,14 +17,6 @@ Create a new file on your project folder, name as `build.properties`. By default
 
 #### Optional properties
 
-##### Include installer library
-
-You can disable the installer for some kind of extensions like Joomla libraries. Joomla is not able to run any custom installer script for libraries, so we can ignore the instaler for them.
-The default value is 1.
-
-    include.installer=0
-
-
 ##### Alias for Related Extension's Path
 
 If you extension has one or more related extension, you must set its local copy path alias:
