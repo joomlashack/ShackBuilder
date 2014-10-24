@@ -141,19 +141,27 @@ If you already have a newer version installed for any related extension, it will
 
 ### Obsolete items
 
-*Needs refactoring*
+Obsolete items will be unistalled or deleted before install any related extension.
+You can set 3 types of obsolete items: extension, file and folder.
+For file and folder, use relative paths to the site root.
 
     <alledia>
         ...
 
-        <obsoleteItems>
-            <folder>library</folder>
-            <filename>style.css</filename>
+        <obsolete>
             <extension
                 type="plugin"
-                element="osvimeo"
-                group="content">OSVimeo</extension>
-        </obsoleteItems>
+                group="system"
+                element="osoldextension"
+                publish="true"
+                ordering="first"
+                >OSOldExtension</extension>
+
+            <file>/components/com_mycomponent/oldfile.php</file>
+            <file>/administrator/components/com_mycomponent/oldfile.php</file>
+
+            <folder>/components/com_mycomponent/oldfolder</folder>
+        </obsolete>
 
         ...
     </alledia>
