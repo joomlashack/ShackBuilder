@@ -168,23 +168,29 @@
 
         <!-- Show what are the branches are being used for each sub project -->
         <if>
-            <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+            <equals arg1="${buildingdirectly}" arg2="1" />
             <then>
-                <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro"/>
-            </then>
-            <else>
-                <property name="projects" value="AllediaBuilder,${composer.extra.name}"/>
-            </else>
-        </if>
-        <!-- Inject the installer on the projects property, if needed -->
-        <if>
-            <isset property="manifest.scriptfile"/>
-            <then>
-                <property name="projects" value="AllediaInstaller,${projects}" override="true"/>
+                <if>
+                    <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+                    <then>
+                        <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro"/>
+                    </then>
+                    <else>
+                        <property name="projects" value="AllediaBuilder,${composer.extra.name}"/>
+                    </else>
+                </if>
+                <!-- Inject the installer on the projects property, if needed -->
+                <if>
+                    <isset property="manifest.scriptfile"/>
+                    <then>
+                        <property name="projects" value="AllediaInstaller,${projects}" override="true"/>
+                    </then>
+                </if>
+
+                <checkbranch projects="${projects},${project.relatedExtensions}"/>
             </then>
         </if>
 
-        <checkbranch projects="${projects},${project.relatedExtensions}"/>
     </target>
 
     <!-- Update creation date in Joomla manifest file -->
