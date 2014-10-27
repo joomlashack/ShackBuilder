@@ -185,20 +185,15 @@ These views are packed by the installer library and loaded by all extensions.
 
     ./views
     |   |-- installer
-    |   |   |-- header_default.php
-    |   |   |-- header_install.php
-    |   |   |-- header_update.php
-    |   |   |-- footer_default.php
-    |   |   |-- footer_install.php
-    |   |   |-- footer_update.php
+    |   |   |-- default.php
+    |   |   |-- default_info.php
+    |   |   |-- default_license.php
 
 Your extensions can override any file and add a new one: body_*.
 
     ./views
     |   |-- installer
-    |   |   |-- body_default.php
-    |   |   |-- body_install.php
-    |   |   |-- body_update.php
+    |   |   |-- default_custom.php
 
 #### variables
 
