@@ -174,9 +174,11 @@
                     <equals arg1="${composer.extra.package-license}" arg2="pro"/>
                     <then>
                         <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro"/>
+                        <property name="project.${composer.extra.name}-Pro.path" value="${project.path}" />
                     </then>
                     <else>
                         <property name="projects" value="AllediaBuilder,${composer.extra.name}"/>
+                        <property name="project.${composer.extra.name}.path" value="${project.path}" />
                     </else>
                 </if>
                 <!-- Inject the installer on the projects property, if needed -->
@@ -186,6 +188,8 @@
                         <property name="projects" value="AllediaInstaller,${projects}" override="true"/>
                     </then>
                 </if>
+
+                <property name="project.AllediaBuilder.path" value="${builder.path}" />
 
                 <checkbranch projects="${projects},${project.relatedExtensions}"/>
             </then>
