@@ -17,8 +17,8 @@
     </target>
 
     <!-- Create Current Release and package -->
-        <property name="manifest.version" value="" override="false"/>
     <target name="build" description="Generate package file for current version">
+        <property name="manifest.version" value="0.0.0" override="false"/>
         <phingcall target="package">
             <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
         </phingcall>
