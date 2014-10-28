@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Release" default="current-release">
+<project name="Release" default="build">
 
     <!-- Create New Release and package -->
-    <target name="new-release" description="Update version/creation and create IDed package" depends="release">
+    <target name="build-new" description="Update version/creation and create IDed package" depends="release">
         <if>
             <isset property="release.type"/>
             <then>
@@ -17,8 +17,8 @@
     </target>
 
     <!-- Create Current Release and package -->
-    <target name="current-release" description="Generate package file for current version">
-        <property name="manifest.version" value="" override="false"/>
+    <target name="build" description="Generate package file for current version">
+        <property name="manifest.version" value="0.0.0" override="false"/>
         <phingcall target="package">
             <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
         </phingcall>
@@ -31,14 +31,26 @@
                 <contains string="${extension}" substring="${"/>
             </not>
             <then>
-                <!-- Is the extension path set? -->
-                <property name="extension.path" value="${project.${extension}.path}"/>
+                <echo>Packing the related extension: ${extension}</echo>
 
+                <!-- Do we have this extension pre-packed? -->
                 <if>
-                    <contains string="${extension.path}" substring="${"/>
+                    <available file="${project.source.path}/extensions/${extension}" type="dir" />
                     <then>
-                        <fail message="Missed related extension path property: project.${extension}.path"/>
+                        <!-- Let's build using the current folder -->
+                        <property name="extension.path" value="${project.source.path}/extensions/${extension}" override="true"/>
                     </then>
+                    <else>
+                        <!-- Is the extension path set? -->
+                        <property name="extension.path" value="${project.${extension}.path}"/>
+
+                        <if>
+                            <contains string="${extension.path}" substring="${"/>
+                            <then>
+                                <fail message="Missed related extension path property: project.${extension}.path"/>
+                            </then>
+                        </if>
+                    </else>
                 </if>
 
                 <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
@@ -46,7 +58,7 @@
                 <!-- Make sure we have the main extensions folder -->
                 <if>
                     <not>
-                        <available file="${extensions.tmp.path}" type="file" />
+                        <available file="${extensions.tmp.path}" type="dir" />
                     </not>
                     <then>
                         <mkdir dir="${extensions.tmp.path}"/>
@@ -55,7 +67,7 @@
 
                 <!-- Run the related extension phing script -->
                 <mkdir dir="${extensions.tmp.path}/${extension}"/>
-                <exec command="phing -f ${extension.path}/build.xml current-release -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
+                <exec command="phing -f ${extension.path}/build.xml build -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
             </then>
         </if>
     </target>
@@ -118,6 +130,7 @@
         <copy todir="${packages.tmp.path}">
             <fileset dir="${project.free.source.path}" id="free-code">
                 <include name="**"/>
+                <exclude name="extensions/**"/>
             </fileset>
         </copy>
 

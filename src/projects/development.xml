@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Release" default="current-release">
+<project name="Release" default="build">
 
     <!-- Create a temporary merged language file for local development with symlink -->
     <target name="merge-language-dev" description="Create merged language files">
