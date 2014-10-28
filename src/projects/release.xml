@@ -33,12 +33,13 @@
             <then>
                 <echo>Packing the related extension: ${extension}</echo>
 
+                <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
+
                 <!-- Do we have this extension pre-packed? -->
                 <if>
-                    <available file="${project.source.path}/extensions/${extension}" type="dir" />
+                    <available file="${extensions.tmp.path}/${extension}" type="dir" />
                     <then>
-                        <!-- Let's build using the current folder -->
-                        <property name="extension.path" value="${project.source.path}/extensions/${extension}" override="true"/>
+                        <echo>The extension ${extension} is pre-packed. Ignoring...</echo>
                     </then>
                     <else>
                         <!-- Is the extension path set? -->
@@ -50,24 +51,22 @@
                                 <fail message="Missed related extension path property: project.${extension}.path"/>
                             </then>
                         </if>
+
+                        <!-- Make sure we have the main extensions folder -->
+                        <if>
+                            <not>
+                                <available file="${extensions.tmp.path}" type="dir" />
+                            </not>
+                            <then>
+                                <mkdir dir="${extensions.tmp.path}"/>
+                            </then>
+                        </if>
+
+                        <!-- Run the related extension phing script -->
+                        <mkdir dir="${extensions.tmp.path}/${extension}"/>
+                        <exec command="phing -f ${extension.path}/build.xml build -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
                     </else>
                 </if>
-
-                <property name="extensions.tmp.path" value="${packages.tmp.path}/extensions"/>
-
-                <!-- Make sure we have the main extensions folder -->
-                <if>
-                    <not>
-                        <available file="${extensions.tmp.path}" type="dir" />
-                    </not>
-                    <then>
-                        <mkdir dir="${extensions.tmp.path}"/>
-                    </then>
-                </if>
-
-                <!-- Run the related extension phing script -->
-                <mkdir dir="${extensions.tmp.path}/${extension}"/>
-                <exec command="phing -f ${extension.path}/build.xml build -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
             </then>
         </if>
     </target>
@@ -130,7 +129,6 @@
         <copy todir="${packages.tmp.path}">
             <fileset dir="${project.free.source.path}" id="free-code">
                 <include name="**"/>
-                <exclude name="extensions/**"/>
             </fileset>
         </copy>
 
