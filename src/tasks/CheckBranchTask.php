@@ -50,23 +50,25 @@ class CheckBranchTask extends Task
 
         if (isset($this->projects)) {
             foreach ($this->projects as $project) {
-                $headFilePath = realpath($paths[$project] . '/.git/HEAD');
+                if (isset($paths[$project])) {
+                    $headFilePath = realpath($paths[$project] . '/.git/HEAD');
 
-                if (is_file($headFilePath)) {
-                    $head = file_get_contents($headFilePath);
+                    if (is_file($headFilePath)) {
+                        $head = file_get_contents($headFilePath);
 
-                    if (!empty($head)) {
-                        preg_match('/heads\/(.*)/', $head, $matches);
-                        $branch = $matches[1];
+                        if (!empty($head)) {
+                            preg_match('/heads\/(.*)/', $head, $matches);
+                            $branch = $matches[1];
 
-                        $output .= $offset . str_pad($project, 20, ' ') . ': ' . $branch;
+                            $output .= $offset . str_pad($project, 20, ' ') . ': ' . $branch;
 
-                        if ($branch !== 'master') {
-                            $output .= ' (*)';
-                            $hasNonMaster = true;
+                            if ($branch !== 'master') {
+                                $output .= ' (*)';
+                                $hasNonMaster = true;
+                            }
+
+                            $output .= "\n";
                         }
-
-                        $output .= "\n";
                     }
                 }
             }
