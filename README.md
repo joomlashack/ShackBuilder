@@ -203,11 +203,11 @@ Your extensions can override any file and add a new one: body_*.
 
 To build the extension packages, go inside the extension folder you want to build and run the command:
 
-    $ phing build-current
+    $ phing build
 
 ## Main tasks
 
 * build-new
-* build-current
+* build
 * symlink
 * unlink

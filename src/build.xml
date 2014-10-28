@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Alledia Joomla Phing Builder" default="build-current">
+<project name="Alledia Joomla Phing Builder" default="build">
     <property name="builder.version" value="3.0.7"/>
 
     <!-- Display basic information -->

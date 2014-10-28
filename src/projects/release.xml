@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Release" default="build-current">
+<project name="Release" default="build">
 
     <!-- Create New Release and package -->
     <target name="build-new" description="Update version/creation and create IDed package" depends="release">
@@ -17,8 +17,8 @@
     </target>
 
     <!-- Create Current Release and package -->
-    <target name="build-current" description="Generate package file for current version">
         <property name="manifest.version" value="" override="false"/>
+    <target name="build" description="Generate package file for current version">
         <phingcall target="package">
             <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
         </phingcall>
