@@ -31,10 +31,9 @@ class UnlinkSymlinksTask extends MappedSymlinksTask
         }
 
         foreach ($this->map['symlinks'] as $item) {
-            $source      = array_keys($item);
-            $source      = $source[0];
-            $destination = array_values($item);
-            $destination = $destination[0];
+            $item = explode(' ', $item);
+            $source      = $item[0];
+            $destination = $item[1];
 
             // Normalise paths
             $source      = realpath($this->sourceBasePath . '/' . $source);
