@@ -120,6 +120,14 @@
                 <copy todir="${installer.tmp.path}">
                     <fileset dir="${installer.source.path}" id="installer-code">
                         <include name="**"/>
+                        <exclude name="media/**"/>
+                    </fileset>
+                </copy>
+
+                <!-- Installer media - it is separated because componentes use admin/site subfolders folders -->
+                <copy todir="${packages.tmp.path}/media">
+                    <fileset dir="${installer.source.path}/media" id="installer-media-code">
+                        <include name="**"/>
                     </fileset>
                 </copy>
             </then>
