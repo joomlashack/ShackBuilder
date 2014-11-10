@@ -156,7 +156,27 @@
                 </copy>
 
                 <!-- Merge language files -->
-                <mergefiles basepath="${packages.tmp.path}/language/en-GB" pattern=".pro." replace="."/>
+                <if>
+                    <equals arg1="${composer.type}" arg2="joomla.component"/>
+                    <then>
+                        <if>
+                            <available file="${packages.tmp.path}/admin/language/en-GB" type="dir" />
+                            <then>
+                                <mergefiles basepath="${packages.tmp.path}/admin/language/en-GB" pattern=".pro." replace="."/>
+                            </then>
+                        </if>
+
+                        <if>
+                            <available file="${packages.tmp.path}/site/language/en-GB" type="dir" />
+                            <then>
+                                <mergefiles basepath="${packages.tmp.path}/site/language/en-GB" pattern=".pro." replace="."/>
+                            </then>
+                        </if>
+                    </then>
+                    <else>
+                        <mergefiles basepath="${packages.tmp.path}/language/en-GB" pattern=".pro." replace="."/>
+                    </else>
+                </if>
             </then>
         </if>
 

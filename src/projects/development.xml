@@ -3,10 +3,34 @@
 
     <!-- Create a temporary merged language file for local development with symlink -->
     <target name="merge-language-dev" description="Create merged language files">
-        <property name="language.tmp.path" value="${packages.path}/dev/language/en-GB"/>
-        <property name="language.free.path" value="${project.free.source.path}/language/en-GB"/>
-        <property name="language.pro.path" value="${project.source.path}/language/en-GB"/>
+        <if>
+            <equals arg1="${composer.type}" arg2="joomla.component"/>
+            <then>
+                <!-- Admin -->
+                <phingcall target="merge-language-dev-subtask">
+                    <property name="language.tmp.path" value="${packages.path}/dev/admin/language/en-GB"/>
+                    <property name="language.free.path" value="${project.free.source.path}/admin/language/en-GB"/>
+                    <property name="language.pro.path" value="${project.source.path}/admin/language/en-GB"/>
+                </phingcall>
 
+                <!-- Site -->
+                <phingcall target="merge-language-dev-subtask">
+                    <property name="language.tmp.path" value="${packages.path}/dev/site/language/en-GB"/>
+                    <property name="language.free.path" value="${project.free.source.path}/site/language/en-GB"/>
+                    <property name="language.pro.path" value="${project.source.path}/site/language/en-GB"/>
+                </phingcall>
+            </then>
+            <else>
+                <phingcall target="merge-language-dev-subtask">
+                    <property name="language.tmp.path" value="${packages.path}/dev/language/en-GB"/>
+                    <property name="language.free.path" value="${project.free.source.path}/language/en-GB"/>
+                    <property name="language.pro.path" value="${project.source.path}/language/en-GB"/>
+                </phingcall>
+            </else>
+        </if>
+    </target>
+
+    <target name="merge-language-dev-subtask" description="Create merged language files">
         <if>
             <available file="${language.free.path}" type="dir"/>
             <then>
@@ -46,7 +70,6 @@
                 </if>
             </then>
         </if>
-
     </target>
 
 </project>
