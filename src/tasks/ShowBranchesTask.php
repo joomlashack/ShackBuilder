@@ -8,7 +8,7 @@
 
 require_once 'phing/Task.php';
 
-class CheckBranchTask extends Task
+class ShowBranchesTask extends Task
 {
     /**
      * The project list to check, as CSV
@@ -45,8 +45,8 @@ class CheckBranchTask extends Task
         }
 
         $hasNonMaster = false;
-        $offset = str_repeat(' ', 14);
-        $output = "=================[ Branches ]=================\n\n";
+        $offset = str_repeat(' ', 15);
+        $output = "=================[ Branches ]================\n\n";
 
         if (isset($this->projects)) {
             foreach ($this->projects as $project) {

@@ -230,7 +230,9 @@
 
                 <property name="project.AllediaBuilder.path" value="${builder.path}" />
 
-                <checkbranch projects="${projects},${project.relatedExtensions}"/>
+                <phingcall target="show-branches">
+                    <property name="projects" value="${projects},${project.relatedExtensions}" />
+                </phingcall>
             </then>
         </if>
 
@@ -284,4 +286,7 @@
         </if>
     </target>
 
+    <target name="show-branches">
+        <showbranches projects="${projects}"/>
+    </target>
 </project>

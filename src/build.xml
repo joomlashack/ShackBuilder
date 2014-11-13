@@ -9,7 +9,7 @@
     <includepath classpath="${builder.path}/src/tasks"/>
     <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask"/>
     <taskdef name="setversion" classname="SetversionTask"/>
-    <taskdef name="checkbranch" classname="CheckBranchTask"/>
+    <taskdef name="showbranches" classname="ShowBranchesTask"/>
     <taskdef name="mergefiles" classname="MergeFilesTask"/>
     <taskdef name="getrelatedextensions" classname="RelatedExtensionsTask"/>
 
