@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Release" default="build">
+<project name="Packager" default="build">
 
     <!-- Create New Release and package -->
-    <target name="build-new" description="Update version/creation and create IDed package" depends="release">
+    <target name="build-new" description="Update version/creation and create IDed package" depends="new-package">
         <if>
             <isset property="release.type"/>
             <then>
@@ -242,7 +242,7 @@
 
         <property name="creation.find" value=""><![CDATA[<creationDate>.*</creationDate>]]></property>
         <property name="creation.replace" value=""><![CDATA[<creationDate>${creation.TODAY}</creationDate>]]></property>
-
+        <echo>${project.manifest}</echo>
         <reflexive file="${project.manifest}">
             <filterchain>
                 <replaceregexp>
@@ -254,7 +254,7 @@
         <echo message="Creation Date: ${creation.TODAY}"/>
     </target>
 
-    <target name="release" hidden="true">
+    <target name="new-package" hidden="true">
         <echo><![CDATA[
             1. Major
             2. Minor
