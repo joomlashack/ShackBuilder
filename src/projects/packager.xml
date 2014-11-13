@@ -25,7 +25,7 @@
     </target>
 
     <!-- Pack the extension into a project -->
-    <target name="pack-related-extensions" description="Pack the related extensions">
+    <target name="pack-related-extensions">
         <if>
             <not>
                 <contains string="${extension}" substring="${"/>
@@ -72,7 +72,7 @@
     </target>
 
     <!-- Create Package without identifying version info -->
-    <target name="package" description="Create installation package file">
+    <target name="package">
         <property name="package.path" value="${packages.path}/${package.file}"/>
 
         <!-- Remove the package, if exists -->
@@ -239,7 +239,7 @@
     </target>
 
     <!-- Update creation date in Joomla manifest file -->
-    <target name="update-creation" description="Update creation date">
+    <target name="update-creation">
         <tstamp prefix="creation"/>
 
         <property name="creation.find" value=""><![CDATA[<creationDate>.*</creationDate>]]></property>

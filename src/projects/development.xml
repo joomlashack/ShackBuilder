@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Release" default="build">
+<project name="Development" default="build">
+    <taskdef name="createsymlinks" classname="CreateSymlinksTask" />
+    <taskdef name="unlinksynlinks" classname="UnlinkSymlinksTask" />
+
+    <property name="symlink.map.path" value="${project.path}/symlinks.yml"/>
 
     <!-- Create a temporary merged language file for local development with symlink -->
     <target name="merge-language-dev" description="Create merged language files">
@@ -30,7 +34,7 @@
         </if>
     </target>
 
-    <target name="merge-language-dev-subtask" description="Create merged language files">
+    <target name="merge-language-dev-subtask">
         <if>
             <available file="${language.free.path}" type="dir"/>
             <then>
@@ -70,6 +74,48 @@
                 </if>
             </then>
         </if>
+    </target>
+
+    <!-- Create symlinks for the extension in development environments -->
+    <target name="symlink">
+        <phingcall target="merge-language-dev" />
+
+        <if>
+            <available file="${packages.path}/.build.properties"/>
+            <then>
+                <property file="${packages.path}/.build.properties" />
+            </then>
+            <else>
+                <property name="joomla.path" value="" override="true" />
+            </else>
+        </if>
+        <input propertyName="joomla.path" message="Joomla root path: " defaultValue="${joomla.path}"/>
+
+        <createsymlinks mapfile="${symlink.map.path}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
+
+        <!-- Stores the last symlinked path -->
+        <if>
+            <os family="unix"/>
+            <then>
+                <exec command="echo 'joomla.path=${joomla.path}' > ${packages.path}/.build.properties"/>
+            </then>
+        </if>
+    </target>
+
+    <!-- Remove symlinks for the extension in development environments -->
+    <target name="unlink">
+        <if>
+            <available file="${packages.path}/.build.properties"/>
+            <then>
+                <property file="${packages.path}/.build.properties" />
+            </then>
+            <else>
+                <property name="joomla.path" value="" override="true" />
+            </else>
+        </if>
+        <input propertyName="joomla.path" message="Joomla root path: " defaultValue="${joomla.path}"/>
+
+        <unlinksynlinks mapfile="${symlink.map.path}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
     </target>
 
 </project>

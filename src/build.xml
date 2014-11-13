@@ -81,5 +81,4 @@
 
     <import file="${builder.path}/src/projects/development.xml"/>
     <import file="${builder.path}/src/projects/packager.xml"/>
-    <import file="${builder.path}/src/projects/symlinker.xml"/>
 </project>
