@@ -2,7 +2,7 @@
 <project name="Packager" default="build">
 
     <!-- Create New Release and package -->
-    <target name="build-new" description="Update version/creation and create IDed package" depends="new-package">
+    <target name="build-new" description="Update version/creation and create IDed package" depends="set-new-version">
         <if>
             <isset property="release.type"/>
             <then>
@@ -253,7 +253,7 @@
         <echo message="Creation Date: ${creation.TODAY}"/>
     </target>
 
-    <target name="new-package" hidden="true">
+    <target name="set-new-version" hidden="true">
         <echo><![CDATA[
             1. Major
             2. Minor
@@ -261,7 +261,7 @@
         ]]></echo>
         <input
             propertyName="release.id"
-            validArgs="0,1,2,3"
+            validArgs="0, 1, 2, 3"
             message="Release Type: "/>
 
         <if>
