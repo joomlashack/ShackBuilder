@@ -242,7 +242,6 @@
 
         <property name="creation.find" value=""><![CDATA[<creationDate>.*</creationDate>]]></property>
         <property name="creation.replace" value=""><![CDATA[<creationDate>${creation.TODAY}</creationDate>]]></property>
-        <echo>${project.manifest}</echo>
         <reflexive file="${project.manifest}">
             <filterchain>
                 <replaceregexp>
