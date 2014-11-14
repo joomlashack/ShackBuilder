@@ -24,7 +24,8 @@ class GitStatusTask extends GitCommandTask
         $output = $this->git('status');
         if (! substr_count($output, 'working directory clean') > 0) {
             $this->log($output, Project::MSG_WARN);
-            throw new BuildException($this->projectName . "'s repository is dirty. Please, commit all changes!");
+            $this->log("{$this->projectName}'s dirty. Please, commit all changes before release", Project::MSG_WARN);
+            throw new BuildException($this->projectName . "'s repository is dirty. Please, commit all changes before release");
         }
 
         $this->log($this->projectName . "'s repository is clean");
