@@ -2,6 +2,7 @@
 <project name="Realeaser">
     <taskdef name="gitstatus" classname="GitStatusTask" />
     <taskdef name="gitfetchall" classname="GitFetchAllTask" />
+    <taskdef name="gittagged" classname="GitTaggedTask" />
 
     <!-- Create a new release and publish -->
     <target name="release" description="Check, create and release the package">
@@ -55,5 +56,8 @@
         <gitfetchall projectName="${check.project}" path="${check.path}"/>
         <!-- Do we have any uncommited change? -->
         <gitstatus projectName="${check.project}" path="${check.path}"/>
+        <!-- Do we have a tag for this version? -->
+        <gittagged projectName="${check.project}" path="${check.path}"/>
+
     </target>
 </project>
