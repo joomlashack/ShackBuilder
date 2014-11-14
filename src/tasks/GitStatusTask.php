@@ -27,6 +27,6 @@ class GitStatusTask extends GitCommandTask
             throw new BuildException($this->projectName . "'s repository is dirty. Please, commit all changes!");
         }
 
-        $this->log($this->projectName . "'s' repository is clean");
+        $this->log($this->projectName . "'s repository is clean");
     }
 }
