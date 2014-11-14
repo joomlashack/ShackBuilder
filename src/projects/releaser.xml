@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Realeaser">
+    <taskdef name="gitstatus" classname="GitStatusTask" />
+    <taskdef name="gitfetchall" classname="GitFetchAllTask" />
+
+    <!-- Create a new release and publish -->
+    <target name="release" description="Check, create and release the package">
+        <if>
+            <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+            <then>
+                <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro"/>
+                <property name="project.${composer.extra.name}-Pro.path" value="${project.path}" />
+            </then>
+            <else>
+                <property name="projects" value="AllediaBuilder,${composer.extra.name}"/>
+                <property name="project.${composer.extra.name}.path" value="${project.path}" />
+            </else>
+        </if>
+        <!-- Inject the installer on the projects property, if needed -->
+        <if>
+            <isset property="manifest.scriptfile"/>
+            <then>
+                <property name="projects" value="AllediaInstaller,${projects}" override="true"/>
+            </then>
+        </if>
+
+        <property name="project.AllediaBuilder.path" value="${builder.path}" />
+
+        <phingcall target="check-state-of-projects">
+            <property name="projects" value="${projects},${project.relatedExtensions}" />
+        </phingcall>
+    </target>
+
+    <target name="check-state-of-projects">
+        <foreach list="${projects}" param="check.project" target="check-state-for-release" delimiter=","/>
+    </target>
+
+    <target name="check-state-for-release">
+        <property name="check.path" value="${project.${check.project}.path}"/>
+
+        <if>
+            <not>
+                <available file="${check.path}" type="dir" />
+            </not>
+            <then>
+                <fail message="Repository path ${check.path} not found"/>
+            </then>
+        </if>
+
+        <gitfetchall projectName="${check.project}" path="${check.path}"/>
+        <gitstatus projectName="${check.project}" path="${check.path}"/>
+    </target>
+</project>
