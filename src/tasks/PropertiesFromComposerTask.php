@@ -18,6 +18,13 @@ class PropertiesFromComposerTask extends Task
     protected $file;
 
     /**
+     * Property prefix
+     *
+     * @var string
+     */
+    protected $prefix;
+
+    /**
      * The setter for the attribute "file". It should point to
      * the composer.json file
      *
@@ -31,6 +38,16 @@ class PropertiesFromComposerTask extends Task
         }
 
         $this->file = $path;
+    }
+
+    /**
+     * Set the property prefix
+     *
+     * @param [type] $prefix [description]
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
     }
 
     /**
@@ -49,6 +66,10 @@ class PropertiesFromComposerTask extends Task
      */
     public function main()
     {
+        if (empty($this->prefix)) {
+            $this->prefix = 'composer';
+        }
+
         $json = json_decode(file_get_contents($this->file), true);
 
         $self = $this;
@@ -66,7 +87,7 @@ class PropertiesFromComposerTask extends Task
             }
         };
 
-        $name = 'composer';
+        $name = $this->prefix;
         $setProperties($name, $json);
 
         // Set the project.type property
