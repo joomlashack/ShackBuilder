@@ -6,6 +6,7 @@
 
     <!-- Create a new release and publish -->
     <target name="release" description="Check, create and release the package">
+        <!-- Get the list of related projects -->
         <if>
             <equals arg1="${composer.extra.package-license}" arg2="pro"/>
             <then>
@@ -31,9 +32,17 @@
             <property name="projects" value="${projects},${project.relatedExtensions}" />
         </phingcall>
 
-        <!-- You can't release a stable release from non-master branch -->
+        <!-- @TODO: You can't release a stable release from non-master branch -->
 
-        <!-- You can't release a non stable release from master -->
+        <!-- @TODO: You can't release a non stable release from master -->
+
+        <!-- @TODO: Check if the version is not already published on GitHub -->
+
+        <!-- @TODO: Push the branch and all tags -->
+
+        <!-- @TODO: Release to Github -->
+
+        <!-- @TODO: Release to deployment server -->
     </target>
 
     <target name="check-state-of-projects">
@@ -58,6 +67,6 @@
         <gitstatus projectName="${check.project}" path="${check.path}"/>
         <!-- Do we have a tag for this version? -->
         <gittagged projectName="${check.project}" path="${check.path}"/>
-
+        <!-- @TODO: Is the tag equals the current version? -->
     </target>
 </project>
