@@ -27,6 +27,7 @@
         </if>
 
         <property name="project.AllediaBuilder.path" value="${builder.path}" />
+        <property name="projects" value="${projects},${project.relatedExtensions}" override="true"/>
 
         <!-- Check the repositories status -->
         <phingcall target="check-repo-status-for-projects">
