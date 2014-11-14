@@ -28,8 +28,9 @@
 
         <property name="project.AllediaBuilder.path" value="${builder.path}" />
 
-        <phingcall target="check-state-of-projects">
-            <property name="projects" value="${projects},${project.relatedExtensions}" />
+        <!-- Check the repositories status -->
+        <phingcall target="check-repo-status-for-projects">
+            <property name="projects" value="${projects}"/>
         </phingcall>
 
         <!-- @TODO: You can't release a stable release from non-master branch -->
@@ -38,6 +39,14 @@
 
         <!-- @TODO: Check if the version is not already published on GitHub -->
 
+        <!-- Display the current branches -->
+        <phingcall target="show-branches">
+            <property name="projects" value="${projects}"/>
+        </phingcall>
+
+        <!-- Build the project -->
+        <phingcall target="build" />
+
         <!-- @TODO: Push the branch and all tags -->
 
         <!-- @TODO: Release to Github -->
@@ -45,11 +54,11 @@
         <!-- @TODO: Release to deployment server -->
     </target>
 
-    <target name="check-state-of-projects">
-        <foreach list="${projects}" param="check.project" target="check-state-for-release" delimiter=","/>
+    <target name="check-repo-status-for-projects">
+        <foreach list="${projects}" param="check.project" target="check-repo-status" delimiter=","/>
     </target>
 
-    <target name="check-state-for-release">
+    <target name="check-repo-status">
         <property name="check.path" value="${project.${check.project}.path}"/>
 
         <if>
@@ -65,7 +74,7 @@
         <gitfetchall projectName="${check.project}" path="${check.path}"/>
         <!-- Do we have any uncommited change? -->
         <gitstatus projectName="${check.project}" path="${check.path}"/>
-        <!-- Do we have a tag for this version? -->
+        <!-- Do we have a tag for the current head? -->
         <gittagged projectName="${check.project}" path="${check.path}"/>
         <!-- @TODO: Is the tag equals the current version? -->
     </target>
