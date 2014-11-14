@@ -56,27 +56,63 @@
     </target>
 
     <target name="check-repo-status-for-projects">
-        <foreach list="${projects}" param="check.project" target="check-repo-status" delimiter=","/>
+        <foreach list="${projects}" param="subproject" target="check-repo-status" delimiter=","/>
     </target>
 
     <target name="check-repo-status">
-        <property name="check.path" value="${project.${check.project}.path}"/>
+        <property name="subproject.path" value="${project.${subproject}.path}"/>
+        <php expression="strtolower(${subproject})" returnProperty="subproject.name.short"/>
 
         <if>
             <not>
-                <available file="${check.path}" type="dir" />
+                <available file="${subproject.path}" type="dir" />
             </not>
             <then>
-                <fail message="Repository path ${check.path} not found"/>
+                <fail message="Repository path ${subproject.path} not found"/>
             </then>
         </if>
 
         <!-- Fetch all tags -->
-        <gitfetchall projectName="${check.project}" path="${check.path}"/>
+        <gitfetchall projectName="${subproject}" path="${subproject.path}"/>
         <!-- Do we have any uncommited change? -->
-        <gitstatus projectName="${check.project}" path="${check.path}"/>
+        <gitstatus projectName="${subproject}" path="${subproject.path}"/>
         <!-- Do we have a tag for the current head? -->
-        <gittagged projectName="${check.project}" path="${check.path}"/>
-        <!-- @TODO: Is the tag equals the current version? -->
+        <gittagged projectName="${subproject}" path="${subproject.path}"/>
+
+        <!-- Check if we are on the right version -->
+        <if>
+            <available file="${subproject.path}/composer.json" />
+            <then>
+                <propertiesfromcomposer file="${subproject.path}/composer.json" prefix="subproject-composer" />
+
+                <!-- Parse the manifest file and get properties -->
+                <property name="subproject.manifest" value="${subproject.path}/src/${subproject.name.short}.xml"/>
+                <if>
+                    <not>
+                        <available file="${subproject.manifest}" property="subproject.manifest.exists"/>
+                    </not>
+                    <then>
+                        <property name="subproject.manifest" value="${subproject.path}/src/${subproject.type}_${subproject.name.short}.xml" override="true"/>
+                    </then>
+                </if>
+
+                <if>
+                    <available file="${subproject.manifest}"/>
+                    <then>
+                        <xmlproperty file="${subproject.manifest}" prefix="subproject-manifest" keepRoot="false" />
+
+                        <!-- Is the tag equals the current version? -->
+                        <if>
+                            <not>
+                                <equals arg1="${subproject-manifest.version}" arg2="${current-tag-version}"/>
+                            </not>
+                            <then>
+                                <fail message="The ${subproject}'s version on manifest (${subproject-manifest.version}) and tag name (${current-tag}) don't match." />
+                            </then>
+                        </if>
+                    </then>
+                </if>
+            </then>
+        </if>
     </target>
 </project>

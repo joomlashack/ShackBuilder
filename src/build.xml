@@ -24,7 +24,7 @@
         </then>
     </if>
 
-    <propertiesfromcomposer file="${project.path}/composer.json"/>
+    <propertiesfromcomposer file="${project.path}/composer.json" prefix="composer" />
 
     <property name="project.source.path" value="${project.path}/src"/>
     <property name="project.name.short" value="${composer.extra.element-short}"/>
