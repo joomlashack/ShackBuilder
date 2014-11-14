@@ -44,5 +44,20 @@ class GitTaggedTask extends GitCommandTask
             $this->log("{$this->projectName}'s HEAD commit: {$hashHead}. Create a tag for it or use the correct branch", Project::MSG_WARN);
             throw new BuildException($this->projectName . " was not released. Create a tag for the current HEAD commit, or use the correct branch");
         }
+
+        // Extract version from the tag name
+        $version = preg_replace('/^v/', '', $tag);
+
+        // Extract the release type from tag name
+        preg_match('/[0-9]\-([a-z]*)/i', $tag, $matches);
+        if (isset($matches[1])) {
+            $releaseType = $matches[1];
+        } else {
+            $releaseType = 'stable';
+        }
+
+        $this->project->setProperty('current-tag', $tag);
+        $this->project->setProperty('current-tag-version', $version);
+        $this->project->setProperty('current-tag-release-type', $releaseType);
     }
 }
