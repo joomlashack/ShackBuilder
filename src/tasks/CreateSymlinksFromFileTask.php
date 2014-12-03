@@ -8,7 +8,7 @@
 
 require_once 'library/MappedSymlinksTask.php';
 
-class CreateSymlinksTask extends MappedSymlinksTask
+class CreateSymlinksFromFileTask extends MappedSymlinksTask
 {
     /**
      * The method that runs the task

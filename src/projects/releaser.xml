@@ -10,11 +10,13 @@
         <if>
             <equals arg1="${composer.extra.package-license}" arg2="pro"/>
             <then>
-                <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro"/>
+                <!-- <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro"/> -->
+                <property name="projects" value="${composer.extra.name},${composer.extra.name}-Pro"/>
                 <property name="project.${composer.extra.name}-Pro.path" value="${project.path}" />
             </then>
             <else>
-                <property name="projects" value="AllediaBuilder,${composer.extra.name}"/>
+                <!-- <property name="projects" value="AllediaBuilder,${composer.extra.name}"/> -->
+                <property name="projects" value="${composer.extra.name}"/>
                 <property name="project.${composer.extra.name}.path" value="${project.path}" />
             </else>
         </if>

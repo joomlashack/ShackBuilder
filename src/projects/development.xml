@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Development" default="build">
-    <taskdef name="createsymlinks" classname="CreateSymlinksTask" />
+    <taskdef name="createsymlinks" classname="CreateSymlinksFromManifestTask" />
     <taskdef name="unlinksynlinks" classname="UnlinkSymlinksTask" />
 
     <property name="symlink.map.path" value="${project.path}/symlinks.yml"/>
@@ -91,7 +91,7 @@
         </if>
         <input propertyName="joomla.path" message="Joomla root path: " defaultValue="${joomla.path}"/>
 
-        <createsymlinks mapfile="${symlink.map.path}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
+        <createsymlinks manifestFile="${project.manifest}" destinationbasepath="${joomla.path}" sourcebasepath="${project.path}"/>
 
         <!-- Stores the last symlinked path -->
         <if>

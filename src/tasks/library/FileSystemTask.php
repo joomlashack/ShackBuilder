@@ -58,4 +58,18 @@ class FileSystemTask extends Task
 
         return false;
     }
+
+    protected function mkdir($path)
+    {
+        $this->log('Creating directory: ' . $path);
+
+        mkdir($path, 0777, true);
+    }
+
+    protected function symlink($source, $destination)
+    {
+        $this->log('Creating symlink: ' . $destination);
+
+        symlink($source, $destination);
+    }
 }
