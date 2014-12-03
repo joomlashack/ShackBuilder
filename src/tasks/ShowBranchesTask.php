@@ -80,6 +80,11 @@ class ShowBranchesTask extends Task
 
         $output .= $offset . "=============================================";
 
-        $this->log($output);
+        if ($hasNonMaster) {
+            $this->log($output, Project::MSG_WARN);
+            $this->log('Are you sure you want non-master branches?', Project::MSG_WARN);
+        } else {
+            $this->log($output);
+        }
     }
 }
