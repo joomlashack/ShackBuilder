@@ -134,7 +134,7 @@
         </if>
 
         <!-- Copy the free source folder to a temporary location -->
-        <copy todir="${packages.tmp.path}">
+        <copy todir="${packages.tmp.path}" overwrite="true">
             <fileset dir="${project.free.source.path}" id="free-code">
                 <include name="**"/>
             </fileset>
