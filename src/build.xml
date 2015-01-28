@@ -12,6 +12,7 @@
     <taskdef name="showbranches" classname="ShowBranchesTask"/>
     <taskdef name="mergefiles" classname="MergeFilesTask"/>
     <taskdef name="getrelatedextensions" classname="RelatedExtensionsTask"/>
+    <taskdef name="getincludes" classname="IncludesTask"/>
 
     <!-- Properties -->
     <!-- Try to get the project path from the build.properties, for deployment environment -->
@@ -78,6 +79,8 @@
     <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false" />
 
     <getrelatedextensions file="${project.manifest}" property="project.relatedExtensions" ignoreRelatedExtensions="${ignoreRelatedExtensions}"/>
+
+    <getincludes file="${project.manifest}" property="project.includes" ignoreIncludes="${ignoreIncludes}"/>
 
     <import file="${builder.path}/src/projects/development.xml"/>
     <import file="${builder.path}/src/projects/packager.xml"/>

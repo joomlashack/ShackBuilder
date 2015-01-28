@@ -64,9 +64,34 @@
 
                         <!-- Run the related extension phing script -->
                         <mkdir dir="${extensions.tmp.path}/${extension}"/>
-                        <exec command="phing -f ${extension.path}/build.xml build -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
+                        <exec command="phing -f ${extension.path}/build.xml build -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -DignoreIncludes=${project.includes} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
                     </else>
                 </if>
+            </then>
+        </if>
+    </target>
+
+    <!-- Pack the includes into a project -->
+    <target name="pack-includes">
+        <if>
+            <not>
+                <contains string="${include}" substring="${"/>
+            </not>
+            <then>
+                <echo>Packing the include: ${include}</echo>
+
+                <!-- Is the include path set? -->
+                <property name="include.path" value="${project.${include}.path}"/>
+
+                <if>
+                    <contains string="${include.path}" substring="${"/>
+                    <then>
+                        <fail message="Missed include path property: project.${include}.path"/>
+                    </then>
+                </if>
+
+                <!-- Run the include phing script -->
+                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path} -DignoreIncludes=${project.includes} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
             </then>
         </if>
     </target>
@@ -132,6 +157,9 @@
                 </copy>
             </then>
         </if>
+
+        <!-- Copy the resources specified by the include tag -->
+        <foreach list="${project.includes}" param="include" target="pack-includes" delimiter=","/>
 
         <!-- Copy the free source folder to a temporary location -->
         <copy todir="${packages.tmp.path}">

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Alledia Include Phing Builder" default="build">
+    <property name="builder.version" value="3.0.13-dev"/>
+
+    <!-- Display basic information -->
+    <echo message="Version ${builder.version} for includes"/>
+
+    <!-- Include the external tasks -->
+    <includepath classpath="${builder.path}/src/tasks"/>
+
+    <!-- Properties -->
+    <!-- Try to get the project path from the build.properties, for deployment environment -->
+    <if>
+        <not>
+            <isset property="project.path"/>
+        </not>
+        <then>
+            <property name="project.path" value="${project.basedir}"/>
+        </then>
+    </if>
+
+    <!-- Check if we are building the package directly or as a related extension -->
+    <!-- If it is a related extension, we will receive these properties from the command line -->
+    <if>
+        <not>
+            <isset property="packages.tmp.path"/>
+        </not>
+        <then>
+            <!-- We are building the package directly -->
+            <property name="packages.path" value="${project.path}/packages"/>
+            <property name="packages.tmp.path" value="${packages.path}/tmp"/>
+            <property name="buildingdirectly" value="1"/>
+        </then>
+        <else>
+            <property name="buildingdirectly" value="0"/>
+        </else>
+    </if>
+
+    <property name="project.src.path" value="${project.path}/src"/>
+
+    <!-- Copy all files from /src to the destination folder -->
+    <target name="copy" description="Copy files">
+        <!-- Copy the include files -->
+        <copy todir="${packages.tmp.path}">
+            <fileset dir="${project.src.path}" id="files">
+                <include name="**"/>
+            </fileset>
+        </copy>
+    </target>
+</project>
