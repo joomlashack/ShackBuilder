@@ -11,7 +11,7 @@ require_once 'phing/Task.php';
 class RelatedExtensionsTask extends Task
 {
     /**
-     * XML file with the a tag related extensions
+     * XML Manifest file
      *
      * @var string
      */
