@@ -64,7 +64,7 @@
 
                         <!-- Run the related extension phing script -->
                         <mkdir dir="${extensions.tmp.path}/${extension}"/>
-                        <exec command="phing -f ${extension.path}/build.xml build -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -DignoreIncludes=${project.includes} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
+                        <exec command="phing -f ${extension.path}/build.xml build -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
                     </else>
                 </if>
             </then>
@@ -91,7 +91,7 @@
                 </if>
 
                 <!-- Run the include phing script -->
-                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path} -DignoreIncludes=${project.includes} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
+                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path} -logger phing.listener.DefaultLogger -Dproject.type=${project.type}" logoutput="true" checkreturn="true"/>
             </then>
         </if>
     </target>
