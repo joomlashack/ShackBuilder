@@ -259,7 +259,7 @@
                 <property name="project.AllediaBuilder.path" value="${builder.path}" />
 
                 <phingcall target="show-branches">
-                    <property name="projects" value="${projects},${project.relatedExtensions}" />
+                    <property name="projects" value="${projects},${project.relatedExtensions},${project.includes}" />
                 </phingcall>
             </then>
         </if>

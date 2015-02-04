@@ -48,7 +48,19 @@ class ShowBranchesTask extends Task
         $offset = str_repeat(' ', 15);
         $output = "=================[ Branches ]================\n\n";
 
+        $longestLength = 0;
+
         if (isset($this->projects)) {
+
+            // Get the longest project name length
+            foreach ($this->projects as $project) {
+                $length = strlen($project);
+                if ($length > $longestLength) {
+                    $longestLength = $length;
+                }
+            }
+
+            // Iteration into the projects
             foreach ($this->projects as $project) {
                 if (isset($paths[$project])) {
                     $headFilePath = realpath($paths[$project] . '/.git/HEAD');
@@ -60,7 +72,7 @@ class ShowBranchesTask extends Task
                             preg_match('/heads\/(.*)/', $head, $matches);
                             $branch = $matches[1];
 
-                            $output .= $offset . str_pad($project, 20, ' ') . ': ' . $branch;
+                            $output .= $offset . str_pad($project, $longestLength, ' ') . ': ' . $branch;
 
                             if ($branch !== 'master') {
                                 $output .= ' (*)';
