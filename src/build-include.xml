@@ -46,5 +46,22 @@
                 <include name="**"/>
             </fileset>
         </copy>
+
+        <if>
+            <not>
+                <equals arg1="${project.type}" arg2="com" />
+            </not>
+            <then>
+                <echo>${project.type}</echo>
+                <echo>${packages.tmp.path}/admin</echo>
+                <!-- Move files drom the admin folder -->
+                <copy todir="${packages.tmp.path}">
+                    <fileset dir="${packages.tmp.path}/admin" id="admin_files">
+                        <include name="**"/>
+                    </fileset>
+                </copy>
+                <delete dir="${packages.tmp.path}/admin" />
+            </then>
+        </if>
     </target>
 </project>
