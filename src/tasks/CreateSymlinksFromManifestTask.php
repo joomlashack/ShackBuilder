@@ -258,9 +258,10 @@ class CreateSymlinksFromManifestTask extends FileSystemTask
 
     protected function getDestinationPath($tag, $destinationBaseFolder = '')
     {
-        $destinationPath = $this->destinationBasePath;
+        $destinationPath          = $this->destinationBasePath;
         $elementShortPropertyName = 'element-short';
-        $elementShort    = $this->composer->extra->$elementShortPropertyName;
+        $elementShort             = $this->composer->extra->$elementShortPropertyName;
+        $attributes               = $this->manifest->attributes();
 
         if (!empty($destinationBaseFolder)) {
             $destinationPath .= '/' . $destinationBaseFolder;
@@ -268,13 +269,15 @@ class CreateSymlinksFromManifestTask extends FileSystemTask
 
         if ($destinationBaseFolder !== 'media') {
             // Append folders to the path according to the extension type
-            switch ($this->manifest->attributes()['type']) {
+            $type = (string) $attributes['type'];
+
+            switch ($type) {
                 case 'component':
                     $destinationPath .= "/components/com_{$elementShort}";
                     break;
 
                 case 'plugin':
-                    $group = $this->manifest->attributes()['group'];
+                    $group = (string) $attributes['group'];
                     $destinationPath .= "/plugins/{$group}/{$elementShort}";
                     break;
 
@@ -286,7 +289,7 @@ class CreateSymlinksFromManifestTask extends FileSystemTask
             }
         }
 
-        $subDestinationFolder = (string) $tag->attributes()['destination'];
+        $subDestinationFolder = (string) $attributes['destination'];
 
         if (!empty($subDestinationFolder)) {
             $destinationPath .= '/' . $subDestinationFolder;
