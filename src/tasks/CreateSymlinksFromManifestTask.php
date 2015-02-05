@@ -208,7 +208,8 @@ class CreateSymlinksFromManifestTask extends FileSystemTask
     protected function getSourcePathArray($tag, $license, $includeInstallerAsSource = false)
     {
         $sourcePath      = $this->sourceBasePath . '/src';
-        $subSourceFolder = (string) $tag->attributes()['folder'];
+        $subSourceFolder = $tag->attributes();
+        $subSourceFolder = (string) $subSourceFolder['folder'];
 
         if (!empty($subSourceFolder)) {
             $sourcePath .= '/' . $subSourceFolder;
