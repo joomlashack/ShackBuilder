@@ -74,6 +74,14 @@
         <then/>
         <else>
             <property name="project.manifest" value="${project.source.path}/${project.type}_${project.name.short}.xml" override="true"/>
+
+            <if>
+                <available file="${project.manifest}" property="project.manifest.exists"/>
+                <then/>
+                <else>
+                    <property name="project.manifest" value="${project.source.path}/templateDetails.xml" override="true"/>
+                </else>
+            </if>
         </else>
     </if>
     <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false" />
