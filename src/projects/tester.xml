@@ -41,17 +41,41 @@
                 <echo>[Joomla${joomla.version}] Started a new PhantomJS container: ${container.phantomjs.id}</echo>
 
                 <exec command="docker rm -f ${container.name}" />
-                <exec command="docker run -d --name ${container.name} -p ${container.port}:80 --link ${container.phantomjs.name}:phantomjs -v ${project.path}:/project  -v ${builder.path}:/builder -v ${testframework.path}:/testframework alledia/joomla${joomla.version}tests" checkreturn="true" outputProperty="container.id" />
-                <echo>[Joomla${joomla.version}] Started a new container tests: ${container.id}</echo>
+                <property name="command1" value="docker run -d --name ${container.name} -p ${container.port}:80 --link ${container.phantomjs.name}:phantomjs -v ${project.path}:/project  -v ${builder.path}:/builder alledia/joomla${joomla.version}tests" />
+                <exec command="${command1}" outputProperty="container.id" returnProperty="container.result" />
+                <if>
+                    <not>
+                        <equals arg1="${container.result}" arg2="0" />
+                    </not>
+                    <then>
+                        <fail message="[Joomla${joomla.version}] Error starting a new container:${line.separator}${command1}${line.separator}${line.separator}${container.id}" />
+                    </then>
+                    <else>
+                        <echo>[Joomla${joomla.version}] Started a new container tests: ${container.id}</echo>
+                    </else>
+                </if>
 
                 <!-- Delay of 10s waiting for MySQL to be ready - TODO: Change for a real service status checker -->
+                <echo>[Joomla${joomla.version}] Waiting for the MySQL to be ready...</echo>
                 <exec command="php -r 'usleep(10000000);'" />
 
                 <!-- Install the package into the container running a test -->
                 <echo>[Joomla${joomla.version}] Wait... running the extension's tests...</echo>
 
-                <exec command="docker exec ${container.name} codecept run  --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" outputProperty="tests.output" />
-                <echo>[Joomla${joomla.version}] ${tests.output}</echo>
+                <property name="command2" value="docker exec ${container.name} codecept run  --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" />
+                <exec command="${command2}" returnProperty="tests.result" outputProperty="tests.output" />
+                <if>
+                    <not>
+                        <equals arg1="${tests.result}" arg2="0" />
+                    </not>
+                    <then>
+                        <fail message="[Joomla${joomla.version}]${line.separator}${command2}${line.separator}${line.separator}${tests.output}" />
+                    </then>
+                    <else>
+                        <echo>[Joomla${joomla.version}] ${tests.output}</echo>
+                    </else>
+                </if>
+
 
                 <!-- Stop and remove the containers -->
                 <echo>[Joomla${joomla.version}] Removing the phantomjs container ${container.phantomjs.id}</echo>
