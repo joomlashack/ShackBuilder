@@ -51,6 +51,7 @@
                         <fail message="[Joomla${joomla.version}] Error starting a new container:${line.separator}${command1}${line.separator}${line.separator}${container.id}" />
                     </then>
                     <else>
+                        <echo>[Joomla${joomla.version}] ${command1}</echo>
                         <echo>[Joomla${joomla.version}] Started a new container tests: ${container.id}</echo>
                     </else>
                 </if>
@@ -72,6 +73,7 @@
                         <fail message="[Joomla${joomla.version}]${line.separator}${command2}${line.separator}${line.separator}${tests.output}" />
                     </then>
                     <else>
+                        <echo>[Joomla${joomla.version}] ${command2}</echo>
                         <echo>[Joomla${joomla.version}] ${tests.output}</echo>
                     </else>
                 </if>
