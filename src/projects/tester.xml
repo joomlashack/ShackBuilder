@@ -13,7 +13,7 @@
         <delete dir="${project.path}/tests/_output/extension_installer" />
         <unzip file="${project.path}/tests/_output/extension_installer.zip" todir="${project.path}/tests/_output/extension_installer" />
 
-        <parallel threadCount="4">
+        <parallel threadCount="2">
             <phingcall target="test-specific-joomla">
                 <property name="joomla.version" value="25" />
             </phingcall>
