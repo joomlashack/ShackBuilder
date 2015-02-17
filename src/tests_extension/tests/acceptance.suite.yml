@@ -1,0 +1,25 @@
+# Codeception Test Suite Configuration
+
+# suite for acceptance tests.
+# perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+class_name: AcceptanceTester
+modules:
+    enabled:
+        - WebDriver
+        - AcceptanceHelper
+    config:
+        WebDriver:
+            url: 'http://joomla.dev:8034/'
+            browser: phantomjs
+            host: phantomjs
+            port: 4444
+            window_size: 1200x768
+            wait: 4
+            restart: true
+            capabilities:
+                webStorageEnabled: true
+                takesScreenshot: true
+                cssSelectorsEnabled: true
+

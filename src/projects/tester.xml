@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Tester" default="test">
+    <!-- TODO: Split tests into groups and run them in parallel. Keep the install extension test in a group and commit the container to reuse in the next tests
+     http://codeception.com/docs/07-AdvancedUsage#Groups, http://codeception.com/docs/12-ParallelExecution#Step-1-Split-Tests -->
+    <target name="test">
+        <!-- Build a package to be tested -->
+        <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
+        <phingcall target="build" />
+
+        <!-- Move the built file to the _data folder -->
+        <echo>Moving the built package to the _data folder to be installed</echo>
+        <copy file="${packages.path}/${package.file}" tofile="${project.path}/tests/_output/extension_installer.zip" />
+        <delete dir="${project.path}/tests/_output/extension_installer" />
+        <unzip file="${project.path}/tests/_output/extension_installer.zip" todir="${project.path}/tests/_output/extension_installer" />
+
+        <parallel threadCount="4">
+            <phingcall target="test-specific-joomla">
+                <property name="joomla.version" value="25" />
+            </phingcall>
+
+            <phingcall target="test-specific-joomla">
+                <property name="joomla.version" value="34" />
+            </phingcall>
+        </parallel>
+    </target>
+
+    <target name="test-specific-joomla">
+        <if>
+            <equals arg1="${joomla${joomla.version}.support}" arg2="1"/>
+            <then>
+                <!-- Load a docker container from alledia/joomlaXXtests to run the tests -->
+                <property name="container.name" value="allediabuilder_joomla_${joomla.version}_tests" />
+                <property name="container.port" value="80${joomla.version}" />
+                <property name="container.phantomjs.name" value="allediabuilder_joomla_${joomla.version}_phantomjs" />
+                <property name="container.phantomjs.port" value="44${joomla.version}" />
+                <echo>[Joomla${joomla.version}] Cleanup existent containers...</echo>
+
+                <!-- Run the PhantomJS container -->
+                <exec command="docker rm -f ${container.phantomjs.name}" />
+                <exec command="docker run -d --name ${container.phantomjs.name} -p ${container.phantomjs.port}:4444 davert/phantomjs-env" checkreturn="true" outputProperty="container.phantomjs.id" />
+                <echo>[Joomla${joomla.version}] Started a new PhantomJS container: ${container.phantomjs.id}</echo>
+
+                <exec command="docker rm -f ${container.name}" />
+                <exec command="docker run -d --name ${container.name} -p ${container.port}:80 --link ${container.phantomjs.name}:phantomjs -v ${project.path}:/project  -v ${builder.path}:/builder -v ${testframework.path}:/testframework alledia/joomla${joomla.version}tests" checkreturn="true" outputProperty="container.id" />
+                <echo>[Joomla${joomla.version}] Started a new container tests: ${container.id}</echo>
+
+                <!-- Delay of 10s waiting for MySQL to be ready - TODO: Change for a real service status checker -->
+                <exec command="php -r 'usleep(10000000);'" />
+
+                <!-- Install the package into the container running a test -->
+                <echo>[Joomla${joomla.version}] Wait... running the extension's tests...</echo>
+
+                <exec command="docker exec ${container.name} codecept run  --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" outputProperty="tests.output" />
+                <echo>[Joomla${joomla.version}] ${tests.output}</echo>
+
+                <!-- Stop and remove the containers -->
+                <echo>[Joomla${joomla.version}] Removing the phantomjs container ${container.phantomjs.id}</echo>
+                <exec command="docker rm -f ${container.phantomjs.id}" />
+                <echo>[Joomla${joomla.version}] Removing the container ${container.id}</echo>
+                <exec command="docker rm -f ${container.id}" />
+            </then>
+        </if>
+    </target>
+</project>
