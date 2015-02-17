@@ -5,8 +5,8 @@ $_SERVER['REQUEST_METHOD'] = 'GET';
 $_SERVER['REQUEST_URI']    = '';
 
 // Check if we have a valid joomla location
-if (!is_dir($localConfig->joomlaPath)) {
-    throw new Exception('Could not find the Joomla folder: ' . $localConfig->joomlaPath);
+if (!is_dir($localConfig['joomla_path'])) {
+    throw new Exception('Could not find the Joomla folder: ' . $localConfig['joomla_path']);
 }
 
 define('ALLEDIA_BUILDER_PATH', $config->allediaBuilderPath);
@@ -16,7 +16,7 @@ define('TEST_HOST_BASEURL', 'http://joomla.dev:8025');
 define('_JEXEC', 1);
 
 if (!defined('JPATH_BASE')) {
-    define('JPATH_BASE', realpath($localConfig->joomlaPath));
+    define('JPATH_BASE', realpath($localConfig['joomla_path']));
 }
 require_once JPATH_BASE . '/includes/defines.php';
 
@@ -59,7 +59,7 @@ require_once JPATH_CONFIGURATION . '/configuration.php';
 JFactory::getApplication('site');
 
 // Load the support classes
-$supportClassBasePath = __DIR__ . '/support';
+$supportClassBasePath = __DIR__ . '/_support';
 require_once $supportClassBasePath . '/AssertHelper.php';
 require_once $supportClassBasePath . '/ClassHelper.php';
 require_once $supportClassBasePath . '/JoomlaDboHelper.php';
