@@ -41,7 +41,7 @@
                 <echo>[Joomla${joomla.version}] Started a new PhantomJS container: ${container.phantomjs.id}</echo>
 
                 <exec command="docker rm -f ${container.name}" />
-                <property name="command1" value="docker run -d --name ${container.name} -p ${container.port}:80 --link ${container.phantomjs.name}:phantomjs -v ${project.path}:/project  -v ${builder.path}:/builder alledia/joomla${joomla.version}tests" />
+                <property name="command1" value="docker run -d --name ${container.name} -p ${container.port}:80 --link ${container.phantomjs.name}:phantomjs -v ${project.path}:/project  -v ${builder.path}:/builder alledia/joomla-codeception:joomla${joomla.version}" />
                 <exec command="${command1}" outputProperty="container.id" returnProperty="container.result" />
                 <if>
                     <not>
