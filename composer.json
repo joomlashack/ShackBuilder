@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": ">=5.3",
-        "phing/phing": "dev-master"
+        "phing/phing": "dev-master",
+        "codeception/codeception": "*"
     }
 }
