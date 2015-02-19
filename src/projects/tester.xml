@@ -69,8 +69,6 @@
                 </if>
 
                 <!-- Stop and remove the containers -->
-                <!-- <echo>[Joomla${joomla.version}] Removing the phantomjs container ${container.phantomjs.id}</echo>
-                <exec command="docker rm -f ${container.phantomjs.id}" /> -->
                 <echo>[Joomla${joomla.version}] Removing the container ${container.id}</echo>
                 <exec command="docker rm -f ${container.id}" />
             </then>
