@@ -9,8 +9,8 @@ if (!is_dir($localConfig['joomla_path'])) {
     throw new Exception('Could not find the Joomla folder: ' . $localConfig['joomla_path']);
 }
 
-define('ALLEDIA_BUILDER_PATH', $config->allediaBuilderPath);
-define('TEST_HOST_BASEURL', 'http://joomla.dev:8025');
+define('ALLEDIA_BUILDER_PATH', '/builder');
+define('TEST_HOST_BASEURL', 'http://127.0.0.1');
 
 // Load a minimal Joomla framework
 define('_JEXEC', 1);

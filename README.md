@@ -5,15 +5,19 @@ Alledia Builder
 
 Common Build Scripts to build our extensions.
 
-## Setup and environment
+## Requirements
 
-Make sure you heve phing [installed and configured](http://www.phing.info/trac/wiki/Users/Installation).
+* Phing
+* Docker (for the tests)
 
 ### Phing properties
 
 Create a new file on your project folder, name as `build.properties`. By default the only required settings are:
 
     builder.path=/path/to/AllediaBuilder/local/copy
+    joomla25.support=1
+    joomla34.support=1
+
 
 #### Optional properties
 
@@ -199,15 +203,84 @@ Your extensions can override any file and add a new one: body_*.
 
     $this->version, etc...
 
+## Tests
+
+You will be able to create unit, integration, functional or acceptance tests using Codeception. You don't need to have codeception installed, since it is embeded in a Docker container.
+
+For now we support parallel tests for:
+
+* Joomla 2.5.28
+* Joomla 3.4.0-rc
+
+### Creating tests
+
+If you already have PHPUnit or Codeception tests in your project, rename the `./tests` and `codeception.yml` to anything else, as backup.
+Now, run the `test-bootstrap` target to configure the tests.
+
+    phing test-bootstrap
+
+This command does more than run `codecept bootstrap`. It will try to make sure you have the required settings and create the bootstrap file and basic installer tests. So please, do not run `codecept bootstrap` manually.
+
+You can now move your PHPUnit/Codeception tests from the backup or create your own tests based on Codeception.
+
+### Running tests
+
+It is able to run Codeception tests from the project in multiple versions of Joomla at the same time in parallel.
+It starts two Docker containers for each Joomla, running PhantomJS and a LAMP + Codeception environment where it runs Joomla.
+
+Use the following command to start the tests, instead of call codeception directly:
+
+    $ phing test
+
+It will use PhantomJS to run headless acceptance tests. To check how the screen is rendered, you can trigger screenshots at any time, using:
+
+    $I->makeScreenshot();
+
+They are saved in the **./tests/_output/debug/** folder.
+
+#### Codeception arguments
+
+These arguments are optional.
+
+    $ phing test -Dsuit unit -Dtest path/to/TestClass:testMethod
+
+#### Tests results
+
+You have the tests results printed on the terminal, but they are exported as HTML to:
+
+* /path/to/project/tests/_output/report_joomla25.html
+* /path/to/project/tests/_output/report_joomla34.html
+
+In case of errors for the acception tests, you will have a screenshot of the screen available in:
+
+* /path/to/project/tests/_output/ClassName.testName.fail.html
+* /path/to/project/tests/_output/ClassName.testName.fail.png
+
+As we are testing multiple versions of Joomla in parallel, if a test fails for both versions you will have the screenshot only for the Joomla that last failed.
+
+### Tests Workflow
+
+* Build a installer package for the project using the current version, grabbing all dependencies
+* Start docker containers for PhantomJS and Joomla 2.5 and/or Joomla 3.4
+* Run the following steps in parallel, for multiple Joomla versions
+ * Install the extension into the containerized Joomla, testing and looking for error messages (You can customize this test)
+ * Run your Acceptance tests
+ * Run your Funciontal tests
+ * Run your Integration tests
+ * Run your Unit tests
+ * Build a HTML report with the tests result
+ * Close and remove the containers
+
 ## How to use
 
 To build the extension packages, go inside the extension folder you want to build and run the command:
 
-    $ phing build
+    $ phing <target>
 
-## Main tasks
+### Available targets
 
 * build-new
 * build
 * symlink
 * unlink
+* test

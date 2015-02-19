@@ -1,7 +1,7 @@
 <?php
 use \AcceptanceTester;
 
-class ExtensionInstallerCest
+abstract class ExtensionInstallerAbstractCest
 {
     public function _before(AcceptanceTester $I)
     {

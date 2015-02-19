@@ -14,77 +14,157 @@
         <unzip file="${project.path}/tests/_output/extension_installer.zip" todir="${project.path}/tests/_output/extension_installer" />
 
         <parallel threadCount="2">
-            <phingcall target="test-specific-joomla">
+            <phingcall target="test-in-joomla">
                 <property name="joomla.version" value="25" />
             </phingcall>
 
-            <phingcall target="test-specific-joomla">
+            <phingcall target="test-in-joomla">
                 <property name="joomla.version" value="34" />
             </phingcall>
         </parallel>
     </target>
 
-    <target name="test-specific-joomla">
+    <target name="test-in-joomla">
         <if>
             <equals arg1="${joomla${joomla.version}.support}" arg2="1"/>
             <then>
                 <!-- Load a docker container from alledia/joomlaXXtests to run the tests -->
-                <property name="container.name" value="allediabuilder_joomla_${joomla.version}_tests" />
-                <property name="container.port" value="80${joomla.version}" />
-                <property name="container.phantomjs.name" value="allediabuilder_joomla_${joomla.version}_phantomjs" />
-                <property name="container.phantomjs.port" value="44${joomla.version}" />
+                <property name="container.name" value="allediabuilder_${project.name.long}_j${joomla.version}_tests" />
+                <property name="suite" value="" />
+                <property name="test" value="" />
                 <echo>[Joomla${joomla.version}] Cleanup existent containers...</echo>
 
-                <!-- Run the PhantomJS container -->
-                <exec command="docker rm -f ${container.phantomjs.name}" />
-                <exec command="docker run -d --name ${container.phantomjs.name} -p ${container.phantomjs.port}:4444 davert/phantomjs-env" checkreturn="true" outputProperty="container.phantomjs.id" />
-                <echo>[Joomla${joomla.version}] Started a new PhantomJS container: ${container.phantomjs.id}</echo>
-
                 <exec command="docker rm -f ${container.name}" />
-                <property name="command1" value="docker run -d --name ${container.name} -p ${container.port}:80 --link ${container.phantomjs.name}:phantomjs -v ${project.path}:/project  -v ${builder.path}:/builder alledia/joomla-codeception:joomla${joomla.version}" />
+                <property name="command1" value="docker run -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder alledia/joomla-codeception:joomla${joomla.version}" />
                 <exec command="${command1}" outputProperty="container.id" returnProperty="container.result" />
                 <if>
-                    <not>
-                        <equals arg1="${container.result}" arg2="0" />
-                    </not>
+                    <equals arg1="${container.result}" arg2="0" />
                     <then>
-                        <fail message="[Joomla${joomla.version}] Error starting a new container:${line.separator}${command1}${line.separator}${line.separator}${container.id}" />
+                        <echo>[Joomla${joomla.version}] ${command1}</echo>
+                        <echo>[Joomla${joomla.version}] Started a new container tests: ${container.name} ${container.id}</echo>
                     </then>
                     <else>
-                        <echo>[Joomla${joomla.version}] ${command1}</echo>
-                        <echo>[Joomla${joomla.version}] Started a new container tests: ${container.id}</echo>
+                        <fail message="[Joomla${joomla.version}] Error starting a new container:${line.separator}${command1}${line.separator}${line.separator}${container.id}" />
                     </else>
                 </if>
 
                 <!-- Delay of 10s waiting for MySQL to be ready - TODO: Change for a real service status checker -->
                 <echo>[Joomla${joomla.version}] Waiting for the MySQL to be ready...</echo>
-                <exec command="php -r 'usleep(10000000);'" />
+                <exec command="php -r 'usleep(15000000);'" />
 
                 <!-- Install the package into the container running a test -->
-                <echo>[Joomla${joomla.version}] Wait... running the extension's tests...</echo>
+                <echo>[Joomla${joomla.version}] Hold on, running the extension's tests...</echo>
 
-                <property name="command2" value="docker exec ${container.name} codecept run  --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" />
+                <property name="command2" value="docker exec ${container.name} codecept run ${suite} ${test} --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" />
                 <exec command="${command2}" returnProperty="tests.result" outputProperty="tests.output" />
                 <if>
-                    <not>
-                        <equals arg1="${tests.result}" arg2="0" />
-                    </not>
+                    <equals arg1="${tests.result}" arg2="0" />
                     <then>
-                        <fail message="[Joomla${joomla.version}]${line.separator}${command2}${line.separator}${line.separator}${tests.output}" />
-                    </then>
-                    <else>
                         <echo>[Joomla${joomla.version}] ${command2}</echo>
                         <echo>[Joomla${joomla.version}] ${tests.output}</echo>
+                    </then>
+                    <else>
+                        <fail message="[Joomla${joomla.version}] Error running the tests:${line.separator}${command2}${line.separator}${line.separator}${tests.output}" />
                     </else>
                 </if>
 
-
                 <!-- Stop and remove the containers -->
-                <echo>[Joomla${joomla.version}] Removing the phantomjs container ${container.phantomjs.id}</echo>
-                <exec command="docker rm -f ${container.phantomjs.id}" />
+                <!-- <echo>[Joomla${joomla.version}] Removing the phantomjs container ${container.phantomjs.id}</echo>
+                <exec command="docker rm -f ${container.phantomjs.id}" /> -->
                 <echo>[Joomla${joomla.version}] Removing the container ${container.id}</echo>
                 <exec command="docker rm -f ${container.id}" />
             </then>
+        </if>
+    </target>
+
+    <target name="test-bootstrap">
+        <!-- Check if we already are bootstrapped -->
+        <if>
+            <available file="${project.path}/codeception.yml" />
+            <then>
+                <echo level="warning">It seems like your project already have the tests set up.</echo>
+                <echo level="info">If you would like to bootstrap it again, please remove:${line.separator}${line.separator}                ./tests${line.separator}                ./codeception.yml</echo>
+            </then>
+            <else>
+                <!-- Run the Codeception bootstrap -->
+                <exec command="docker run -d -v ${project.path}:/project alledia/codeception" returnProperty="container.result" outputProperty="container.id" />
+                <exec command="docker exec ${container.id} codecept bootstrap /project" outputProperty="container.output" />
+                <exec command="docker rm ${container.id}" />
+
+                <!-- Check the basic files -->
+                <condition property="bootstrapped">
+                    <and>
+                        <available file="${project.path}/codeception.yml" property="codeception.yml.available" />
+                        <available file="${project.path}/tests" property="codeception.tests.available" />
+                    </and>
+                </condition>
+                <if>
+                    <equals arg1="${bootstrapped}" arg2="true" />
+                    <then>
+                        <echo>Codeception is bootstrapped successfully</echo>
+                        <!-- Check the build.properties file -->
+                        <echo>Checking build.properties file for Joomla 2.5 and Joomla 3.4 support properties</echo>
+                        <if>
+                            <contains string="${joomla25.support}" substring="${" />
+                            <then>
+                                <echo file="${project.path}/build.properties" append="true">${line.separator}joomla25.support=1</echo>
+                            </then>
+                        </if>
+                        <if>
+                            <contains string="${joomla34.support}" substring="${" />
+                            <then>
+                                <echo file="${project.path}/build.properties" append="true">${line.separator}joomla34.support=1</echo>
+                            </then>
+                        </if>
+
+                        <!-- Creates the acceptance.suite.yml file-->
+                        <echo>Creating the default acceptance.suite.yml file</echo>
+                        <echo file="${project.path}/tests/acceptance.suite.yml"><![CDATA[# Codeception Test Suite Configuration
+# suite for acceptance tests.
+# perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+class_name: AcceptanceTester
+modules:
+    enabled:
+        - WebDriver
+        - AcceptanceHelper
+    config:
+        WebDriver:
+            url: 'http://127.0.0.1'
+            browser: phantomjs
+            host: localhost
+            port: 4444
+            window_size: 1200x768
+            wait: 10
+            restart: true
+            capabilities:
+                webStorageEnabled: true
+                takesScreenshot: true
+                cssSelectorsEnabled: true]]></echo>
+
+                        <!-- Fill the bootstrap file -->
+                        <echo>Creating the default _bootstrap.php file, inheriting from AllediaBuilder</echo>
+                        <echo file="${project.path}/tests/_bootstrap.php" append="true">${line.separator}// Load the bootstrap file from Alledia Builder${line.separator}require_once '/builder/src/codeception/_bootstrap.php';</echo>
+
+                        <!-- Create the installer acceptance test -->
+                        <echo file="${project.path}/tests/acceptance/AAAExtensionInstallerCest.php"><![CDATA[<?php
+use \AcceptanceTester;
+
+require_once ALLEDIA_BUILDER_PATH . '/src/codeception/acceptance/ExtensionInstallerAbstractCest.php';
+
+class AAAExtensionInstallerCest extends ExtensionInstallerAbstractCest
+{
+
+}
+]]></echo>
+                        <echo>Tests bootstrapped successfully!</echo>
+                    </then>
+                    <else>
+                        <echo level="error">Error: ${container.output}</echo>
+                    </else>
+                </if>
+            </else>
         </if>
     </target>
 </project>
