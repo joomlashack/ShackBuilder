@@ -38,9 +38,8 @@
                         <echo>${line.prefix} Wait... preparing the test environment for j${joomla.version}</echo>
                         <echo level="debug">${line.prefix} Cleanup existent containers...</echo>
                         <exec command="docker rm -f ${container.name}" />
-                        <property name="command1" value="docker run -m ${memory} -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder alledia/joomla-codeception:joomla${joomla.version}" />
-                        <exec command="${command1}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
-                        <echo level="debug">${line.prefix} ${command1}</echo>
+                        <exec command="docker run -m ${memory} -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder alledia/joomla-codeception:joomla${joomla.version}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
+
                         <echo level="debug">${line.prefix} Started a new container tests: ${container.name} (${container.id})</echo>
 
                         <!-- Delay of 10s waiting for MySQL to be ready - TODO: Change for a real service status checker -->
@@ -50,16 +49,14 @@
                         <!-- Install the package into the container running a test -->
                         <echo>${line.prefix} Hold on, running the extension's tests in j${joomla.version}...</echo>
 
-                        <property name="command2" value="docker exec ${container.name} codecept run ${params} --no-colors --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" />
-                        <exec command="${command2}" returnProperty="tests.result" outputProperty="tests.output" checkreturn="true" />
+                        <exec command="docker exec ${container.name} codecept run ${params} --no-colors --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" returnProperty="tests.result" outputProperty="tests.output" checkreturn="true" />
 
-                        <echo level="debug">${line.prefix} ${command2}</echo>
                         <echo level="debug">${line.prefix} ${tests.output}</echo>
                         <echo level="warning">${line.prefix} Good Job! :)  Your tests passed succesfully for j${joomla.version}</echo>
                     </try>
                     <catch>
                         <!-- Error/Exception found -->
-                        <echo level="error">${line.prefix} Wow man :(  I have detected errors or failed tests:${line.separator}${catchOutput}${line.separator}${line.separator}Command: ${command2}${line.separator}Output: ${tests.output}</echo>
+                        <echo level="error">${line.prefix} Wow man :(  I have detected errors or failed tests:${line.separator}${catchOutput}${line.separator}${line.separator}Command: ${line.separator}Output: ${tests.output}</echo>
                     </catch>
                     <finally>
                         <!-- Stop and remove the containers -->
