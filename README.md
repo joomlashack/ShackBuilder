@@ -263,7 +263,7 @@ As we are testing multiple versions of Joomla in parallel, if a test fails for b
 
 #### Tests cleanup
 
-If you had any exception while running your tests and are seeing some odd error messages, try to cleanup things, removing the docker containers and tmp .pid files. Use the command:
+If you had any exception while running your tests and are seeing some odd error messages, try to cleanup things, removing the docker containers and cleaning the tests/_output/ folder. Use the command:
 
     $ phing test-cleanup
 
