@@ -2,10 +2,11 @@
 <project name="Tester" default="test">
     <!-- TODO: Split tests into groups and run them in parallel. Keep the install extension test in a group and commit the container to reuse in the next tests
      http://codeception.com/docs/07-AdvancedUsage#Groups, http://codeception.com/docs/12-ParallelExecution#Step-1-Split-Tests -->
+    <property name="memory" value="512MB" />
+
     <target name="test">
         <!-- Build a package to be tested -->
         <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
-        <property name="memory" value="512MB" />
         <phingcall target="build" />
 
         <!-- Move the built file to the _data folder -->
