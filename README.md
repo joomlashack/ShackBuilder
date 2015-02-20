@@ -261,6 +261,12 @@ In case of errors for the acception tests, you will have a screenshot of the scr
 
 As we are testing multiple versions of Joomla in parallel, if a test fails for both versions you will have the screenshot only for the Joomla that last failed.
 
+#### Tests cleanup
+
+If you had any exception while running your tests and are seeing some odd error messages, try to cleanup things, removing the docker containers and tmp .pid files. Use the command:
+
+    $ phing test-cleanup
+
 ### Tests Workflow
 
 * Build a installer package for the project using the current version, grabbing all dependencies
