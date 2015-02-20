@@ -274,7 +274,7 @@ If you had any exception while running your tests and are seeing some odd error 
 * Run the following steps in parallel, for multiple Joomla versions
  * Install the extension into the containerized Joomla, testing and looking for error messages (You can customize this test)
  * Run your Acceptance tests
- * Run your Funciontal tests
+ * Run your Functional tests
  * Run your Integration tests
  * Run your Unit tests
  * Build a HTML report with the tests result
