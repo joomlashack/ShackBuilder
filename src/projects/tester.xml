@@ -73,47 +73,54 @@
 
     <target name="test-bootstrap">
         <!-- Check if we already are bootstrapped -->
+        <condition property="bootstrapped-already">
+            <or>
+                <available file="${project.path}/codeception.yml" property="codeception.yml.available" />
+                <available file="${project.path}/tests" property="codeception.tests.available" />
+            </or>
+        </condition>
         <if>
-            <available file="${project.path}/codeception.yml" />
+            <equals arg1="${bootstrapped-already}" arg2="true" />
             <then>
                 <echo level="warning">It seems like your project already have the tests set up.</echo>
                 <echo level="info">If you would like to bootstrap it again, please remove:${line.separator}${line.separator}                ./tests${line.separator}                ./codeception.yml</echo>
             </then>
             <else>
-                <!-- Run the Codeception bootstrap -->
-                <exec command="docker run -d -v ${project.path}:/project -m ${memory} alledia/codeception" returnProperty="container.result" outputProperty="container.id" />
-                <exec command="docker exec ${container.id} codecept bootstrap /project" outputProperty="container.output" />
-                <exec command="docker rm ${container.id}" />
+                <trycatch property="catchOutputBootstrap">
+                    <try>
+                        <!-- Run the Codeception bootstrap -->
+                        <exec command="docker run -d -v ${project.path}:/project -m ${memory} alledia/codeception" returnProperty="container.result" outputProperty="container.id" />
+                        <exec command="docker exec ${container.id} codecept bootstrap /project" outputProperty="container.output" />
 
-                <!-- Check the basic files -->
-                <condition property="bootstrapped">
-                    <and>
-                        <available file="${project.path}/codeception.yml" property="codeception.yml.available" />
-                        <available file="${project.path}/tests" property="codeception.tests.available" />
-                    </and>
-                </condition>
-                <if>
-                    <equals arg1="${bootstrapped}" arg2="true" />
-                    <then>
-                        <echo>Codeception is bootstrapped successfully</echo>
-                        <!-- Check the build.properties file -->
-                        <echo>Checking build.properties file for Joomla 2.5 and Joomla 3.4 support properties</echo>
+                        <!-- Check the basic files -->
+                        <condition property="bootstrapped">
+                            <and>
+                                <available file="${project.path}/codeception.yml" property="codeception.yml.available" />
+                                <available file="${project.path}/tests" property="codeception.tests.available" />
+                            </and>
+                        </condition>
                         <if>
-                            <contains string="${joomla25.support}" substring="${" />
+                            <equals arg1="${bootstrapped}" arg2="true" />
                             <then>
-                                <echo file="${project.path}/build.properties" append="true">${line.separator}joomla25.support=1</echo>
-                            </then>
-                        </if>
-                        <if>
-                            <contains string="${joomla34.support}" substring="${" />
-                            <then>
-                                <echo file="${project.path}/build.properties" append="true">${line.separator}joomla34.support=1</echo>
-                            </then>
-                        </if>
+                                <echo>Codeception is bootstrapped successfully</echo>
+                                <!-- Check the build.properties file -->
+                                <echo>Checking build.properties file for Joomla 2.5 and Joomla 3.4 support properties</echo>
+                                <if>
+                                    <contains string="${joomla25.support}" substring="${" />
+                                    <then>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}joomla25.support=1</echo>
+                                    </then>
+                                </if>
+                                <if>
+                                    <contains string="${joomla34.support}" substring="${" />
+                                    <then>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}joomla34.support=1</echo>
+                                    </then>
+                                </if>
 
-                        <!-- Creates the acceptance.suite.yml file-->
-                        <echo>Creating the default acceptance.suite.yml file</echo>
-                        <echo file="${project.path}/tests/acceptance.suite.yml"><![CDATA[# Codeception Test Suite Configuration
+                                <!-- Creates the acceptance.suite.yml file-->
+                                <echo>Creating the default acceptance.suite.yml file</echo>
+                                <echo file="${project.path}/tests/acceptance.suite.yml"><![CDATA[# Codeception Test Suite Configuration
 # suite for acceptance tests.
 # perform tests in browser using the WebDriver or PhpBrowser.
 # If you need both WebDriver and PHPBrowser tests - create a separate suite.
@@ -137,12 +144,12 @@ modules:
                 takesScreenshot: true
                 cssSelectorsEnabled: true]]></echo>
 
-                        <!-- Fill the bootstrap file -->
-                        <echo>Creating the default _bootstrap.php file, inheriting from AllediaBuilder</echo>
-                        <echo file="${project.path}/tests/_bootstrap.php" append="true">${line.separator}// Load the bootstrap file from Alledia Builder${line.separator}require_once '/builder/src/codeception/_bootstrap.php';</echo>
+                                <!-- Fill the bootstrap file -->
+                                <echo>Creating the default _bootstrap.php file, inheriting from AllediaBuilder</echo>
+                                <echo file="${project.path}/tests/_bootstrap.php" append="true">${line.separator}// Load the bootstrap file from Alledia Builder${line.separator}require_once '/builder/src/codeception/_bootstrap.php';</echo>
 
-                        <!-- Create the installer acceptance test -->
-                        <echo file="${project.path}/tests/acceptance/AAAExtensionInstallerCest.php"><![CDATA[<?php
+                                <!-- Create the installer acceptance test -->
+                                <echo file="${project.path}/tests/acceptance/AAAExtensionInstallerCest.php"><![CDATA[<?php
 use \AcceptanceTester;
 
 require_once ALLEDIA_BUILDER_PATH . '/src/codeception/acceptance/ExtensionInstallerAbstractCest.php';
@@ -152,12 +159,20 @@ class AAAExtensionInstallerCest extends ExtensionInstallerAbstractCest
 
 }
 ]]></echo>
-                        <echo>Tests bootstrapped successfully!</echo>
-                    </then>
-                    <else>
-                        <echo level="error">Error: ${container.output}</echo>
-                    </else>
-                </if>
+                                <echo>Tests bootstrapped successfully!</echo>
+                            </then>
+                            <else>
+                                <echo level="error">Error: ${container.output}</echo>
+                            </else>
+                        </if>
+                    </try>
+                    <catch>
+                        <echo level="error">${catchOutputBootstrap}</echo>
+                    </catch>
+                    <finally>
+                        <exec command="docker rm ${container.id}" />
+                    </finally>
+                </trycatch>
             </else>
         </if>
     </target>
