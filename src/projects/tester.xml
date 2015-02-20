@@ -12,7 +12,7 @@
         <!-- Move the built file to the _data folder -->
         <echo>Moving the built package to the _data folder to be installed</echo>
         <copy file="${packages.path}/${package.file}" tofile="${project.path}/tests/_output/extension_installer.zip" />
-        <delete dir="${project.path}/tests/_output/extension_installer" />
+        <delete dir="${project.path}/tests/_output/extension_installer" quiet="true" />
         <unzip file="${project.path}/tests/_output/extension_installer.zip" todir="${project.path}/tests/_output/extension_installer" />
 
         <parallel threadCount="2">
