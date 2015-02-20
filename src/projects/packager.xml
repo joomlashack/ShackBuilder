@@ -159,7 +159,7 @@
         </if>
 
         <!-- Copy the resources specified by the include tag -->
-        <foreach list="${project.includes}" param="include" target="pack-includes" delimiter=","/>
+        <foreach_parallel list="${project.includes}" param="include" target="pack-includes" delimiter="," threadCount="4" />
 
         <!-- Copy the free source folder to a temporary location -->
         <copy todir="${packages.tmp.path}" overwrite="true">
@@ -206,7 +206,7 @@
         </if>
 
         <!-- Pack related extensions -->
-        <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter=","/>
+        <foreach_parallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="4" />
 
         <!-- PHP Lint -->
         <phplint haltonfailure="true">

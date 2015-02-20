@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Alledia Joomla Phing Builder" default="build">
-    <property name="builder.version" value="3.0.14"/>
+    <property name="builder.version" value="3.0.15"/>
 
     <!-- Display basic information -->
     <echo message="Version ${builder.version} for Joomla! extensions"/>
@@ -13,6 +13,7 @@
     <taskdef name="mergefiles" classname="MergeFilesTask"/>
     <taskdef name="getrelatedextensions" classname="RelatedExtensionsTask"/>
     <taskdef name="getincludes" classname="IncludesTask"/>
+    <taskdef name="foreach_parallel" classname="ForeachParallelTask" />
 
     <!-- Properties -->
     <!-- Try to get the project path from the build.properties, for deployment environment -->

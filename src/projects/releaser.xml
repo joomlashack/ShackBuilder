@@ -58,7 +58,7 @@
     </target>
 
     <target name="check-repo-status-for-projects">
-        <foreach list="${projects}" param="subproject" target="check-repo-status" delimiter=","/>
+        <foreach_parallel list="${projects}" param="subproject" target="check-repo-status" delimiter="," threadCount="4" />
     </target>
 
     <target name="check-repo-status">
