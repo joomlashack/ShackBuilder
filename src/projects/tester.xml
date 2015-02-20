@@ -56,7 +56,7 @@
                     </try>
                     <catch>
                         <!-- Error/Exception found -->
-                        <echo level="error">${line.prefix} Wow man :(  I have detected errors or failed tests:${line.separator}${catchOutput}${line.separator}${line.separator}Command: ${line.separator}Output: ${tests.output}</echo>
+                        <echo level="error">${line.prefix} Oh man :(  I have detected errors or failed tests:${line.separator}${catchOutput}${line.separator}${line.separator}Command: ${line.separator}Output: ${tests.output}</echo>
                     </catch>
                     <finally>
                         <!-- Stop and remove the containers -->
