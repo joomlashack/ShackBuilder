@@ -24,10 +24,33 @@
                 <property name="joomla.version" value="34" />
             </phingcall>
         </parallel>
+
+        <!-- Show tests result warning for Joomla 25 -->
+        <if>
+            <available file="${project.path}/tests/_output/j25.success" />
+            <then>
+                <echo level="warning">Results for j25: Good Job! :)  Your tests passed successfully!</echo>
+            </then>
+            <else>
+                <echo level="error">Results for j25: Oh man :(  I have detected errors or failed tests: tests/_output/report_joomla25.html</echo>
+            </else>
+        </if>
+
+        <!-- Show tests result warning for Joomla 34 -->
+        <if>
+            <available file="${project.path}/tests/_output/j34.success" />
+            <then>
+                <echo level="warning">Results for j34: Good Job! :)  Your tests passed successfully!</echo>
+            </then>
+            <else>
+                <echo level="error">Results for j34: Oh man :(  I have detected errors or failed tests: tests/_output/report_joomla34.html</echo>
+            </else>
+        </if>
     </target>
 
     <target name="test-in-joomla">
         <property name="line.prefix" value="j${joomla.version} :::" />
+        <property name="success.file" value="${project.path}/tests/_output/j${joomla.version}.success" />
         <if>
             <equals arg1="${joomla${joomla.version}.support}" arg2="1"/>
             <then>
@@ -36,6 +59,7 @@
                 <trycatch property="catchOutput">
                     <try>
                         <echo>${line.prefix} Wait... preparing the test environment for j${joomla.version}</echo>
+                        <delete file="${success.file}" quiet="true" />
                         <echo level="debug">${line.prefix} Cleanup existent containers...</echo>
                         <exec command="docker rm -f ${container.name}" />
                         <exec command="docker run -m ${memory} -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder -v ${project.path}/tests/_output/run/j${joomla.version}_mysqld:/run/mysqld alledia/joomla-codeception:joomla${joomla.version}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
@@ -56,11 +80,11 @@
                         <exec command="docker exec ${container.name} codecept run ${params} --no-colors --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" returnProperty="tests.result" outputProperty="tests.output" checkreturn="true" />
 
                         <echo level="debug">${line.prefix} ${tests.output}</echo>
-                        <echo level="warning">${line.prefix} Good Job! :)  Your tests passed succesfully for j${joomla.version}</echo>
+                        <echo file="${success.file}">1</echo>
                     </try>
                     <catch>
                         <!-- Error/Exception found -->
-                        <echo level="error">${line.prefix} Oh man :(  I have detected errors or failed tests:${line.separator}${catchOutput}${line.separator}${line.separator}Command: ${line.separator}Output: ${tests.output}</echo>
+                        <echo level="error">${line.prefix} Error/failure: ${line.separator}${catchOutput}${line.separator}${line.separator}Command: ${line.separator}Output: ${tests.output}</echo>
                     </catch>
                     <finally>
                         <!-- Stop and remove the containers -->
