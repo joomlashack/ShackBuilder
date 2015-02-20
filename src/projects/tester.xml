@@ -38,13 +38,17 @@
                         <echo>${line.prefix} Wait... preparing the test environment for j${joomla.version}</echo>
                         <echo level="debug">${line.prefix} Cleanup existent containers...</echo>
                         <exec command="docker rm -f ${container.name}" />
-                        <exec command="docker run -m ${memory} -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder alledia/joomla-codeception:joomla${joomla.version}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
+                        <exec command="docker run -m ${memory} -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder -v ${project.path}/tests/_output/run/j${joomla.version}_mysqld:/run/mysqld alledia/joomla-codeception:joomla${joomla.version}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
 
                         <echo level="debug">${line.prefix} Started a new container tests: ${container.name} (${container.id})</echo>
 
                         <!-- Delay of 10s waiting for MySQL to be ready - TODO: Change for a real service status checker -->
                         <echo level="debug">${line.prefix} Waiting for the MySQL to be ready...</echo>
-                        <exec command="php -r 'usleep(15000000);'" />
+
+                        <!-- Wait for MySQL to be ready -->
+                        <waitfor maxwaitunit="second" maxwait="20">
+                            <available file="${project.path}/tests/_output/run/j${joomla.version}_mysqld/mysqld.pid" />
+                        </waitfor>
 
                         <!-- Install the package into the container running a test -->
                         <echo>${line.prefix} Hold on, running the extension's tests in j${joomla.version}...</echo>
@@ -62,6 +66,7 @@
                         <!-- Stop and remove the containers -->
                         <echo level="debug">${line.prefix} Removing the container ${container.id}</echo>
                         <exec command="docker rm -f ${container.id}" />
+                        <delete dir="${project.path}/tests/_output/run/j${joomla.version}_mysqld" quiet="true" />
                     </finally>
                 </trycatch>
             </then>
