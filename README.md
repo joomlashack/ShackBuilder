@@ -238,11 +238,14 @@ It will use PhantomJS to run headless acceptance tests. To check how the screen 
 
 They are saved in the **./tests/_output/debug/** folder.
 
-#### Codeception arguments
+#### Tests arguments
 
 These arguments are optional.
 
-    $ phing test -Dsuit unit -Dtest path/to/TestClass:testMethod
+* memory: used to set the memory available for the container (default: 512MB)
+* params: codeception params (default: none)
+
+    $ phing test -Dmemory=1GB -Dparams="unit path/to/TestClass:testMethod --debug"
 
 #### Tests results
 

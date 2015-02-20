@@ -5,6 +5,7 @@
     <target name="test">
         <!-- Build a package to be tested -->
         <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
+        <property name="memory" value="512MB" />
         <phingcall target="build" />
 
         <!-- Move the built file to the _data folder -->
@@ -25,52 +26,46 @@
     </target>
 
     <target name="test-in-joomla">
+        <property name="line.prefix" value="j${joomla.version} :::" />
         <if>
             <equals arg1="${joomla${joomla.version}.support}" arg2="1"/>
             <then>
                 <!-- Load a docker container from alledia/joomlaXXtests to run the tests -->
                 <property name="container.name" value="allediabuilder_${project.name.long}_j${joomla.version}_tests" />
-                <property name="suite" value="" />
-                <property name="test" value="" />
-                <echo>[Joomla${joomla.version}] Cleanup existent containers...</echo>
+                <trycatch property="catchOutput">
+                    <try>
+                        <echo>${line.prefix} Wait... preparing the test environment for j${joomla.version}</echo>
+                        <echo level="debug">${line.prefix} Cleanup existent containers...</echo>
+                        <exec command="docker rm -f ${container.name}" />
+                        <property name="command1" value="docker run -m ${memory} -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder alledia/joomla-codeception:joomla${joomla.version}" />
+                        <exec command="${command1}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
+                        <echo level="debug">${line.prefix} ${command1}</echo>
+                        <echo level="debug">${line.prefix} Started a new container tests: ${container.name} (${container.id})</echo>
 
-                <exec command="docker rm -f ${container.name}" />
-                <property name="command1" value="docker run -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder alledia/joomla-codeception:joomla${joomla.version}" />
-                <exec command="${command1}" outputProperty="container.id" returnProperty="container.result" />
-                <if>
-                    <equals arg1="${container.result}" arg2="0" />
-                    <then>
-                        <echo>[Joomla${joomla.version}] ${command1}</echo>
-                        <echo>[Joomla${joomla.version}] Started a new container tests: ${container.name} ${container.id}</echo>
-                    </then>
-                    <else>
-                        <fail message="[Joomla${joomla.version}] Error starting a new container:${line.separator}${command1}${line.separator}${line.separator}${container.id}" />
-                    </else>
-                </if>
+                        <!-- Delay of 10s waiting for MySQL to be ready - TODO: Change for a real service status checker -->
+                        <echo level="debug">${line.prefix} Waiting for the MySQL to be ready...</echo>
+                        <exec command="php -r 'usleep(15000000);'" />
 
-                <!-- Delay of 10s waiting for MySQL to be ready - TODO: Change for a real service status checker -->
-                <echo>[Joomla${joomla.version}] Waiting for the MySQL to be ready...</echo>
-                <exec command="php -r 'usleep(15000000);'" />
+                        <!-- Install the package into the container running a test -->
+                        <echo>${line.prefix} Hold on, running the extension's tests in j${joomla.version}...</echo>
 
-                <!-- Install the package into the container running a test -->
-                <echo>[Joomla${joomla.version}] Hold on, running the extension's tests...</echo>
+                        <property name="command2" value="docker exec ${container.name} codecept run ${params} --no-colors --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" />
+                        <exec command="${command2}" returnProperty="tests.result" outputProperty="tests.output" checkreturn="true" />
 
-                <property name="command2" value="docker exec ${container.name} codecept run ${suite} ${test} --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" />
-                <exec command="${command2}" returnProperty="tests.result" outputProperty="tests.output" />
-                <if>
-                    <equals arg1="${tests.result}" arg2="0" />
-                    <then>
-                        <echo>[Joomla${joomla.version}] ${command2}</echo>
-                        <echo>[Joomla${joomla.version}] ${tests.output}</echo>
-                    </then>
-                    <else>
-                        <fail message="[Joomla${joomla.version}] Error running the tests:${line.separator}${command2}${line.separator}${line.separator}${tests.output}" />
-                    </else>
-                </if>
-
-                <!-- Stop and remove the containers -->
-                <echo>[Joomla${joomla.version}] Removing the container ${container.id}</echo>
-                <exec command="docker rm -f ${container.id}" />
+                        <echo level="debug">${line.prefix} ${command2}</echo>
+                        <echo level="debug">${line.prefix} ${tests.output}</echo>
+                        <echo level="warning">${line.prefix} Good Job! :)  Your tests passed succesfully for j${joomla.version}</echo>
+                    </try>
+                    <catch>
+                        <!-- Error/Exception found -->
+                        <echo level="error">${line.prefix} Wow man :(  I have detected errors or failed tests:${line.separator}${catchOutput}${line.separator}${line.separator}Command: ${command2}${line.separator}Output: ${tests.output}</echo>
+                    </catch>
+                    <finally>
+                        <!-- Stop and remove the containers -->
+                        <echo level="debug">${line.prefix} Removing the container ${container.id}</echo>
+                        <exec command="docker rm -f ${container.id}" />
+                    </finally>
+                </trycatch>
             </then>
         </if>
     </target>
@@ -85,7 +80,7 @@
             </then>
             <else>
                 <!-- Run the Codeception bootstrap -->
-                <exec command="docker run -d -v ${project.path}:/project alledia/codeception" returnProperty="container.result" outputProperty="container.id" />
+                <exec command="docker run -d -v ${project.path}:/project -m ${memory} alledia/codeception" returnProperty="container.result" outputProperty="container.id" />
                 <exec command="docker exec ${container.id} codecept bootstrap /project" outputProperty="container.output" />
                 <exec command="docker rm ${container.id}" />
 
