@@ -204,12 +204,16 @@ class AAAExtensionInstallerCest extends ExtensionInstallerAbstractCest
     </target>
 
     <target name="test-cleanup">
-        <echo>Removing the docker containers, if running</echo>
+        <echo>Removing the docker containers, if found</echo>
         <exec command="docker rm -f allediabuilder_${project.name.long}_j25_tests" />
         <exec command="docker rm -f allediabuilder_${project.name.long}_j34_tests" />
 
-        <echo>Removing the tmp folders</echo>
-        <delete dir="${project.path}/tests/_output/run/j25_mysqld" quiet="true" />
-        <delete dir="${project.path}/tests/_output/run/j34_mysqld" quiet="true" />
+        <echo>Cleaning the _output folder</echo>
+        <delete quiet="true" includeemptydirs="true">
+            <fileset dir="${project.path}/tests/_output">
+                <include name="**" />
+            </fileset>
+        </delete>
+        <mkdir dir="${project.path}/tests/_output" />
     </target>
 </project>
