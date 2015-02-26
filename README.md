@@ -9,6 +9,9 @@ Common Build Scripts to build our extensions.
 
 * Phing
 * Docker (for the tests)
+ * alledia/codeception
+ * alledia/joomla-codeception:joomla25
+ * alledia/joomla-codeception:joomla34
 
 ### Phing properties
 
@@ -211,6 +214,16 @@ For now we support parallel tests for:
 
 * Joomla 2.5.28
 * Joomla 3.4.0-rc
+
+### Requirements
+
+Install Docker and pull the alledia images:
+
+    $ docker pull alledia/codeception
+    $ docker pull alledia/joomla-codeception:joomla25
+    $ docker pull alledia/joomla-codeception:joomla34
+
+You don't need to have codeception installed locally, since it will run inside the containers.
 
 ### Creating tests
 
