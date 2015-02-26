@@ -236,6 +236,16 @@ This command does more than run `codecept bootstrap`. It will try to make sure y
 
 You can now move your PHPUnit/Codeception tests from the backup or create your own tests based on Codeception.
 
+What this command does?
+
+* Run `codeception bootstrap`
+* Make sure you have `joomla25.support=1` in your `build.properties` file
+* Make sure you have `joomla34.support=1` in your `build.properties` file
+* Customize tests/acceptance.suite.yml file
+* Customize tests/_bootstrap.php
+
+You can choose what joomla version you want to run just customizing the `joomla25.support` property.
+
 ### Running tests
 
 It is able to run Codeception tests from the project in multiple versions of Joomla at the same time in parallel.
@@ -251,12 +261,12 @@ It will use PhantomJS to run headless acceptance tests. To check how the screen 
 
 They are saved in the **./tests/_output/debug/** folder.
 
-#### Tests arguments
+#### Tests arguments (optional)
 
-These arguments are optional.
-
-* memory: used to set the memory available for the container (default: 512MB)
+* memory: used to set the memory available for the container (default: 512MB).
 * params: codeception params (default: none)
+
+How to use?
 
     $ phing test -Dmemory=1GB -Dparams="unit path/to/TestClass:testMethod --debug"
 
@@ -284,14 +294,11 @@ If you had any exception while running your tests and are seeing some odd error 
 
 By running the command `phing test` the script will execute the following steps:
 
-* Build a installer package for the project using the current version, grabbing all dependencies
-* Start docker containers for PhantomJS and Joomla 2.5 and/or Joomla 3.4
-* Run the following steps in parallel, for multiple Joomla versions
+* Build an installer package for the project using the current version, grabbing all dependencies
+* Start docker containers for each Joomla version your extension support
+* Run the following steps in parallel, for each supported Joomla version
  * Install the extension into the containerized Joomla, testing and looking for error messages (You can customize this test)
- * Run your Acceptance tests
- * Run your Functional tests
- * Run your Integration tests
- * Run your Unit tests
+ * Run your test suites
  * Build a HTML report with the tests result
  * Close and remove the containers
 
@@ -303,8 +310,10 @@ To build the extension packages, go inside the extension folder you want to buil
 
 ### Available targets
 
-* build-new
 * build
+* build-new
 * symlink
 * unlink
+* test-bootstrap
 * test
+* test-cleanup
