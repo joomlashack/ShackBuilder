@@ -282,6 +282,8 @@ If you had any exception while running your tests and are seeing some odd error 
 
 ### Tests Workflow
 
+By running the command `phing test` the script will execute the following steps:
+
 * Build a installer package for the project using the current version, grabbing all dependencies
 * Start docker containers for PhantomJS and Joomla 2.5 and/or Joomla 3.4
 * Run the following steps in parallel, for multiple Joomla versions
