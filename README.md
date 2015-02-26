@@ -18,8 +18,8 @@ Common Build Scripts to build our extensions.
 Create a new file on your project folder, name as `build.properties`. By default the only required settings are:
 
     builder.path=/path/to/AllediaBuilder/local/copy
-    joomla25.support=1
-    joomla34.support=1
+    test.container.joomla25=1
+    test.container.joomla34=1
 
 
 #### Optional properties
@@ -239,12 +239,12 @@ You can now move your PHPUnit/Codeception tests from the backup or create your o
 What this command does?
 
 * Run `codeception bootstrap`
-* Make sure you have `joomla25.support=1` in your `build.properties` file
-* Make sure you have `joomla34.support=1` in your `build.properties` file
+* Make sure you have `test.container.joomla25=1` in your `build.properties` file
+* Make sure you have `test.container.joomla34=1` in your `build.properties` file
 * Customize tests/acceptance.suite.yml file
 * Customize tests/_bootstrap.php
 
-You can choose what joomla version you want to run just customizing the `joomla25.support` property.
+You can choose what joomla version you want to run just customizing the `test.container.joomla25` property.
 
 ### Running tests
 

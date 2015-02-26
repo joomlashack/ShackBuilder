@@ -52,7 +52,7 @@
         <property name="line.prefix" value="j${joomla.version} :::" />
         <property name="success.file" value="${project.path}/tests/_output/j${joomla.version}.success" />
         <if>
-            <equals arg1="${joomla${joomla.version}.support}" arg2="1"/>
+            <equals arg1="${test.container.joomla${joomla.version}}" arg2="1"/>
             <then>
                 <!-- Load a docker container from alledia/joomlaXXtests to run the tests -->
                 <property name="container.name" value="allediabuilder_${project.name.long}_j${joomla.version}_tests" />
@@ -132,15 +132,15 @@
                                 <!-- Check the build.properties file -->
                                 <echo>Checking build.properties file for Joomla 2.5 and Joomla 3.4 support properties</echo>
                                 <if>
-                                    <contains string="${joomla25.support}" substring="${" />
+                                    <contains string="${test.container.joomla25}" substring="${" />
                                     <then>
-                                        <echo file="${project.path}/build.properties" append="true">${line.separator}joomla25.support=1</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.joomla25=1</echo>
                                     </then>
                                 </if>
                                 <if>
-                                    <contains string="${joomla34.support}" substring="${" />
+                                    <contains string="${test.container.joomla34}" substring="${" />
                                     <then>
-                                        <echo file="${project.path}/build.properties" append="true">${line.separator}joomla34.support=1</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.joomla34=1</echo>
                                     </then>
                                 </if>
 
