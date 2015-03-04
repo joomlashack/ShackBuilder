@@ -216,4 +216,22 @@ class AAAExtensionInstallerCest extends ExtensionInstallerAbstractCest
         </delete>
         <mkdir dir="${project.path}/tests/_output" />
     </target>
+
+    <target name="codecept">
+        <trycatch property="catchOutputBootstrap">
+            <try>
+                <!-- Run the Codeception bootstrap -->
+                <exec command="docker run -d -v ${project.path}:/project -v ${builder.path}:/builder -m ${memory} alledia/codeception" returnProperty="container.result" outputProperty="container.id" />
+                <exec command="docker exec ${container.id} codecept ${params}" outputProperty="container.output" />
+
+                <echo>${container.output}</echo>
+            </try>
+            <catch>
+                <echo level="error">${catchOutputBootstrap}</echo>
+            </catch>
+            <finally>
+                <exec command="docker rm -f ${container.id}" />
+            </finally>
+        </trycatch>
+    </target>
 </project>
