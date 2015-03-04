@@ -115,19 +115,28 @@
                             <then>
                                 <echo>Codeception is bootstrapped successfully</echo>
                                 <!-- Check the build.properties file -->
-                                <echo>Checking build.properties file for Joomla 2.5 and Joomla 3.4 support properties</echo>
+                                <echo>Checking build.properties file for test container properties</echo>
                                 <if>
-                                    <contains string="${test.container.joomla25}" substring="${" />
+                                    <contains string="${test.containers}" substring="${" />
                                     <then>
-                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.joomla25=1</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}########################################################################</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}# Test's configuration</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}########################################################################</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.containers=joomla25,joomla34</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}# Images</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.image.joomla25=alledia/joomla-codeception:2.5.28</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.image.joomla34=alledia/joomla-codeception:3.4.0</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}# Groups</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.groups.joomla25=all</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.groups.joomla34=all</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}########################################################################</echo>
                                     </then>
                                 </if>
-                                <if>
-                                    <contains string="${test.container.joomla34}" substring="${" />
-                                    <then>
-                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.joomla34=1</echo>
-                                    </then>
-                                </if>
+
+                                <!-- Updates the global settings file -->
+                                <echo file="${project.path}/codeception.yml" append="true">${line.separator}groups:</echo>
+                                <echo file="${project.path}/codeception.yml" append="true">${line.separator}    all:</echo>
+                                <echo file="${project.path}/codeception.yml" append="true">${line.separator}        - tests/acceptance/ExtensionInstallerCest.php</echo>
 
                                 <!-- Creates the acceptance.suite.yml file-->
                                 <echo>Creating the default acceptance.suite.yml file</echo>
@@ -160,12 +169,12 @@ modules:
                                 <echo file="${project.path}/tests/_bootstrap.php" append="true">${line.separator}// Load the bootstrap file from Alledia Builder${line.separator}require_once '/builder/src/codeception/_bootstrap.php';</echo>
 
                                 <!-- Create the installer acceptance test -->
-                                <echo file="${project.path}/tests/acceptance/AAAExtensionInstallerCest.php"><![CDATA[<?php
+                                <echo file="${project.path}/tests/acceptance/ExtensionInstallerCest.php"><![CDATA[<?php
 use \AcceptanceTester;
 
 require_once ALLEDIA_BUILDER_PATH . '/src/codeception/acceptance/ExtensionInstallerAbstractCest.php';
 
-class AAAExtensionInstallerCest extends ExtensionInstallerAbstractCest
+class ExtensionInstallerCest extends ExtensionInstallerAbstractCest
 {
 
 }
@@ -189,9 +198,7 @@ class AAAExtensionInstallerCest extends ExtensionInstallerAbstractCest
     </target>
 
     <target name="test-cleanup">
-        <echo>Removing the docker containers, if found</echo>
-        <exec command="docker rm -f allediabuilder_${project.name.long}_j25_tests" />
-        <exec command="docker rm -f allediabuilder_${project.name.long}_j34_tests" />
+        <foreach_parallel list="${test.containers}" param="container.alias" target="_test-cleanup-container" delimiter="," threadCount="2" />
 
         <echo>Cleaning the _output folder</echo>
         <delete quiet="true" includeemptydirs="true">
@@ -200,6 +207,11 @@ class AAAExtensionInstallerCest extends ExtensionInstallerAbstractCest
             </fileset>
         </delete>
         <mkdir dir="${project.path}/tests/_output" />
+    </target>
+
+    <target name="_test-cleanup-container">
+        <echo>Removing the docker container for ${container.alias}, if found</echo>
+        <exec command="docker rm -f allediabuilder_tests_${project.name.long}_${container.alias}" />
     </target>
 
     <target name="codecept">
