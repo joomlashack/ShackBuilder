@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Tester" default="test">
+
+    <taskdef name="getcodeceptiongroupsparam" classname="GetCodeceptionGroupsParamTask" />
+
     <!-- TODO: Split tests into groups and run them in parallel. Keep the install extension test in a group and commit the container to reuse in the next tests
      http://codeception.com/docs/07-AdvancedUsage#Groups, http://codeception.com/docs/12-ParallelExecution#Step-1-Split-Tests -->
     <property name="memory" value="512MB" />
+    <property name="params" value="" />
 
     <target name="test">
         <!-- Build a package to be tested -->
@@ -15,85 +19,66 @@
         <delete dir="${project.path}/tests/_output/extension_installer" quiet="true" />
         <unzip file="${project.path}/tests/_output/extension_installer.zip" todir="${project.path}/tests/_output/extension_installer" />
 
-        <parallel threadCount="2">
-            <phingcall target="test-in-joomla">
-                <property name="joomla.version" value="25" />
-            </phingcall>
+        <foreach_parallel list="${test.containers}" param="container.alias" target="run-test-in-container" delimiter="," threadCount="2" />
 
-            <phingcall target="test-in-joomla">
-                <property name="joomla.version" value="34" />
-            </phingcall>
-        </parallel>
-
-        <!-- Show tests result warning for Joomla 25 -->
-        <if>
-            <available file="${project.path}/tests/_output/j25.success" />
-            <then>
-                <echo level="warning">Results for j25: Good Job! :)  Your tests passed successfully!</echo>
-            </then>
-            <else>
-                <echo level="error">Results for j25: Oh man :(  I have detected errors or failed tests: tests/_output/report_joomla25.html</echo>
-            </else>
-        </if>
-
-        <!-- Show tests result warning for Joomla 34 -->
-        <if>
-            <available file="${project.path}/tests/_output/j34.success" />
-            <then>
-                <echo level="warning">Results for j34: Good Job! :)  Your tests passed successfully!</echo>
-            </then>
-            <else>
-                <echo level="error">Results for j34: Oh man :(  I have detected errors or failed tests: tests/_output/report_joomla34.html</echo>
-            </else>
-        </if>
+        <foreach list="${test.containers}" param="container.alias" target="show-test-results" />
     </target>
 
-    <target name="test-in-joomla">
-        <property name="line.prefix" value="j${joomla.version} :::" />
-        <property name="success.file" value="${project.path}/tests/_output/j${joomla.version}.success" />
+    <target name="run-test-in-container">
+        <property name="line.prefix" value="${container.alias} :::" />
+        <property name="success.file" value="${project.path}/tests/_output/${container.alias}.success" />
+        <!-- Load a docker container from alledia/joomlaXXtests to run the tests -->
+        <property name="container.name" value="allediabuilder_tests_${project.name.long}_${container.alias}" />
+        <trycatch property="catchOutput">
+            <try>
+                <echo>${line.prefix} Wait... preparing the test environment for ${container.alias}</echo>
+                <delete file="${success.file}" quiet="true" />
+                <echo level="debug">${line.prefix} Preparing the container...</echo>
+                <exec command="docker rm -f ${container.name}" />
+                <exec command="docker run -m ${memory} -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder -v ${project.path}/tests/_output/run/${container.alias}_mysqld:/run/mysqld ${test.container.image.${container.alias}}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
+
+                <echo level="debug">${line.prefix} Container info: ${container.name} (${container.id})</echo>
+
+                <!-- Wait for MySQL to be ready -->
+                <echo level="debug">${line.prefix} Waiting for the MySQL service to be ready...</echo>
+                <waitfor maxwaitunit="second" maxwait="60">
+                    <available file="${project.path}/tests/_output/run/${container.alias}_mysqld/mysqld.pid" />
+                </waitfor>
+
+                <!-- Convert groups into codeception param -->
+                <getcodeceptiongroupsparam property="test.groups" groups="${test.container.groups.${container.alias}}" />
+
+                <!-- Install the package into the container running a test -->
+                <echo>${line.prefix} Hold on, running the extension's tests in ${container.alias}...</echo>
+
+                <exec command="docker exec ${container.name} codecept run ${params} ${test.groups} --no-colors --html /project/tests/_output/report_${container.alias}.html -c /project" returnProperty="tests.result" outputProperty="tests.output" checkreturn="true" />
+
+                <echo level="debug">${line.prefix} ${tests.output}</echo>
+                <echo file="${success.file}">1</echo>
+            </try>
+            <catch>
+                <!-- Error/Exception found -->
+                <echo level="error">${line.prefix} Error/failure: ${line.separator}${catchOutput}${line.separator}${line.separator}Command: ${line.separator}Output: ${tests.output}</echo>
+            </catch>
+            <finally>
+                <!-- Stop and remove the containers -->
+                <echo level="debug">${line.prefix} Removing container ${container.name} (${container.id})</echo>
+                <exec command="docker rm -f ${container.id}" />
+                <delete dir="${project.path}/tests/_output/run/${container.alias}_mysqld" quiet="true" />
+            </finally>
+        </trycatch>
+    </target>
+
+    <target name="show-test-results">
+        <!-- Show tests result warning -->
         <if>
-            <equals arg1="${test.container.joomla${joomla.version}}" arg2="1"/>
+            <available file="${project.path}/tests/_output/${container.alias}.success" />
             <then>
-                <!-- Load a docker container from alledia/joomlaXXtests to run the tests -->
-                <property name="container.name" value="allediabuilder_${project.name.long}_j${joomla.version}_tests" />
-                <trycatch property="catchOutput">
-                    <try>
-                        <echo>${line.prefix} Wait... preparing the test environment for j${joomla.version}</echo>
-                        <delete file="${success.file}" quiet="true" />
-                        <echo level="debug">${line.prefix} Cleanup existent containers...</echo>
-                        <exec command="docker rm -f ${container.name}" />
-                        <exec command="docker run -m ${memory} -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder -v ${project.path}/tests/_output/run/j${joomla.version}_mysqld:/run/mysqld alledia/joomla-codeception:joomla${joomla.version}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
-
-                        <echo level="debug">${line.prefix} Started a new container tests: ${container.name} (${container.id})</echo>
-
-                        <!-- Delay of 10s waiting for MySQL to be ready - TODO: Change for a real service status checker -->
-                        <echo level="debug">${line.prefix} Waiting for the MySQL to be ready...</echo>
-
-                        <!-- Wait for MySQL to be ready -->
-                        <waitfor maxwaitunit="second" maxwait="20">
-                            <available file="${project.path}/tests/_output/run/j${joomla.version}_mysqld/mysqld.pid" />
-                        </waitfor>
-
-                        <!-- Install the package into the container running a test -->
-                        <echo>${line.prefix} Hold on, running the extension's tests in j${joomla.version}...</echo>
-
-                        <exec command="docker exec ${container.name} codecept run ${params} --no-colors --html /project/tests/_output/report_joomla${joomla.version}.html -c /project" returnProperty="tests.result" outputProperty="tests.output" checkreturn="true" />
-
-                        <echo level="debug">${line.prefix} ${tests.output}</echo>
-                        <echo file="${success.file}">1</echo>
-                    </try>
-                    <catch>
-                        <!-- Error/Exception found -->
-                        <echo level="error">${line.prefix} Error/failure: ${line.separator}${catchOutput}${line.separator}${line.separator}Command: ${line.separator}Output: ${tests.output}</echo>
-                    </catch>
-                    <finally>
-                        <!-- Stop and remove the containers -->
-                        <echo level="debug">${line.prefix} Removing the container ${container.id}</echo>
-                        <exec command="docker rm -f ${container.id}" />
-                        <delete dir="${project.path}/tests/_output/run/j${joomla.version}_mysqld" quiet="true" />
-                    </finally>
-                </trycatch>
+                <echo level="warning">Results for ${container.alias}: Good Job! :)  Your tests passed successfully!</echo>
             </then>
+            <else>
+                <echo level="error">Results for ${container.alias}: Oh man :(  I have detected errors or failed tests: tests/_output/report_${container.alias}.html</echo>
+            </else>
         </if>
     </target>
 
