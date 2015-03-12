@@ -5,6 +5,17 @@
     <!-- Display basic information -->
     <echo message="Version ${builder.version} for Joomla! extensions"/>
 
+    <!-- Global properties -->
+    <if>
+        <available file="${builder.path}/global.properties" type="file" />
+        <then>
+            <property file="${builder.path}/global.properties" />
+        </then>
+        <else>
+            <property name="builder.thread.count" value="2" />
+        </else>
+    </if>
+
     <!-- Include the external tasks -->
     <includepath classpath="${builder.path}/src/tasks"/>
     <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask"/>
