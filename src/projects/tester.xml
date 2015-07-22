@@ -19,7 +19,15 @@
         <delete dir="${project.path}/tests/_output/extension_installer" quiet="true" />
         <unzip file="${project.path}/tests/_output/extension_installer.zip" todir="${project.path}/tests/_output/extension_installer" />
 
-        <foreach_parallel list="${test.containers}" param="container.alias" target="run-test-in-container" delimiter="," threadCount="${builder.thread.count}" />
+        <if>
+            <istrue value="${capabilities.parallel}"/>
+            <then>
+                <foreach_parallel list="${test.containers}" param="container.alias" target="run-test-in-container" delimiter="," threadCount="${builder.thread.count}" />
+            </then>
+            <else>
+                <foreach list="${test.containers}" param="container.alias" target="run-test-in-container" delimiter="," />
+            </else>
+        </if>
 
         <foreach list="${test.containers}" param="container.alias" target="show-test-results" />
     </target>
@@ -198,7 +206,15 @@ class ExtensionInstallerCest extends ExtensionInstallerAbstractCest
     </target>
 
     <target name="test-cleanup">
-        <foreach_parallel list="${test.containers}" param="container.alias" target="_test-cleanup-container" delimiter="," threadCount="${builder.thread.count}" />
+        <if>
+            <istrue value="${capabilities.parallel}"/>
+            <then>
+                <foreach_parallel list="${test.containers}" param="container.alias" target="_test-cleanup-container" delimiter="," threadCount="${builder.thread.count}" />
+            </then>
+            <else>
+                <foreach list="${test.containers}" param="container.alias" target="_test-cleanup-container" delimiter="," />
+            </else>
+        </if>
 
         <echo>Cleaning the _output folder</echo>
         <delete quiet="true" includeemptydirs="true">

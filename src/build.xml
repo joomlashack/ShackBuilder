@@ -16,6 +16,11 @@
         </else>
     </if>
 
+    <!-- check capabilities -->
+    <php function="extension_loaded" returnProperty="capabilities.parallel">
+        <param value="pcntl"/>
+    </php>
+
     <!-- Include the external tasks -->
     <includepath classpath="${builder.path}/src/tasks"/>
     <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask"/>
