@@ -162,11 +162,16 @@
         <foreach_parallel list="${project.includes}" param="include" target="pack-includes" delimiter="," threadCount="${builder.thread.count}" />
 
         <!-- Copy the free source folder to a temporary location -->
-        <copy todir="${packages.tmp.path}" overwrite="true">
-            <fileset dir="${project.free.source.path}" id="free-code">
-                <include name="**"/>
-            </fileset>
-        </copy>
+        <if>
+           <equals arg1="${project.hasFreeVersion}" arg2="1"/>
+           <then>
+                <copy todir="${packages.tmp.path}" overwrite="true">
+                    <fileset dir="${project.free.source.path}" id="free-code">
+                        <include name="**"/>
+                    </fileset>
+                </copy>
+           </then>
+        </if>
 
         <!-- Pro extensions -->
         <if>

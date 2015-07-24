@@ -45,21 +45,26 @@
 
     <!-- Set the free extension path -->
     <if>
-        <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+        <equals arg1="${project.hasFreeVersion}" arg2="1"/>
         <then>
             <if>
-                <isset property="project.${composer.extra.name}.path"/>
+                <equals arg1="${composer.extra.package-license}" arg2="pro"/>
                 <then>
-                    <property name="project.free.source.path" value="${project.${composer.extra.name}.path}/src"/>
+                    <if>
+                        <isset property="project.${composer.extra.name}.path"/>
+                        <then>
+                            <property name="project.free.source.path" value="${project.${composer.extra.name}.path}/src"/>
+                        </then>
+                        <else>
+                            <fail message="Missed project.${composer.extra.name}.path property"/>
+                        </else>
+                    </if>
                 </then>
                 <else>
-                    <fail message="Missed project.${composer.extra.name}.path property"/>
+                    <property name="project.free.source.path" value="${project.source.path}"/>
                 </else>
             </if>
         </then>
-        <else>
-            <property name="project.free.source.path" value="${project.source.path}"/>
-        </else>
     </if>
 
     <!-- Check if we are building the package directly or as a related extension -->
