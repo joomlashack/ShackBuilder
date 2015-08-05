@@ -58,7 +58,15 @@
     </target>
 
     <target name="check-repo-status-for-projects">
-        <foreach_parallel list="${projects}" param="subproject" target="check-repo-status" delimiter="," threadCount="${builder.thread.count}" />
+        <if>
+            <istrue value="${capabilities.parallel}"/>
+            <then>
+                <foreach_parallel list="${projects}" param="subproject" target="check-repo-status" delimiter="," threadCount="${builder.thread.count}" />
+            </then>
+            <else>
+                <foreach list="${projects}" param="subproject" target="check-repo-status" delimiter=","/>
+            </else>
+        </if>
     </target>
 
     <target name="check-repo-status">
