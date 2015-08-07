@@ -33,12 +33,13 @@ class SetversionTask extends Task
     protected $property;
 
     /* Regex to match for version number */
-    const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)([^<]*)(</version>)#m';
+    const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)(\.?(\d*))([^<]*)?(</version>)#m';
 
     /* Allowed Releastypes */
     const RELEASETYPE_MAJOR  = 'MAJOR';
     const RELEASETYPE_MINOR  = 'MINOR';
     const RELEASETYPE_BUGFIX = 'BUGFIX';
+    const RELEASETYPE_BUILD  = 'BUILD';
 
     /**
      * Set Property for Releasetype (Minor, Major, Bugfix)
@@ -118,7 +119,7 @@ class SetversionTask extends Task
 
         // Extract version
         preg_match(self::REGEX, $filecontent, $match);
-        list(,,$major, $minor, $bugfix, $add) = $match;
+        list(,,$major, $minor, $bugfix,, $build, $add) = $match;
 
         // Return new version number
         switch ($this->releasetype) {
@@ -148,6 +149,25 @@ class SetversionTask extends Task
                     ++$bugfix
                 );
                 break;
+
+            case self::RELEASETYPE_BUILD:
+                $newVersion = sprintf(
+                    "%d.%d.%d",
+                    $major,
+                    $minor,
+                    $bugfix
+                );
+
+                if (empty($build)) {
+                    $build = 0;
+                }
+
+                $build++;
+                break;
+        }
+
+        if (!empty($build)) {
+            $newVersion .= ".{$build}";
         }
 
         return $newVersion . $add;
@@ -169,7 +189,8 @@ class SetversionTask extends Task
         $releaseTypes = array(
             self::RELEASETYPE_MAJOR,
             self::RELEASETYPE_MINOR,
-            self::RELEASETYPE_BUGFIX
+            self::RELEASETYPE_BUGFIX,
+            self::RELEASETYPE_BUILD
         );
 
         if (!in_array($this->releasetype, $releaseTypes)) {

@@ -16,6 +16,17 @@
         </if>
     </target>
 
+    <!-- Create New Release and package for development -->
+    <target name="build-dev" description="Update version/creation and create IDed package with build number">
+        <property name="release.type" value="BUILD" override="true"/>
+        <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version"/>
+        <phingcall target="update-creation"/>
+
+        <phingcall target="package">
+            <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
+        </phingcall>
+    </target>
+
     <!-- Create Current Release and package -->
     <target name="build" description="Generate package file for current version">
         <property name="manifest.version" value="0.0.0" override="false"/>
@@ -309,10 +320,11 @@
             1. Major
             2. Minor
             3. Bugfix
+            4. Build
         ]]></echo>
         <input
             propertyName="release.id"
-            validArgs="0, 1, 2, 3"
+            validArgs="0, 1, 2, 3, 4"
             message="Release Type: "/>
 
         <if>
@@ -330,6 +342,12 @@
                 <equals arg1="${release.id}" arg2="3"/>
                 <then>
                     <property name="release.type" value="bugfix"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${release.id}" arg2="4"/>
+                <then>
+                    <property name="release.type" value="build"/>
                 </then>
             </elseif>
         </if>
