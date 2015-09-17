@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Alledia Include Phing Builder" default="build">
-    <property name="builder.version" value="3.2.0"/>
+    <property name="builder.version" value="3.4.0"/>
 
     <!-- Display basic information -->
     <echo message="Version ${builder.version} for includes"/>
