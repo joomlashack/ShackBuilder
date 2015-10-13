@@ -101,8 +101,16 @@
                     </then>
                 </if>
 
+                <!-- Check if we have a custom destination for this include -->
+                <if>
+                    <contains string="${project.includes.${include}.destination}" substring="${"/>
+                    <then>
+                        <property name="project.includes.${include}.destination" value="" override="true" />
+                    </then>
+                </if>
+
                 <!-- Run the include phing script -->
-                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path} -logger phing.listener.DefaultLogger -Dproject.type=${project.type}" logoutput="true" checkreturn="true"/>
+                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path}/${project.includes.${include}.destination} -logger phing.listener.DefaultLogger -Dproject.type=${project.type}" logoutput="true" checkreturn="true"/>
             </then>
         </if>
     </target>
