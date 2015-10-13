@@ -36,7 +36,14 @@
         </else>
     </if>
 
-    <property name="project.src.path" value="${project.path}/src"/>
+    <!-- Check what folder is the source folder -->
+    <if>
+        <contains string="${include.source}" substring="${"/>
+        <then>
+            <property name="include.source" value="src/" override="true" />
+        </then>
+    </if>
+    <property name="project.src.path" value="${project.path}/${include.source}"/>
 
     <!-- Copy all files from /src to the destination folder -->
     <target name="copy" description="Copy files">

@@ -101,6 +101,14 @@
                     </then>
                 </if>
 
+                <!-- Check if we have a custom source for this include. If not, use src/ -->
+                <if>
+                    <contains string="${project.includes.${include}.source}" substring="${"/>
+                    <then>
+                        <property name="project.includes.${include}.source" value="src/" override="true" />
+                    </then>
+                </if>
+
                 <!-- Check if we have a custom destination for this include -->
                 <if>
                     <contains string="${project.includes.${include}.destination}" substring="${"/>
@@ -110,7 +118,7 @@
                 </if>
 
                 <!-- Run the include phing script -->
-                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path}/${project.includes.${include}.destination} -logger phing.listener.DefaultLogger -Dproject.type=${project.type}" logoutput="true" checkreturn="true"/>
+                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path}/${project.includes.${include}.destination} -logger phing.listener.DefaultLogger -Dproject.type=${project.type} -Dinclude.source=${project.includes.${include}.source}" logoutput="true" checkreturn="true"/>
             </then>
         </if>
     </target>
