@@ -93,6 +93,15 @@ class IncludesTask extends Task
         if (!empty($xml->alledia->include)) {
             foreach ($xml->alledia->include as $include) {
                 $includes[] = (string)$include;
+
+                $attributes = $include->attributes();
+                foreach ($attributes as $key => $value) {
+                    $value = (string)$value;
+
+                    if (!empty($value)) {
+                        $this->project->setProperty($this->property . '.' . (string)$include . '.' . $key, $value);
+                    }
+                }
             }
 
             $ignore = array();
