@@ -16,6 +16,17 @@
         </if>
     </target>
 
+    <!-- Create New Release and package for development -->
+    <target name="build-dev" description="Update version/creation and create IDed package with build number">
+        <property name="release.type" value="BUILD" override="true"/>
+        <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version"/>
+        <phingcall target="update-creation"/>
+
+        <phingcall target="package">
+            <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
+        </phingcall>
+    </target>
+
     <!-- Create Current Release and package -->
     <target name="build" description="Generate package file for current version">
         <property name="manifest.version" value="0.0.0" override="false"/>
@@ -90,8 +101,16 @@
                     </then>
                 </if>
 
+                <!-- Check if we have a custom destination for this include -->
+                <if>
+                    <contains string="${project.includes.${include}.destination}" substring="${"/>
+                    <then>
+                        <property name="project.includes.${include}.destination" value="" override="true" />
+                    </then>
+                </if>
+
                 <!-- Run the include phing script -->
-                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path} -logger phing.listener.DefaultLogger -Dproject.type=${project.type}" logoutput="true" checkreturn="true"/>
+                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path}/${project.includes.${include}.destination} -logger phing.listener.DefaultLogger -Dproject.type=${project.type}" logoutput="true" checkreturn="true"/>
             </then>
         </if>
     </target>
@@ -159,14 +178,27 @@
         </if>
 
         <!-- Copy the resources specified by the include tag -->
-        <foreach list="${project.includes}" param="include" target="pack-includes" delimiter=","/>
+        <if>
+            <istrue value="${capabilities.parallel}"/>
+            <then>
+                <foreach_parallel list="${project.includes}" param="include" target="pack-includes" delimiter="," threadCount="${builder.thread.count}" />
+            </then>
+            <else>
+                <foreach list="${project.includes}" param="include" target="pack-includes" delimiter="," />
+            </else>
+        </if>
 
         <!-- Copy the free source folder to a temporary location -->
-        <copy todir="${packages.tmp.path}" overwrite="true">
-            <fileset dir="${project.free.source.path}" id="free-code">
-                <include name="**"/>
-            </fileset>
-        </copy>
+        <if>
+           <equals arg1="${project.hasFreeVersion}" arg2="1"/>
+           <then>
+                <copy todir="${packages.tmp.path}" overwrite="true">
+                    <fileset dir="${project.free.source.path}" id="free-code">
+                        <include name="**"/>
+                    </fileset>
+                </copy>
+           </then>
+        </if>
 
         <!-- Pro extensions -->
         <if>
@@ -206,7 +238,15 @@
         </if>
 
         <!-- Pack related extensions -->
-        <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter=","/>
+        <if>
+            <istrue value="${capabilities.parallel}"/>
+            <then>
+                <foreach_parallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}" />
+            </then>
+            <else>
+                <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," />
+            </else>
+        </if>
 
         <!-- PHP Lint -->
         <phplint haltonfailure="true">
@@ -288,10 +328,11 @@
             1. Major
             2. Minor
             3. Bugfix
+            4. Build
         ]]></echo>
         <input
             propertyName="release.id"
-            validArgs="0, 1, 2, 3"
+            validArgs="0, 1, 2, 3, 4"
             message="Release Type: "/>
 
         <if>
@@ -309,6 +350,12 @@
                 <equals arg1="${release.id}" arg2="3"/>
                 <then>
                     <property name="release.type" value="bugfix"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${release.id}" arg2="4"/>
+                <then>
+                    <property name="release.type" value="build"/>
                 </then>
             </elseif>
         </if>

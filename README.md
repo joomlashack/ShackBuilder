@@ -5,15 +5,22 @@ Alledia Builder
 
 Common Build Scripts to build our extensions.
 
-## Setup and environment
+## Requirements
 
-Make sure you heve phing [installed and configured](http://www.phing.info/trac/wiki/Users/Installation).
+* Phing
+* Docker (for the tests)
+ * alledia/codeception
+ * alledia/joomla-codeception:joomla25
+ * alledia/joomla-codeception:joomla34
 
 ### Phing properties
 
 Create a new file on your project folder, name as `build.properties`. By default the only required settings are:
 
     builder.path=/path/to/AllediaBuilder/local/copy
+    test.container.joomla25=1
+    test.container.joomla34=1
+
 
 #### Optional properties
 
@@ -199,15 +206,114 @@ Your extensions can override any file and add a new one: body_*.
 
     $this->version, etc...
 
+## Tests
+
+You will be able to create unit, integration, functional or acceptance tests using Codeception. You don't need to have codeception installed, since it is embeded in a Docker container.
+
+For now we support parallel tests for:
+
+* Joomla 2.5.28
+* Joomla 3.4.0-rc
+
+### Requirements
+
+Install Docker and pull the alledia images:
+
+    $ docker pull alledia/codeception
+    $ docker pull alledia/joomla-codeception:joomla25
+    $ docker pull alledia/joomla-codeception:joomla34
+
+You don't need to have codeception installed locally, since it will run inside the containers.
+
+### Creating tests
+
+If you already have PHPUnit or Codeception tests in your project, rename the `./tests` and `codeception.yml` to anything else, as backup.
+Now, run the `test-bootstrap` target to configure the tests.
+
+    phing test-bootstrap
+
+This command does more than run `codecept bootstrap`. It will try to make sure you have the required settings and create the bootstrap file and basic installer tests. So please, do not run `codecept bootstrap` manually.
+
+You can now move your PHPUnit/Codeception tests from the backup or create your own tests based on Codeception.
+
+What this command does?
+
+* Run `codeception bootstrap`
+* Make sure you have `test.container.joomla25=1` in your `build.properties` file
+* Make sure you have `test.container.joomla34=1` in your `build.properties` file
+* Customize tests/acceptance.suite.yml file
+* Customize tests/_bootstrap.php
+
+You can choose what joomla version you want to run just customizing the `test.container.joomla25` property.
+
+### Running tests
+
+It is able to run Codeception tests from the project in multiple versions of Joomla at the same time in parallel.
+It starts two Docker containers for each Joomla, running PhantomJS and a LAMP + Codeception environment where it runs Joomla.
+
+Use the following command to start the tests, instead of call codeception directly:
+
+    $ phing test
+
+It will use PhantomJS to run headless acceptance tests. To check how the screen is rendered, you can trigger screenshots at any time, using:
+
+    $I->makeScreenshot();
+
+They are saved in the **./tests/_output/debug/** folder.
+
+#### Tests arguments (optional)
+
+* memory: used to set the memory available for the container (default: 512MB).
+* params: codeception params (default: none)
+
+How to use?
+
+    $ phing test -Dmemory=1GB -Dparams="unit path/to/TestClass:testMethod --debug"
+
+#### Tests results
+
+You have the tests results printed on the terminal, but they are exported as HTML to:
+
+* /path/to/project/tests/_output/report_joomla25.html
+* /path/to/project/tests/_output/report_joomla34.html
+
+In case of errors for the acception tests, you will have a screenshot of the screen available in:
+
+* /path/to/project/tests/_output/ClassName.testName.fail.html
+* /path/to/project/tests/_output/ClassName.testName.fail.png
+
+As we are testing multiple versions of Joomla in parallel, if a test fails for both versions you will have the screenshot only for the Joomla that last failed.
+
+#### Tests cleanup
+
+If you had any exception while running your tests and are seeing some odd error messages, try to cleanup things, removing the docker containers and cleaning the tests/_output/ folder. Use the command:
+
+    $ phing test-cleanup
+
+### Tests Workflow
+
+By running the command `phing test` the script will execute the following steps:
+
+* Build an installer package for the project using the current version, grabbing all dependencies
+* Start docker containers for each Joomla version your extension support
+* Run the following steps in parallel, for each supported Joomla version
+ * Install the extension into the containerized Joomla, testing and looking for error messages (You can customize this test)
+ * Run your test suites
+ * Build a HTML report with the tests result
+ * Close and remove the containers
+
 ## How to use
 
 To build the extension packages, go inside the extension folder you want to build and run the command:
 
-    $ phing build
+    $ phing <target>
 
-## Main tasks
+### Available targets
 
-* build-new
 * build
+* build-new
 * symlink
 * unlink
+* test-bootstrap
+* test
+* test-cleanup

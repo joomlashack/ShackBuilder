@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Alledia Joomla Phing Builder" default="build">
-    <property name="builder.version" value="3.0.14"/>
+    <property name="builder.version" value="3.5.0"/>
 
     <!-- Display basic information -->
     <echo message="Version ${builder.version} for Joomla! extensions"/>
+
+    <!-- Global properties -->
+    <if>
+        <available file="${builder.path}/global.properties" type="file" />
+        <then>
+            <property file="${builder.path}/global.properties" />
+        </then>
+        <else>
+            <property name="builder.thread.count" value="2" />
+        </else>
+    </if>
+
+    <!-- check capabilities -->
+    <php function="extension_loaded" returnProperty="capabilities.parallel">
+        <param value="pcntl"/>
+    </php>
 
     <!-- Include the external tasks -->
     <includepath classpath="${builder.path}/src/tasks"/>
@@ -13,6 +29,7 @@
     <taskdef name="mergefiles" classname="MergeFilesTask"/>
     <taskdef name="getrelatedextensions" classname="RelatedExtensionsTask"/>
     <taskdef name="getincludes" classname="IncludesTask"/>
+    <taskdef name="foreach_parallel" classname="ForeachParallelTask" />
 
     <!-- Properties -->
     <!-- Try to get the project path from the build.properties, for deployment environment -->
@@ -33,21 +50,26 @@
 
     <!-- Set the free extension path -->
     <if>
-        <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+        <equals arg1="${project.hasFreeVersion}" arg2="1"/>
         <then>
             <if>
-                <isset property="project.${composer.extra.name}.path"/>
+                <equals arg1="${composer.extra.package-license}" arg2="pro"/>
                 <then>
-                    <property name="project.free.source.path" value="${project.${composer.extra.name}.path}/src"/>
+                    <if>
+                        <isset property="project.${composer.extra.name}.path"/>
+                        <then>
+                            <property name="project.free.source.path" value="${project.${composer.extra.name}.path}/src"/>
+                        </then>
+                        <else>
+                            <fail message="Missed project.${composer.extra.name}.path property"/>
+                        </else>
+                    </if>
                 </then>
                 <else>
-                    <fail message="Missed project.${composer.extra.name}.path property"/>
+                    <property name="project.free.source.path" value="${project.source.path}"/>
                 </else>
             </if>
         </then>
-        <else>
-            <property name="project.free.source.path" value="${project.source.path}"/>
-        </else>
     </if>
 
     <!-- Check if we are building the package directly or as a related extension -->
