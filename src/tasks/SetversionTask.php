@@ -33,7 +33,7 @@ class SetversionTask extends Task
     protected $property;
 
     /* Regex to match for version number */
-    const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)(\+?(\d*))([^<]*)?(</version>)#m';
+    const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)(b?(\d*))([^<]*)?(</version>)#m';
 
     /* Allowed Releastypes */
     const RELEASETYPE_MAJOR  = 'MAJOR';
@@ -167,7 +167,7 @@ class SetversionTask extends Task
         }
 
         if (!empty($build)) {
-            $newVersion .= "+{$build}";
+            $newVersion .= "b{$build}";
         }
 
         return $newVersion . $add;
