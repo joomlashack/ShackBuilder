@@ -92,7 +92,20 @@ class RelatedExtensionsTask extends Task
 
         if (!empty($xml->alledia->relatedExtensions)) {
             foreach ($xml->alledia->relatedExtensions->extension as $extension) {
-                $extensions[] = (string)$extension;
+                $extensionName = (string)$extension;
+                $extensions[]  = $extensionName;
+
+                // Store in a property the element of each related extensions
+                $this->project->setProperty(
+                    $this->property . '.' . $extensionName . '.element',
+                    (string)$extension->attributes()->element
+                );
+
+                // Store in a property the flag to set update the extension's version on build
+                $this->project->setProperty(
+                    $this->property . '.' . $extensionName . '.updateversion',
+                    (string)$extension->attributes()->updateversion
+                );
             }
 
             $ignore = array();

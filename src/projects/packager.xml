@@ -52,6 +52,46 @@
         </phingcall>
     </target>
 
+    <!-- Set the version for the extension into a project -->
+    <target name="set-version-related-extensions">
+        <if>
+            <not>
+                <contains string="${extension}" substring="${"/>
+            </not>
+            <then>
+                <if>
+                    <equals arg1="${project.relatedExtensions.${extension}.updateversion}" arg2="true"/>
+                    <then>
+                        <echo>Updating version for: ${extension}</echo>
+
+                        <property name="extensions.path" value="${project.source.path}/extensions"/>
+
+                        <!-- Do we have this extension pre-packed? -->
+                        <if>
+                            <available file="${extensions.path}/${extension}" type="dir" />
+                            <then>
+                                <!-- Look for the manifest file of this internal extension -->
+                                <property name="extension.manifest" value="${extensions.path}/${extension}/${project.relatedExtensions.${extension}.element}.xml"/>
+                                <if>
+                                    <available file="${extension.manifest}"/>
+                                    <then>
+                                        <setversion releasetype="custom" file="${extension.manifest}" property="extension.version" customvalue="${manifest.version}"/>
+                                        <phingcall target="update-creation">
+                                            <property name="project.manifest" value="${extension.manifest}"/>
+                                        </phingcall>
+                                    </then>
+                                    <else>
+                                        <echo level= "warning">Manifest file not found: ${extension.manifest}</echo>
+                                    </else>
+                                </if>
+                            </then>
+                        </if>
+                    </then>
+                </if>
+            </then>
+        </if>
+    </target>
+
     <!-- Pack the extension into a project -->
     <target name="pack-related-extensions">
         <if>
@@ -266,9 +306,11 @@
         <if>
             <istrue value="${capabilities.parallel}"/>
             <then>
+                <foreach_parallel list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter="," threadCount="${builder.thread.count}" />
                 <foreach_parallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}" />
             </then>
             <else>
+                <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter="," />
                 <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," />
             </else>
         </if>
