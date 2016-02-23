@@ -55,7 +55,7 @@ class JoomlaDboHelper extends \Codeception\Module
         $db->setQuery("INSERT INTO `#__extensions`
                         (`extension_id`, `name`, `type`, `element`, `folder`, `client_id`, `enabled`, `access`, `protected`, `manifest_cache`, `params`, `custom_data`, `system_data`, `checked_out`, `checked_out_time`, `ordering`, `state`)
                         VALUES
-                            (NULL, '{$name}', '{$type}', '{$element}', '{$folder}', 1, 1, 0, 0, '{\"name\":\"{$name}\",\"type\":\"{$type}\",\"creationDate\":\"November 10, 2014\",\"author\":\"Alledia\",\"copyright\":\"Copyright (C) 2015 Alledia.com. All rights reserved.\",\"authorEmail\":\"hello@alledia.com\",\"authorUrl\":\"https:\\/\\/www.alledia.com\",\"version\":\"1.1.1-beta.2\",\"description\":\"Dumb extension for tests...\",\"group\":\"\"}', '{}', '{\"author\":\"Alledia\"}', '', 0, '0000-00-00 00:00:00', 0, 0);");
+                            (NULL, '{$name}', '{$type}', '{$element}', '{$folder}', 1, 1, 0, 0, '{\"name\":\"{$name}\",\"type\":\"{$type}\",\"creationDate\":\"November 10, 2014\",\"author\":\"Alledia\",\"copyright\":\"Copyright (C) 2016 Alledia.com. All rights reserved.\",\"authorEmail\":\"hello@alledia.com\",\"authorUrl\":\"https:\\/\\/www.alledia.com\",\"version\":\"1.1.1-beta.2\",\"description\":\"Dumb extension for tests...\",\"group\":\"\"}', '{}', '{\"author\":\"Alledia\"}', '', 0, '0000-00-00 00:00:00', 0, 0);");
 
         $db->execute();
 
