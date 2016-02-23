@@ -6,7 +6,7 @@
         <if>
             <isset property="release.type"/>
             <then>
-                <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version"/>
+                <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version" customvalue="${release.custom_version}"/>
                 <phingcall target="update-creation"/>
 
                 <phingcall target="package">
@@ -36,7 +36,7 @@
     <!-- Create New Release and package for development -->
     <target name="build-dev" description="Update version/creation and create IDed package with build number">
         <property name="release.type" value="BUILD" override="true"/>
-        <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version"/>
+        <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version" customvalue="${release.custom_version}"/>
         <phingcall target="update-creation"/>
 
         <phingcall target="package">
