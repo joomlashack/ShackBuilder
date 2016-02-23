@@ -16,6 +16,17 @@
         </if>
     </target>
 
+    <!-- Update version number without build -->
+    <target name="version" description="Update version/creation and create IDed package" depends="set-new-version">
+        <if>
+            <isset property="release.type"/>
+            <then>
+                <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version"/>
+                <phingcall target="update-creation"/>
+            </then>
+        </if>
+    </target>
+
     <!-- Create New Release and package for development -->
     <target name="build-dev" description="Update version/creation and create IDed package with build number">
         <property name="release.type" value="BUILD" override="true"/>
