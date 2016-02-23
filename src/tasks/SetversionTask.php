@@ -32,6 +32,11 @@ class SetversionTask extends Task
      */
     protected $property;
 
+    /**
+     * @var string $customValue
+     */
+    protected $customValue;
+
     /* Regex to match for version number */
     const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)(b?(\d*))([^<]*)?(</version>)#m';
 
@@ -40,6 +45,7 @@ class SetversionTask extends Task
     const RELEASETYPE_MINOR  = 'MINOR';
     const RELEASETYPE_BUGFIX = 'BUGFIX';
     const RELEASETYPE_BUILD  = 'BUILD';
+    const RELEASETYPE_CUSTOM = 'CUSTOM';
 
     /**
      * Set Property for Releasetype (Minor, Major, Bugfix)
@@ -75,6 +81,18 @@ class SetversionTask extends Task
     public function setProperty($property)
     {
         $this->property = $property;
+    }
+
+    /**
+     * Set custom value for version
+     *
+     * @param $property
+     *
+     * @return void
+     */
+    public function setCustomvalue($customValue)
+    {
+        $this->customValue = $customValue;
     }
 
     /**
@@ -164,6 +182,12 @@ class SetversionTask extends Task
 
                 $build++;
                 break;
+
+            case self::RELEASETYPE_CUSTOM:
+                $newVersion = $this->customValue;
+                $build = false;
+                $add = '';
+                break;
         }
 
         if (!empty($build)) {
@@ -190,7 +214,8 @@ class SetversionTask extends Task
             self::RELEASETYPE_MAJOR,
             self::RELEASETYPE_MINOR,
             self::RELEASETYPE_BUGFIX,
-            self::RELEASETYPE_BUILD
+            self::RELEASETYPE_BUILD,
+            self::RELEASETYPE_CUSTOM,
         );
 
         if (!in_array($this->releasetype, $releaseTypes)) {
@@ -238,6 +263,10 @@ class SetversionTask extends Task
             strlen($this->property) === 0
         ) {
             throw new BuildException('Property for publishing version number is not set', $this->location);
+        }
+
+        if ($this->releasetype === self::RELEASETYPE_CUSTOM && is_null($this->customValue) ) {
+            throw new BuildException('Property for custom value is not set', $this->customValue);
         }
     }
 

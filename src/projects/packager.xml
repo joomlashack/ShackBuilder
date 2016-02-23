@@ -16,12 +16,18 @@
         </if>
     </target>
 
+    <!-- Get version number without build -->
+    <target name="version" description="Get the version from the current source">
+        <echo>Current version: ${manifest.version}</echo>
+        <echo>Creation date: ${manifest.creationDate}</echo>
+    </target>
+
     <!-- Update version number without build -->
-    <target name="version" description="Update version/creation and create IDed package" depends="set-new-version">
+    <target name="set-version" description="Update version/creation and create IDed package" depends="set-new-version">
         <if>
             <isset property="release.type"/>
             <then>
-                <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version"/>
+                <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version" customvalue="${release.custom_version}"/>
                 <phingcall target="update-creation"/>
             </then>
         </if>
@@ -348,10 +354,11 @@
             2. Minor
             3. Bugfix
             4. Build
+            5. Custom
         ]]></echo>
         <input
             propertyName="release.id"
-            validArgs="0, 1, 2, 3, 4"
+            validArgs="0, 1, 2, 3, 4, 5"
             message="Release Type: "/>
 
         <if>
@@ -375,6 +382,16 @@
                 <equals arg1="${release.id}" arg2="4"/>
                 <then>
                     <property name="release.type" value="build"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${release.id}" arg2="5"/>
+                <then>
+                    <property name="release.type" value="custom"/>
+                    <input
+                        propertyName="release.custom_version"
+                        defaultValue="${manifest.version}"
+                        message="Custom version: "/>
                 </then>
             </elseif>
         </if>
