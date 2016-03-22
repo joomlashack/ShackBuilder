@@ -286,6 +286,15 @@
                 <!-- Pack the tmp folder -->
                 <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
 
+                <!-- Check if we want to move the new package to a new destination -->
+                <if>
+                    <equals arg1="${project.movePackage}" arg2="1"/>
+                    <then>
+                        <echo>Moving package...</echo>
+                        <move file="${packages.path}/${package.file}" tofile="${project.movePackageTo}/${package.file}" overwrite="true" />
+                    </then>
+                </if>
+
                 <!-- Remove tmp folder -->
                 <if>
                     <not>
