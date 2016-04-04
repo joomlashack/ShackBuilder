@@ -335,6 +335,8 @@
                 <phingcall target="show-branches">
                     <property name="projects" value="${projects},${project.relatedExtensions},${project.includes}" />
                 </phingcall>
+
+                <echo>Version: ${manifest.version}</echo>
             </then>
         </if>
 
