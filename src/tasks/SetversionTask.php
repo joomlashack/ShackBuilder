@@ -38,14 +38,16 @@ class SetversionTask extends Task
     protected $customValue;
 
     /* Regex to match for version number */
-    const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)(b?(\d*))([^<]*)?(</version>)#m';
+    const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)(?:(a|b|rc)?(\d*))([^<]*)?(</version>)#m';
 
     /* Allowed Releastypes */
-    const RELEASETYPE_MAJOR  = 'MAJOR';
-    const RELEASETYPE_MINOR  = 'MINOR';
-    const RELEASETYPE_BUGFIX = 'BUGFIX';
-    const RELEASETYPE_BUILD  = 'BUILD';
-    const RELEASETYPE_CUSTOM = 'CUSTOM';
+    const RELEASETYPE_MAJOR    = 'MAJOR';
+    const RELEASETYPE_MINOR    = 'MINOR';
+    const RELEASETYPE_BUGFIX   = 'BUGFIX';
+    const RELEASETYPE_ALPHA    = 'A';
+    const RELEASETYPE_BETA     = 'B';
+    const RELEASETYPE_RC       = 'RC';
+    const RELEASETYPE_CUSTOM   = 'CUSTOM';
 
     /**
      * Set Property for Releasetype (Minor, Major, Bugfix)
@@ -137,7 +139,7 @@ class SetversionTask extends Task
 
         // Extract version
         preg_match(self::REGEX, $filecontent, $match);
-        list(,,$major, $minor, $bugfix,, $build, $add) = $match;
+        list(,,$major, $minor, $bugfix, $buildType, $build, $sufix,) = $match;
 
         // Return new version number
         switch ($this->releasetype) {
@@ -148,6 +150,7 @@ class SetversionTask extends Task
                     0,
                     0
                 );
+                $build = null;
                 break;
 
             case self::RELEASETYPE_MINOR:
@@ -157,6 +160,7 @@ class SetversionTask extends Task
                     ++$minor,
                     0
                 );
+                $build = null;
                 break;
 
             case self::RELEASETYPE_BUGFIX:
@@ -166,9 +170,12 @@ class SetversionTask extends Task
                     $minor,
                     ++$bugfix
                 );
+                $build = null;
                 break;
 
-            case self::RELEASETYPE_BUILD:
+            case self::RELEASETYPE_ALPHA:
+            case self::RELEASETYPE_BETA:
+            case self::RELEASETYPE_RC:
                 $newVersion = sprintf(
                     "%d.%d.%d",
                     $major,
@@ -180,21 +187,26 @@ class SetversionTask extends Task
                     $build = 0;
                 }
 
+                // Reset the build type if asked for a new one
+                if (strtolower($buildType) !== strtolower($this->releasetype)) {
+                    $buildType = $this->releasetype;
+                    $build = 0;
+                }
+
                 $build++;
                 break;
 
             case self::RELEASETYPE_CUSTOM:
                 $newVersion = $this->customValue;
-                $build = false;
-                $add = '';
+                $build = null;
                 break;
         }
 
         if (!empty($build)) {
-            $newVersion .= "b{$build}";
+            $newVersion .= strtolower($buildType) . "{$build}";
         }
 
-        return $newVersion . $add;
+        return $newVersion . $sufix;
     }
 
 
@@ -214,7 +226,9 @@ class SetversionTask extends Task
             self::RELEASETYPE_MAJOR,
             self::RELEASETYPE_MINOR,
             self::RELEASETYPE_BUGFIX,
-            self::RELEASETYPE_BUILD,
+            self::RELEASETYPE_ALPHA,
+            self::RELEASETYPE_BETA,
+            self::RELEASETYPE_RC,
             self::RELEASETYPE_CUSTOM,
         );
 
@@ -265,7 +279,7 @@ class SetversionTask extends Task
             throw new BuildException('Property for publishing version number is not set', $this->location);
         }
 
-        if ($this->releasetype === self::RELEASETYPE_CUSTOM && is_null($this->customValue) ) {
+        if ($this->releasetype === self::RELEASETYPE_CUSTOM && is_null($this->customValue)) {
             throw new BuildException('Property for custom value is not set', $this->customValue);
         }
     }
@@ -279,6 +293,7 @@ class SetversionTask extends Task
             $head    = array_shift($match);
             $tail    = array_pop($match);
             $replace = $head . $newVersion . $tail;
+
 
             $content = str_replace($source, $replace, $content);
             file_put_contents($this->file, $content);
