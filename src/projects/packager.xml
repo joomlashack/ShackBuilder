@@ -274,11 +274,17 @@
         </if>
 
         <!-- PHP Lint -->
-        <phplint haltonfailure="true">
-            <fileset dir="${packages.tmp.path}">
-                <include name="**/*.php"/>
-            </fileset>
-        </phplint>
+        <property name="project.phplint" value="1" override="false"/>
+        <if>
+            <equals arg1="${project.phplint}" arg2="1"/>
+            <then>
+                <phplint haltonfailure="true">
+                    <fileset dir="${packages.tmp.path}">
+                        <include name="**/*.php"/>
+                    </fileset>
+                </phplint>
+            </then>
+        </if>
 
         <if>
             <equals arg1="${buildingdirectly}" arg2="1"/>
