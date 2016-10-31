@@ -18,17 +18,6 @@
  * <http://phing.info>.
  */
 
-use \BuildException;
-use \FileList;
-use \FileSet;
-use \Mapper;
-use \PhingFile;
-use \Project;
-use \Task;
-
-use \DocBlox_Parallel_Manager,
-    \DocBlox_Parallel_Worker;
-
 /**
  * <foreach_parallel> task
  *

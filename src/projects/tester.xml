@@ -36,19 +36,20 @@
         <property name="line.prefix" value="${container.alias} :::" />
         <property name="success.file" value="${project.path}/tests/_output/${container.alias}.success" />
         <!-- Load a docker container from alledia/joomlaXXtests to run the tests -->
-        <property name="container.name" value="allediabuilder_tests_${project.name.long}_${container.alias}" />
+        <property name="container.name" value="tests_${project.name.long}_${container.alias}" />
         <trycatch property="catchOutput">
             <try>
                 <echo>${line.prefix} Wait... preparing the test environment for ${container.alias}</echo>
                 <delete file="${success.file}" quiet="true" />
-                <echo level="debug">${line.prefix} Preparing the container...</echo>
+                <echo>${line.prefix} Preparing the container...</echo>
+                <echo>docker rm -f ${container.name} &amp;&gt;/dev/null</echo>
                 <exec command="docker rm -f ${container.name}" />
-                <exec command="docker run -m ${memory} -d --name ${container.name} -p ::80 -p ::4444 -v ${project.path}:/project -v ${builder.path}:/builder -v ${project.path}/tests/_output/run/${container.alias}_mysqld:/run/mysqld ${test.container.image.${container.alias}}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
+                <exec command="docker run -m ${memory} -d --name ${container.name} -p 80 -p 4444 -v ${project.path}:/project -v ${builder.path}:/builder -v ${project.path}/tests/_output/run/${container.alias}_mysqld:/run/mysqld ${test.container.image.${container.alias}}" outputProperty="container.id" returnProperty="container.result" checkreturn="true" />
 
-                <echo level="debug">${line.prefix} Container info: ${container.name} (${container.id})</echo>
+                <echo>${line.prefix} Container info: ${container.name} (${container.id})</echo>
 
                 <!-- Wait for MySQL to be ready -->
-                <echo level="debug">${line.prefix} Waiting for the MySQL service to be ready...</echo>
+                <echo>${line.prefix} Waiting for the MySQL service to be ready...</echo>
                 <waitfor maxwaitunit="second" maxwait="60">
                     <available file="${project.path}/tests/_output/run/${container.alias}_mysqld/mysqld.pid" />
                 </waitfor>
@@ -59,9 +60,9 @@
                 <!-- Install the package into the container running a test -->
                 <echo>${line.prefix} Hold on, running the extension's tests in ${container.alias}...</echo>
 
-                <exec command="docker exec ${container.name} codecept run ${params} ${test.groups} --no-colors --html /project/tests/_output/report_${container.alias}.html -c /project" returnProperty="tests.result" outputProperty="tests.output" checkreturn="true" />
+                <exec command="docker exec -d ${container.name} 'codecept run ${params} ${test.groups} --no-colors --html /project/tests/_output/report_${container.alias}.html -c /project'" returnProperty="tests.result" outputProperty="tests.output" checkreturn="true" />
 
-                <echo level="debug">${line.prefix} ${tests.output}</echo>
+                <echo>${line.prefix} ${tests.output}</echo>
                 <echo file="${success.file}">1</echo>
             </try>
             <catch>
@@ -130,13 +131,15 @@
                                         <echo file="${project.path}/build.properties" append="true">${line.separator}########################################################################</echo>
                                         <echo file="${project.path}/build.properties" append="true">${line.separator}# Test's configuration</echo>
                                         <echo file="${project.path}/build.properties" append="true">${line.separator}########################################################################</echo>
-                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.containers=joomla25,joomla34</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.containers=joomla-oswistia-25,joomla-oswistia-34,joomla-oswistia-35</echo>
                                         <echo file="${project.path}/build.properties" append="true">${line.separator}# Images</echo>
-                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.image.joomla25=alledia/joomla-codeception:2.5.28</echo>
-                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.image.joomla34=alledia/joomla-codeception:3.4.0</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.image.joomla-oswistia-25=alledia/joomla-codeception:2.5.28</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.image.joomla-oswistia-34=alledia/joomla-codeception:3.4.8</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.image.joomla-oswistia-35=alledia/joomla-codeception:3.5.0-beta4</echo>
                                         <echo file="${project.path}/build.properties" append="true">${line.separator}# Groups</echo>
-                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.groups.joomla25=all</echo>
-                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.groups.joomla34=all</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.groups.joomla-oswistia-25=all</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.groups.joomla-oswistia-34=all</echo>
+                                        <echo file="${project.path}/build.properties" append="true">${line.separator}test.container.groups.joomla-oswistia-35=all</echo>
                                         <echo file="${project.path}/build.properties" append="true">${line.separator}########################################################################</echo>
                                     </then>
                                 </if>

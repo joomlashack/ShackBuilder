@@ -34,8 +34,8 @@
     </target>
 
     <!-- Create New Release and package for development -->
-    <target name="build-dev" description="Update version/creation and create IDed package with build number">
-        <property name="release.type" value="BUILD" override="true"/>
+    <target name="build-dev" description="Update version/creation and create IDed package with alpha number">
+        <property name="release.type" value="ALPHA" override="true"/>
         <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version" customvalue="${release.custom_version}"/>
         <phingcall target="update-creation"/>
 
@@ -356,6 +356,15 @@
                 <!-- Pack the tmp folder -->
                 <zip destfile="${packages.path}/${package.file}" includeemptydirs="true" basedir="${packages.tmp.path}"/>
 
+                <!-- Check if we want to move the new package to a new destination -->
+                <if>
+                    <equals arg1="${project.movePackage}" arg2="1"/>
+                    <then>
+                        <echo>Moving package...</echo>
+                        <move file="${packages.path}/${package.file}" tofile="${project.movePackageTo}/${package.file}" overwrite="true" />
+                    </then>
+                </if>
+
                 <!-- Remove tmp folder -->
                 <if>
                     <not>
@@ -396,6 +405,8 @@
                 <phingcall target="show-branches">
                     <property name="projects" value="${projects},${project.relatedExtensions},${project.includes}" />
                 </phingcall>
+
+                <echo>Version: ${manifest.version}</echo>
             </then>
         </if>
 
@@ -423,12 +434,14 @@
             1. Major
             2. Minor
             3. Bugfix
-            4. Build
-            5. Custom
+            4. Alpha
+            5. Beta
+            6. RC
+            7. Custom
         ]]></echo>
         <input
             propertyName="release.id"
-            validArgs="0, 1, 2, 3, 4, 5"
+            validArgs="0, 1, 2, 3, 4, 5, 6, 7"
             message="Release Type: "/>
 
         <if>
@@ -451,11 +464,23 @@
             <elseif>
                 <equals arg1="${release.id}" arg2="4"/>
                 <then>
-                    <property name="release.type" value="build"/>
+                    <property name="release.type" value="a"/>
                 </then>
             </elseif>
             <elseif>
                 <equals arg1="${release.id}" arg2="5"/>
+                <then>
+                    <property name="release.type" value="b"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${release.id}" arg2="6"/>
+                <then>
+                    <property name="release.type" value="rc"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${release.id}" arg2="7"/>
                 <then>
                     <property name="release.type" value="custom"/>
                     <input
