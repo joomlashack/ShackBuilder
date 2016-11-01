@@ -330,7 +330,6 @@
         <if>
             <istrue value="${capabilities.parallel}"/>
             <then>
-                <foreach_parallel list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter="," threadCount="${builder.thread.count}" />
                 <foreach_parallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}" />
             </then>
             <else>
