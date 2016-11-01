@@ -2,7 +2,7 @@
 <project name="Packager" default="build">
 
     <!-- Create New Release and package -->
-    <target name="build-new" description="Update version/creation and create IDed package" depends="set-new-version">
+    <target name="build-new" description="Update version/creation and create IDed package" depends="prompt-new-version">
         <if>
             <isset property="release.type"/>
             <then>
@@ -26,7 +26,7 @@
     </target>
 
     <!-- Update version number without build -->
-    <target name="set-version" description="Update version/creation and create IDed package" depends="set-new-version">
+    <target name="set-version" description="Update version/creation and create IDed package" depends="prompt-new-version">
         <if>
             <isset property="release.type"/>
             <then>
@@ -429,8 +429,12 @@
         <echo message="Creation Date: ${creation.TODAY}"/>
     </target>
 
-    <target name="set-new-version" hidden="true">
+    <target name="prompt-new-version" hidden="true">
         <echo><![CDATA[
+            Current version: ${manifest.version}
+
+            New version level:
+
             1. Major
             2. Minor
             3. Bugfix
@@ -441,7 +445,7 @@
         ]]></echo>
         <input
             propertyName="release.id"
-            validArgs="0, 1, 2, 3, 4, 5, 6, 7"
+            validArgs="1, 2, 3, 4, 5, 6, 7"
             message="Release Type: "/>
 
         <if>
@@ -465,18 +469,21 @@
                 <equals arg1="${release.id}" arg2="4"/>
                 <then>
                     <property name="release.type" value="a"/>
+                    <phingcall target="prompt-new-dev-version"/>
                 </then>
             </elseif>
             <elseif>
                 <equals arg1="${release.id}" arg2="5"/>
                 <then>
                     <property name="release.type" value="b"/>
+                    <phingcall target="prompt-new-dev-version"/>
                 </then>
             </elseif>
             <elseif>
                 <equals arg1="${release.id}" arg2="6"/>
                 <then>
                     <property name="release.type" value="rc"/>
+                    <phingcall target="prompt-new-dev-version"/>
                 </then>
             </elseif>
             <elseif>
@@ -490,6 +497,55 @@
                 </then>
             </elseif>
         </if>
+    </target>
+
+    <target name="prompt-new-dev-version" hidden="true">
+        <echo><![CDATA[
+            Next version:
+
+            1. Major
+            2. Minor
+            3. Bugfix
+
+            0. Keep current base version
+        ]]></echo>
+        <input
+            propertyName="release.id"
+            validArgs="1, 2, 3, 7, 0"
+            message="Release Type: "/>
+
+        <if>
+            <equals arg1="${release.id}" arg2="1"/>
+            <then>
+                <property name="new.release.type" value="major"/>
+            </then>
+            <elseif>
+                <equals arg1="${release.id}" arg2="2"/>
+                <then>
+                    <property name="new.release.type" value="minor"/>
+                </then>
+            </elseif>
+            <elseif>
+                <equals arg1="${release.id}" arg2="3"/>
+                <then>
+                    <property name="new.release.type" value="bugfix"/>
+                </then>
+            </elseif>
+        </if>
+
+        <if>
+            <not>
+                <equals arg1="${release.id}" arg2="0"/>
+            </not>
+            <then>
+                <setversion releasetype="${new.release.type}" file="${project.manifest}" property="manifest.version" customvalue="${new.release.custom_version}"/>
+                <phingcall target="update-creation"/>
+
+                <!-- Update the version for related extensions which are not on this repo, but still set to update -->
+                <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter="," />
+            </then>
+        </if>
+
     </target>
 
     <target name="show-branches">
