@@ -333,7 +333,6 @@
                 <foreach_parallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}" />
             </then>
             <else>
-                <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter="," />
                 <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," />
             </else>
         </if>
