@@ -501,13 +501,13 @@
 
     <target name="prompt-new-dev-version" hidden="true">
         <echo><![CDATA[
-            Next version:
+            Are you starting a new release cycle?
 
             1. Major
             2. Minor
             3. Bugfix
 
-            0. Keep current base version
+            0. No, keep current base version
         ]]></echo>
         <input
             propertyName="release.id"
