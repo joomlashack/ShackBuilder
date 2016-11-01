@@ -39,17 +39,6 @@
         </if>
     </target>
 
-    <!-- Create New Release and package for development -->
-    <target name="build-dev" description="Update version/creation and create IDed package with alpha number">
-        <property name="release.type" value="ALPHA" override="true"/>
-        <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version" customvalue="${release.custom_version}"/>
-        <phingcall target="update-creation"/>
-
-        <phingcall target="package">
-            <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
-        </phingcall>
-    </target>
-
     <!-- Create Current Release and package -->
     <target name="build" description="Generate package file for current version">
         <property name="manifest.version" value="0.0.0" override="false"/>
