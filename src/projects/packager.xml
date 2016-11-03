@@ -424,17 +424,20 @@
 
             New version level:
 
-            1. Major
-            2. Minor
-            3. Bugfix
-            4. Alpha
-            5. Beta
-            6. RC
-            7. Custom
+            (1) Major
+            (2) Minor
+            (3) Bugfix
+
+            (4) Alpha
+            (5) Beta
+            (6) RC
+            (7) Custom
+
+            (8) Stable Release
         ]]></echo>
         <input
             propertyName="release.id"
-            validArgs="1, 2, 3, 4, 5, 6, 7"
+            validArgs="1, 2, 3, 4, 5, 6, 7, 8"
             message="Release Type: "/>
 
         <if>
@@ -485,6 +488,12 @@
                         message="Custom version: "/>
                 </then>
             </elseif>
+            <elseif>
+                <equals arg1="${release.id}" arg2="8"/>
+                <then>
+                    <property name="release.type" value="stable"/>
+                </then>
+            </elseif>
         </if>
     </target>
 
@@ -492,11 +501,11 @@
         <echo><![CDATA[
             Are you starting a new release cycle?
 
-            1. Major
-            2. Minor
-            3. Bugfix
+            (1) Major
+            (2) Minor
+            (3) Bugfix
 
-            0. No, keep current base version
+            (0) No, keep current base version
         ]]></echo>
         <input
             propertyName="release.id"

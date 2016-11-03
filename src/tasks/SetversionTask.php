@@ -48,6 +48,7 @@ class SetversionTask extends Task
     const RELEASETYPE_BETA     = 'B';
     const RELEASETYPE_RC       = 'RC';
     const RELEASETYPE_CUSTOM   = 'CUSTOM';
+    const RELEASETYPE_STABLE   = 'STABLE';
 
     /**
      * Set Property for Releasetype (Minor, Major, Bugfix)
@@ -200,6 +201,16 @@ class SetversionTask extends Task
                 $newVersion = $this->customValue;
                 $build = null;
                 break;
+
+            case self::RELEASETYPE_STABLE:
+                $newVersion = sprintf(
+                    "%d.%d.%d",
+                    $major,
+                    $minor,
+                    $bugfix
+                );
+                $build = null;
+                break;
         }
 
         if (!empty($build)) {
@@ -230,11 +241,12 @@ class SetversionTask extends Task
             self::RELEASETYPE_BETA,
             self::RELEASETYPE_RC,
             self::RELEASETYPE_CUSTOM,
+            self::RELEASETYPE_STABLE,
         );
 
         if (!in_array($this->releasetype, $releaseTypes)) {
             throw new BuildException(sprintf(
-                'Unknown Releasetype %s..Must be one of Major, Minor or Bugfix',
+                'Unknown Releasetype %s..Must be one of Major, Minor or Bugfix, Stable',
                 $this->releasetype
             ), $this->location);
         }
