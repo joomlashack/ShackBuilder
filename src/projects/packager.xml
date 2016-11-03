@@ -15,6 +15,8 @@
                 <phingcall target="package">
                     <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
                 </phingcall>
+
+                <phingcall target="version" />
             </then>
         </if>
     </target>
@@ -35,6 +37,8 @@
 
                 <!-- Update the version for related extensions which are not on this repo, but still set to update -->
                 <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter="," />
+
+                <phingcall target="version" />
             </then>
         </if>
     </target>
