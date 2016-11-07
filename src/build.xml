@@ -16,6 +16,8 @@
         </else>
     </if>
 
+    <property name="builder.vendor.bin.path" value="${builder.path}/vendor/bin" />
+
     <!-- check capabilities -->
     <php function="extension_loaded" returnProperty="capabilities.parallel">
         <param value="pcntl"/>
