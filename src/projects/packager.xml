@@ -424,20 +424,22 @@
 
     <target name="prompt-new-version" hidden="true">
         <echo><![CDATA[
+            ===========================================
             Current version: ${manifest.version}
-
+            -------------------------------------------
             New version level:
 
             (1) Major
             (2) Minor
             (3) Bugfix
-
+            - - - - - - - - - - - - - - - - - - - - -
             (4) Alpha
             (5) Beta
             (6) RC
             (7) Custom
-
+            - - - - - - - - - - - - - - - - - - - - -
             (8) Stable Release
+            ===========================================
         ]]></echo>
         <input
             propertyName="release.id"
@@ -503,13 +505,15 @@
 
     <target name="prompt-new-dev-version" hidden="true">
         <echo><![CDATA[
+            ===========================================
             Are you starting a new release cycle?
-
+            -------------------------------------------
             (1) Major
             (2) Minor
             (3) Bugfix
-
+            - - - - - - - - - - - - - - - - - - - - -
             (0) No, keep current base version
+            ===========================================
         ]]></echo>
         <input
             propertyName="release.id"
