@@ -72,6 +72,7 @@
     </target>
 
     <target name="cs-fix" description="Run php-cs-fixer on the ./src dir">
+        <echo message="Please, wait... fixing the code." />
         <exec command="${builder.vendor.bin.path}/php-cs-fixer fix --fixers=align_equals,encoding,concat_with_spaces,-psr0 --level=psr2 ." dir="./src" escape="false" outputProperty="cmd.output" />
         <echo message="${cmd.output}" />
     </target>
