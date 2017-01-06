@@ -119,7 +119,7 @@ You can automatically pack other extensions while building the package. You just
             <extension
                 type="library"
                 element="allediaframework"
-                uninstall="true">AllediaFramework</extension>
+                uninstall="false">AllediaFramework</extension>
 
             <extension
                 type="component"
