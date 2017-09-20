@@ -270,53 +270,65 @@
             </else>
         </if>
 
-        <!-- Copy the free source folder to a temporary location -->
+        <!-- Check if is a template or extension -->
         <if>
-           <equals arg1="${project.hasFreeVersion}" arg2="1"/>
-           <then>
-                <copy todir="${packages.tmp.path}" overwrite="true">
-                    <fileset dir="${project.free.source.path}" id="free-code">
-                        <include name="**"/>
-                    </fileset>
-                </copy>
-           </then>
-        </if>
-
-        <!-- Pro extensions -->
-        <if>
-            <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+            <equals arg1="${composer.type}" arg2="joomla.template" />
             <then>
-
-                <!-- Copy the pro source overriding the existent free code -->
-                <copy todir="${packages.tmp.path}" overwrite="true">
-                    <fileset dir="${project.source.path}" id="pro-code">
-                        <include name="**"/>
-                    </fileset>
-                </copy>
-
-                <!-- Merge language files -->
+                <!-- Template -->
+                <phingcall target="build-template" />
+            </then>
+            <else>
+                <!-- Extension -->
+                
+                <!-- Copy the free source folder to a temporary location -->
                 <if>
-                    <equals arg1="${composer.type}" arg2="joomla.component"/>
-                    <then>
-                        <if>
-                            <available file="${packages.tmp.path}/admin/language/en-GB" type="dir" />
-                            <then>
-                                <mergefiles basepath="${packages.tmp.path}/admin/language/en-GB" pattern=".pro." replace="."/>
-                            </then>
-                        </if>
+                   <equals arg1="${project.hasFreeVersion}" arg2="1"/>
+                   <then>
+                        <copy todir="${packages.tmp.path}" overwrite="true">
+                            <fileset dir="${project.free.source.path}" id="free-code">
+                                <include name="**"/>
+                            </fileset>
+                        </copy>
+                   </then>
+                </if>
 
+                <!-- Pro extensions -->
+                <if>
+                    <equals arg1="${composer.extra.package-license}" arg2="pro"/>
+                    <then>
+
+                        <!-- Copy the pro source overriding the existent free code -->
+                        <copy todir="${packages.tmp.path}" overwrite="true">
+                            <fileset dir="${project.source.path}" id="pro-code">
+                                <include name="**"/>
+                            </fileset>
+                        </copy>
+
+                        <!-- Merge language files -->
                         <if>
-                            <available file="${packages.tmp.path}/site/language/en-GB" type="dir" />
+                            <equals arg1="${composer.type}" arg2="joomla.component"/>
                             <then>
-                                <mergefiles basepath="${packages.tmp.path}/site/language/en-GB" pattern=".pro." replace="."/>
+                                <if>
+                                    <available file="${packages.tmp.path}/admin/language/en-GB" type="dir" />
+                                    <then>
+                                        <mergefiles basepath="${packages.tmp.path}/admin/language/en-GB" pattern=".pro." replace="."/>
+                                    </then>
+                                </if>
+
+                                <if>
+                                    <available file="${packages.tmp.path}/site/language/en-GB" type="dir" />
+                                    <then>
+                                        <mergefiles basepath="${packages.tmp.path}/site/language/en-GB" pattern=".pro." replace="."/>
+                                    </then>
+                                </if>
                             </then>
+                            <else>
+                                <mergefiles basepath="${packages.tmp.path}/language/en-GB" pattern=".pro." replace="."/>
+                            </else>
                         </if>
                     </then>
-                    <else>
-                        <mergefiles basepath="${packages.tmp.path}/language/en-GB" pattern=".pro." replace="."/>
-                    </else>
                 </if>
-            </then>
+            </else>
         </if>
 
         <!-- Pack related extensions -->
@@ -403,6 +415,86 @@
             </then>
         </if>
 
+    </target>
+
+    <target name="build-template" hidden="true">
+        <xmlproperty file="${project.source.path}/templateDetails.xml" prefix="templateDetails" keepRoot="false" />
+
+        <if>
+            <available file="${project.path}/readme.properties" type="file" />
+            <then>
+                <property file="${project.path}/readme.properties" />
+            </then>
+        </if>
+
+        <property name="project.wright.path" value="${project.path}/wright/code" />
+
+        <!-- Copy in framework -->
+        <available file="${project.wright.path}/wright" type="dir" property="wright.exists" />
+        <if>
+            <equals arg1="${wright.exists}" arg2="true" />
+            <then>
+                <xmlproperty file="${project.wright.path}/templateDetails.xml" prefix="wrightDetails" keepRoot="false" />
+
+                <echo>${project.wright.path}</echo>
+                <copy todir="${packages.tmp.path}" overwrite="true">
+                    <fileset dir="${project.wright.path}">
+                        <exclude name=".svn" />
+                        <exclude name=".svn/**" />
+                        <exclude name=".git" />
+                        <exclude name=".git/**" />
+                        <exclude name=".project" />
+                        <exclude name=".DS_Store" />
+                    </fileset>
+                </copy>
+            </then>
+        </if>
+
+        <!-- Copy the template files -->
+        <copy todir="${packages.tmp.path}" overwrite="true">
+            <fileset dir="${project.source.path}">
+                <exclude name=".svn" />
+                <exclude name=".svn/**" />
+                <exclude name=".git" />
+                <exclude name=".git/**" />
+                <exclude name=".project" />
+                <exclude name=".DS_Store" />
+            </fileset>
+        </copy>
+
+        <!-- Sets version in template language files -->
+        <available file="${packages.tmp.path}/language" type="dir" property="language.exists" />
+        <echo>${language.exists}</echo>
+        <if>
+            <equals arg1="${language.exists}" arg2="true" />
+            <then>
+                <templateversion todir="${packages.tmp.path}" template="${templateDetails.name}" version="${templateDetails.version}" />
+            </then>
+        </if>
+        
+        <!-- <phingcall target="build-assets" /> -->
+    </target>
+
+    <target name="build-assets" hidden="true">
+        <property name="write.build.path" value="${packages.tmp.path}/wright/build" />
+
+        <!-- Build the CSS and JS code -->
+        <!-- Node.JS tasks for building the latest CSS and JS code -->
+        <exec command="sh install.sh" logoutput="true" dir="${write.build.path}" />
+        <exec command="node build.js" logoutput="true" dir="${write.build.path}" />
+        <delete dir="${write.build.path}/.cache" />
+        <delete dir="${write.build.path}/node_modules" />
+        <!-- Copy builder LESS and all files to sources -->
+        <mkdir dir="${packages.tmp.path}/sources" />
+        <mkdir dir="${packages.tmp.path}/sources/less" />
+        <mkdir dir="${packages.tmp.path}/sources/wright" />
+        <mkdir dir="${packages.tmp.path}/sources/wright/build" />
+        <copy todir="${packages.tmp.path}/sources/less" overwrite="true">
+            <fileset dir="${packages.tmp.path}/less" />
+        </copy>
+        <copy todir="${packages.tmp.path}/sources/wright/build" overwrite="true">
+            <fileset dir="${write.build.path}" />
+        </copy>
     </target>
 
     <!-- Update creation date in Joomla manifest file -->

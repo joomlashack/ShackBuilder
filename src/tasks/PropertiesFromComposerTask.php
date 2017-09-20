@@ -101,7 +101,7 @@ class PropertiesFromComposerTask extends Task
             'joomla.cli' => 'cli',
             'joomla.library' => 'lib'
         );
-
+        
         if (!array_key_exists($json['type'], $types)) {
             throw new Exception("Invalid Joomla Extension Type: " . $json['type'], 1);
         }
