@@ -51,7 +51,14 @@ class TemplateVersionTask extends Task
 	
 	protected function updateLanguageFile($fileName)
 	{
-		$path = $this->todir.'/language/' . $fileName;
+		$path = '/language/' . $fileName;
+
+		$this->updateFile($path);
+	}
+
+	protected function updateFile($path)
+	{
+		$path = $this->todir . $path;
 
 		if (! file_exists($path)) {
 			return ;
@@ -60,9 +67,9 @@ class TemplateVersionTask extends Task
 		$content = file_get_contents($path);
 		$content = str_replace('{version}', $this->version, $content);
 	
-		file_put_contents($this->todir.'/language/' . $fileName, $content);
-	
-		$this->log("Updated version in language file " . $fileName);
+		file_put_contents($path, $content);
+
+		$this->log("Updated version in file " . $path);
 	}
 
     /**
@@ -86,6 +93,11 @@ class TemplateVersionTask extends Task
 		{
 			$this->updateLanguageFile('de-DE/de-DE.tpl_' . $this->template . '.ini');
 			$this->updateLanguageFile('de-DE/de-DE.tpl_' . $this->template . '.sys.ini');
+		}
+
+		if (file_exists($this->todir . '/wright/wright.php'))
+		{
+			$this->updateFile('/wright/wright.php');
 		}
     }
 }

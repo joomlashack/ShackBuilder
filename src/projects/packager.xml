@@ -464,7 +464,6 @@
 
         <!-- Sets version in template language files -->
         <available file="${packages.tmp.path}/language" type="dir" property="language.exists" />
-        <echo>${language.exists}</echo>
         <if>
             <equals arg1="${language.exists}" arg2="true" />
             <then>
