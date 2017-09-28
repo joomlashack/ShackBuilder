@@ -427,7 +427,7 @@
             </then>
         </if>
 
-        <property name="project.wright.path" value="${project.path}/wright/code" />
+        <property name="project.wright.path" value="${project.path}/wright/src" />
 
         <!-- Copy in framework -->
         <available file="${project.wright.path}/wright" type="dir" property="wright.exists" />
@@ -436,9 +436,8 @@
             <then>
                 <xmlproperty file="${project.wright.path}/templateDetails.xml" prefix="wrightDetails" keepRoot="false" />
 
-                <echo>${project.wright.path}</echo>
-                <copy todir="${packages.tmp.path}" overwrite="true">
-                    <fileset dir="${project.wright.path}">
+                <copy todir="${packages.tmp.path}/wright" overwrite="true">
+                    <fileset dir="${project.wright.path}/wright">
                         <exclude name=".svn" />
                         <exclude name=".svn/**" />
                         <exclude name=".git" />
@@ -462,6 +461,66 @@
             </fileset>
         </copy>
 
+        <!-- If it's the Wright Framework itself -->
+        <if>
+            <equals arg1="${project.is_wright}" arg2="1" />
+            <then>
+                <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}" templatename="wright" documentationLink="${readme.docs}" />
+            </then>
+            <else>
+                <!-- Copy common Wright files (without replacing to prevail any template specific override) -->
+                <copy file="${project.wright.path}/index.php" tofile="${packages.tmp.path}/index.php" />
+                <copy file="${project.wright.path}/favicon.ico" tofile="${packages.tmp.path}/favicon.ico" />
+                <copy file="${project.wright.path}/component.php" tofile="${packages.tmp.path}/component.php" />
+                <if>
+                    <available file="${project.wright.path}/wrighttemplate.php" />
+                    <then>
+                        <copy file="${project.wright.path}/wrighttemplate.php" tofile="${packages.tmp.path}/wrighttemplate.php" />
+                    </then>
+                </if>
+
+                <!-- Updates template/wright version in wright.php and other template details -->
+                <templatedetails todir="${project.basedir}/${packages.tmp.path}" version="${templateDetails.version}_${wrightDetails.version}" templatename="${tpl.folder}" documentationLink="${readme.docs}" />
+
+                <!-- html, css and js folders only copied for responsive (Wright v.3) templates, until standardized in Wright v.2 -->
+                <if>
+                    <equals arg1="${wright.responsive}" arg2="1" />
+                    <then>
+                        <copy todir="${packages.tmp.path}/html">
+                            <fileset dir="${project.wright.path}/html">
+                                <exclude name=".svn" />
+                                <exclude name=".svn/**" />
+                                <exclude name=".git" />
+                                <exclude name=".git/**" />
+                                <exclude name=".project" />
+                                <exclude name=".DS_Store" />
+                            </fileset>
+                        </copy>
+                        <copy todir="${packages.tmp.path}/css">
+                            <fileset dir="${project.wright.path}/css">
+                                <exclude name=".svn" />
+                                <exclude name=".svn/**" />
+                                <exclude name=".git" />
+                                <exclude name=".git/**" />
+                                <exclude name=".project" />
+                                <exclude name=".DS_Store" />
+                            </fileset>
+                        </copy>
+                        <copy todir="${packages.tmp.path}/js">
+                            <fileset dir="${project.wright.path}/js">
+                                <exclude name=".svn" />
+                                <exclude name=".svn/**" />
+                                <exclude name=".git" />
+                                <exclude name=".git/**" />
+                                <exclude name=".project" />
+                                <exclude name=".DS_Store" />
+                            </fileset>
+                        </copy>
+                    </then>
+                </if>
+            </else>
+        </if>
+
         <!-- Sets version in template language files -->
         <available file="${packages.tmp.path}/language" type="dir" property="language.exists" />
         <if>
@@ -471,16 +530,54 @@
             </then>
         </if>
         
-        <!-- <phingcall target="build-assets" /> -->
+        <phingcall target="build-assets" />
     </target>
 
     <target name="build-assets" hidden="true">
         <property name="write.build.path" value="${packages.tmp.path}/wright/build" />
 
+        <!-- Check if the CSS folder exists. If not, make one -->
+        <if>
+            <not>
+                <available file="${packages.tmp.path}/css" type="dir" />
+            </not>
+            <then>
+                <mkdir dir="${packages.tmp.path}/css" />
+            </then>
+        </if>
+
+        <!-- Check if the JS folder exists. If not, make one -->
+        <if>
+            <not>
+                <available file="${packages.tmp.path}/js" type="dir" />
+            </not>
+            <then>
+                <mkdir dir="${packages.tmp.path}/js" />
+            </then>
+        </if>
+
         <!-- Build the CSS and JS code -->
         <!-- Node.JS tasks for building the latest CSS and JS code -->
-        <exec command="sh install.sh" logoutput="true" dir="${write.build.path}" />
-        <exec command="node build.js" logoutput="true" dir="${write.build.path}" />
+        <exec command="sh install.sh" logoutput="true" dir="${write.build.path}" returnProperty="returnValue" />
+
+        <!-- Look for errors on the last command -->
+        <if>
+            <equals arg1="${returnValue}" arg2="1" />
+            <then>
+                <fail msg="Error found on the last executed command. Please, check the logs." />
+            </then>
+        </if>
+
+        <exec command="node build.js" logoutput="true" dir="${write.build.path}" returnProperty="returnValue" />
+    
+        <!-- Look for errors on the last command -->
+        <if>
+            <equals arg1="${returnValue}" arg2="1" />
+            <then>
+                <fail msg="Error found on the last executed command. Please, check the logs." />
+            </then>
+        </if>
+
         <delete dir="${write.build.path}/.cache" />
         <delete dir="${write.build.path}/node_modules" />
         <!-- Copy builder LESS and all files to sources -->
