@@ -480,44 +480,39 @@
                 </if>
 
                 <!-- Updates template/wright version in wright.php and other template details -->
-                <templatedetails todir="${project.basedir}/${packages.tmp.path}" version="${templateDetails.version}_${wrightDetails.version}" templatename="${tpl.folder}" documentationLink="${readme.docs}" />
+                <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}_${wrightDetails.version}" templatename="${manifest.name}" documentationLink="${readme.docs}" />
 
                 <!-- html, css and js folders only copied for responsive (Wright v.3) templates, until standardized in Wright v.2 -->
-                <if>
-                    <equals arg1="${wright.responsive}" arg2="1" />
-                    <then>
-                        <copy todir="${packages.tmp.path}/html">
-                            <fileset dir="${project.wright.path}/html">
-                                <exclude name=".svn" />
-                                <exclude name=".svn/**" />
-                                <exclude name=".git" />
-                                <exclude name=".git/**" />
-                                <exclude name=".project" />
-                                <exclude name=".DS_Store" />
-                            </fileset>
-                        </copy>
-                        <copy todir="${packages.tmp.path}/css">
-                            <fileset dir="${project.wright.path}/css">
-                                <exclude name=".svn" />
-                                <exclude name=".svn/**" />
-                                <exclude name=".git" />
-                                <exclude name=".git/**" />
-                                <exclude name=".project" />
-                                <exclude name=".DS_Store" />
-                            </fileset>
-                        </copy>
-                        <copy todir="${packages.tmp.path}/js">
-                            <fileset dir="${project.wright.path}/js">
-                                <exclude name=".svn" />
-                                <exclude name=".svn/**" />
-                                <exclude name=".git" />
-                                <exclude name=".git/**" />
-                                <exclude name=".project" />
-                                <exclude name=".DS_Store" />
-                            </fileset>
-                        </copy>
-                    </then>
-                </if>
+                <copy todir="${packages.tmp.path}/html">
+                    <fileset dir="${project.wright.path}/html">
+                        <exclude name=".svn" />
+                        <exclude name=".svn/**" />
+                        <exclude name=".git" />
+                        <exclude name=".git/**" />
+                        <exclude name=".project" />
+                        <exclude name=".DS_Store" />
+                    </fileset>
+                </copy>
+                <copy todir="${packages.tmp.path}/css">
+                    <fileset dir="${project.wright.path}/css">
+                        <exclude name=".svn" />
+                        <exclude name=".svn/**" />
+                        <exclude name=".git" />
+                        <exclude name=".git/**" />
+                        <exclude name=".project" />
+                        <exclude name=".DS_Store" />
+                    </fileset>
+                </copy>
+                <copy todir="${packages.tmp.path}/js">
+                    <fileset dir="${project.wright.path}/js">
+                        <exclude name=".svn" />
+                        <exclude name=".svn/**" />
+                        <exclude name=".git" />
+                        <exclude name=".git/**" />
+                        <exclude name=".project" />
+                        <exclude name=".DS_Store" />
+                    </fileset>
+                </copy>
             </else>
         </if>
 
