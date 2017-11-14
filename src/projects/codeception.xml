@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Codeception" default="codeception">
+
+    <target name="test-prepare">
+        <echo msg="Preparing environment for running Codeception tests" />
+
+        <exec command="docker pull codeception/codeception"
+            logoutput="/dev/stdout"
+            checkreturn="true" />
+    </target>
+
+    <target name="test-unit">
+        <echo msg="Running Codeception Unit tests" />
+
+        <exec command="docker run --rm -v ${PWD}:/project codeception/codeception run unit"
+            logoutput="/dev/stdout"
+            checkreturn="true" />
+    </target>
+</project>
