@@ -287,7 +287,7 @@
             </then>
             <else>
                 <!-- Extension -->
-                
+
                 <!-- Copy the free source folder to a temporary location -->
                 <if>
                    <equals arg1="${project.hasFreeVersion}" arg2="1"/>
@@ -317,21 +317,36 @@
                             <equals arg1="${composer.type}" arg2="joomla.component"/>
                             <then>
                                 <if>
-                                    <available file="${packages.tmp.path}/admin/language/en-GB" type="dir" />
+                                    <available file="${packages.tmp.path}/admin/language" type="dir" />
                                     <then>
-                                        <mergefiles basepath="${packages.tmp.path}/admin/language/en-GB" pattern=".pro." replace="."/>
+                                        <foreach param="dirname" absparam="absname" target="merge-language-files">
+                                            <fileset dir="${packages.tmp.path}/admin/language/">
+                                                <type type="dir" />
+                                                <depth max="0" min="0" />
+                                            </fileset>
+                                        </foreach>
                                     </then>
                                 </if>
 
                                 <if>
-                                    <available file="${packages.tmp.path}/site/language/en-GB" type="dir" />
+                                    <available file="${packages.tmp.path}/site/language" type="dir" />
                                     <then>
-                                        <mergefiles basepath="${packages.tmp.path}/site/language/en-GB" pattern=".pro." replace="."/>
+                                        <foreach param="dirname" absparam="absname" target="merge-language-files">
+                                            <fileset dir="${packages.tmp.path}/site/language/">
+                                                <type type="dir" />
+                                                <depth max="0" min="0" />
+                                            </fileset>
+                                        </foreach>
                                     </then>
                                 </if>
                             </then>
                             <else>
-                                <mergefiles basepath="${packages.tmp.path}/language/en-GB" pattern=".pro." replace="."/>
+                                <foreach param="dirname" absparam="absname" target="merge-language-files">
+                                    <fileset dir="${packages.tmp.path}/language/">
+                                        <type type="dir" />
+                                        <depth max="0" min="0" />
+                                    </fileset>
+                                </foreach>
                             </else>
                         </if>
                     </then>
@@ -423,6 +438,10 @@
             </then>
         </if>
 
+    </target>
+
+    <target name="merge-language-files" hidden="true">
+        <mergefiles basepath="${absname}" pattern=".pro." replace="."/>
     </target>
 
     <target name="build-template" hidden="true">
@@ -532,7 +551,7 @@
                 <templateversion todir="${packages.tmp.path}" template="${templateDetails.name}" version="${templateDetails.version}" />
             </then>
         </if>
-        
+
         <phingcall target="build-assets" />
     </target>
 
@@ -572,7 +591,7 @@
         </if>
 
         <exec command="node build.js" logoutput="true" dir="${write.build.path}" returnProperty="returnValue" />
-    
+
         <!-- Look for errors on the last command -->
         <if>
             <equals arg1="${returnValue}" arg2="1" />
