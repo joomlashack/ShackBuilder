@@ -51,6 +51,14 @@
         </phingcall>
     </target>
 
+    <!-- Create Current Release in a tmp folder -->
+    <target name="build-tmp" description="Generate package file for current version">
+        <property name="manifest.version" value="0.0.0" override="false"/>
+        <phingcall target="package">
+            <property name="buildingdirectly" value="0"/>
+        </phingcall>
+    </target>
+
     <!-- Set the version for the extension into a project -->
     <target name="set-version-related-extensions" hidden="true">
         <echo>set-version-related-extensions-${extension}</echo>
