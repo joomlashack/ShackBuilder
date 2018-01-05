@@ -35,6 +35,13 @@
     <taskdef name="templateversion" classname="TemplateVersionTask" />
     <taskdef name="templatedetails" classname="TemplateDetailsTask" />
 
+    <if>
+        <available file="${home.path}/.composer/vendor/autoload.php" property="exi" />
+        <then>
+            <autoloader autoloaderpath="${home.path}/.composer/vendor/autoload.php"/>
+        </then>
+    </if>
+
     <!-- Properties -->
     <!-- Try to get the project path from the build.properties, for deployment environment -->
     <if>

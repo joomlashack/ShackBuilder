@@ -227,6 +227,13 @@
         </if>
         <mkdir dir="${packages.tmp.path}"/>
 
+        <!-- Merge Files -->
+        <phingcall target="merge-files" />
+
+        <!-- Minify Files -->
+        <phingcall target="minify-files" />
+
+
         <!-- Copy the installer library, if there is a custom installer script -->
         <if>
             <isset property="manifest.scriptfile"/>
@@ -440,8 +447,63 @@
 
     </target>
 
+    <target name="pre-build">
+        <!-- Merge Files -->
+        <phingcall target="merge-files" />
+
+        <!-- Minify Files -->
+        <phingcall target="minify-files" />
+    </target>
+
     <target name="merge-language-files" hidden="true">
         <mergefiles basepath="${absname}" pattern=".pro." replace="."/>
+    </target>
+
+    <target name="merge-files">
+        <if>
+            <isset property="merge-destinations" />
+            <then>
+                <foreach list="${merge-destinations}" param="destination" target="merge-files-target" />
+            </then>
+        </if>
+    </target>
+
+    <target name="merge-files-target" hidden="true">
+        <!-- Remove file if exists -->
+        <if>
+            <available file="${project.source.path}/${destination}" type="file" />
+            <then>
+                <delete file="${project.source.path}/${destination}" />
+            </then>
+        </if>
+
+        <!-- Build each merged file -->
+        <foreach list="${merge-${destination}}" param="file" target="merge-file-into-destination" />
+    </target>
+
+    <target name="merge-file-into-destination" hidden="true">
+        <append
+            destFile="${project.source.path}/${destination}"
+            overwrite="false"
+            fixlastline="true"
+            eol="unix"
+            file="${project.source.path}/${file}" />
+    </target>
+
+    <target name="minify-files">
+        <!-- JS Files -->
+        <if>
+            <isset property="minify-js" />
+            <then>
+                <foreach list="${minify-js}" param="js-file" target="minify-js-file" />
+            </then>
+        </if>
+    </target>
+
+    <target name="minify-js-file" hidden="true">
+        <jsMin targetDir="${project.source.path}" failOnError="true" suffix=".min">
+            <fileset dir="${project.source.path}" includes="${js-file}" />
+        </jsMin>
     </target>
 
     <target name="build-template" hidden="true">
