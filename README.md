@@ -148,7 +148,7 @@ If you already have a newer version installed for any related extension, it will
 
 ### Merge and minify scripts
 
-Scripts can be minified and optionally merged creating a bundle file. This requires the JsShrink library.
+Scripts can be minified and optionally merged creating a bundle file. This requires the JsShrink library and setting the global property `home.path` on the AllediaBuilder/global.properties file.
 
 To minify script files you create a `<minify>` tag inside the `<alledia>` tag. 
 You can specify single script files, as well create bundle files.
