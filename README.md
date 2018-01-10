@@ -148,7 +148,7 @@ If you already have a newer version installed for any related extension, it will
 
 ### Merge and minify scripts
 
-Scripts can be minified and optionally merged creating a bundle file. 
+Scripts can be minified and optionally merged creating a bundle file. This requires the JsShrink library.
 
 To minify script files you create a `<minify>` tag inside the `<alledia>` tag. 
 You can specify single script files, as well create bundle files.
@@ -199,6 +199,10 @@ This will result on new files:
 * media/js/script2.min.js
 * media/js/script-bundle.js
 * media/js/script-bundle.min.js
+
+#### Installing JSShrink using composer
+
+    composer global require tedivm/jshrink
 
 ### Obsolete items
 
