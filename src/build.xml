@@ -34,6 +34,7 @@
     <taskdef name="foreach_parallel" classname="ForeachParallelTask" />
     <taskdef name="templateversion" classname="TemplateVersionTask" />
     <taskdef name="templatedetails" classname="TemplateDetailsTask" />
+    <taskdef name="mergeminify" classname="MergeMinifyTask" />
 
     <if>
         <available file="${home.path}/.composer/vendor/autoload.php" property="exi" />
@@ -117,7 +118,7 @@
             </if>
         </else>
     </if>
-    <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false" />
+    <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false" collapseAttributes="true" />
 
     <getrelatedextensions file="${project.manifest}" property="project.relatedExtensions" ignoreRelatedExtensions="${ignoreRelatedExtensions}"/>
 
