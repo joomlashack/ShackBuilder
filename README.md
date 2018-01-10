@@ -146,6 +146,60 @@ If you already have a newer version installed for any related extension, it will
 * uninstall: flag to indicate that this extension should be uninstalled if the main extension is uninstalled
 * ordering: first, last, 1..n - only for plugins, it set an specific order (only if it is new)
 
+### Merge and minify scripts
+
+Scripts can be minified and optionally merged creating a bundle file. 
+
+To minify script files you create a `<minify>` tag inside the `<alledia>` tag. 
+You can specify single script files, as well create bundle files.
+
+You can specify a custom suffix to be added to the compressed file, right before the extension. The default suffix is ".min".
+
+`<minify suffix="-min">`
+
+The minification is applied while building the package. If you need to run it on developing time, like before committing changes, you can call the task: `phing pre-build`.
+
+#### Single script files
+
+Single files are defined by a `<script>` tag:
+
+    <alledia>
+        ...
+        <minify>
+            <script>media/js/script1.js</script>
+            <script>media/js/script2.js</script>
+        </minify>
+    </alledia>
+
+This will result on new files:
+
+* media/js/script1.min.js
+* media/js/script2.min.js
+
+#### Bundle of script files
+
+A bundle can be created merging files defined inside a `<scripts>` tag. The destination is set on the "destination" attribute: 
+
+    <alledia>
+        ...
+        <minify>
+            <script>media/js/script1.js</script>
+            <script>media/js/script2.js</script>
+
+            <scripts destination="media/js/script-bundle.js">
+                <script>media/js/script3.js</script>
+                <script>media/js/script4.js</script>
+            </scripts>
+        </minify>
+    </alledia>
+
+This will result on new files:
+
+* media/js/script1.min.js
+* media/js/script2.min.js
+* media/js/script-bundle.js
+* media/js/script-bundle.min.js
+
 ### Obsolete items
 
 Obsolete items will be unistalled or deleted before install any related extension.
