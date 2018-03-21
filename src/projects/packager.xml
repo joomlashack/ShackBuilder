@@ -96,7 +96,15 @@
                                     <available file="${extension.manifest}"/>
                                     <then/>
                                     <else>
-                                        <echo level= "warning">Manifest file not found: ${extension.manifest}</echo>
+                                        <!-- Template -->
+                                        <property name="extension.manifest" value="${extensions.path}/${extension}/templateDetails.xml" override="true"/>
+                                        <if>
+                                            <available file="${extension.manifest}" type="file"/>
+                                            <then/>
+                                            <else>
+                                                <echo level= "warning">Manifest file not found: ${extension.manifest}</echo>
+                                            </else>
+                                        </if>
                                     </else>
                                 </if>
                             </else>
