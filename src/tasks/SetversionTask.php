@@ -41,14 +41,14 @@ class SetversionTask extends Task
     const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)(?:(a|b|rc)?(\d*))([^<]*)?(</version>)#m';
 
     /* Allowed Releastypes */
-    const RELEASETYPE_MAJOR    = 'MAJOR';
-    const RELEASETYPE_MINOR    = 'MINOR';
-    const RELEASETYPE_BUGFIX   = 'BUGFIX';
-    const RELEASETYPE_ALPHA    = 'A';
-    const RELEASETYPE_BETA     = 'B';
-    const RELEASETYPE_RC       = 'RC';
-    const RELEASETYPE_CUSTOM   = 'CUSTOM';
-    const RELEASETYPE_STABLE   = 'STABLE';
+    const RELEASETYPE_MAJOR  = 'MAJOR';
+    const RELEASETYPE_MINOR  = 'MINOR';
+    const RELEASETYPE_BUGFIX = 'BUGFIX';
+    const RELEASETYPE_ALPHA  = 'A';
+    const RELEASETYPE_BETA   = 'B';
+    const RELEASETYPE_RC     = 'RC';
+    const RELEASETYPE_CUSTOM = 'CUSTOM';
+    const RELEASETYPE_STABLE = 'STABLE';
 
     /**
      * Set Property for Releasetype (Minor, Major, Bugfix)
@@ -77,7 +77,7 @@ class SetversionTask extends Task
     /**
      * Set name of property to be set
      *
-     * @param $property
+     * @param string $property
      *
      * @return void
      */
@@ -89,7 +89,7 @@ class SetversionTask extends Task
     /**
      * Set custom value for version
      *
-     * @param $property
+     * @param string $customValue
      *
      * @return void
      */
@@ -122,7 +122,6 @@ class SetversionTask extends Task
 
         // publish new version number as property
         $this->project->setProperty($this->property, $newVersion);
-
     }
 
 
@@ -140,7 +139,7 @@ class SetversionTask extends Task
 
         // Extract version
         preg_match(self::REGEX, $filecontent, $match);
-        list(,,$major, $minor, $bugfix, $buildType, $build, $sufix,) = $match;
+        list(, , $major, $minor, $bugfix, $buildType, $build, $sufix,) = $match;
 
         // Return new version number
         switch ($this->releasetype) {
@@ -151,6 +150,7 @@ class SetversionTask extends Task
                     0,
                     0
                 );
+
                 $build = null;
                 break;
 
@@ -161,6 +161,7 @@ class SetversionTask extends Task
                     ++$minor,
                     0
                 );
+
                 $build = null;
                 break;
 
@@ -171,6 +172,7 @@ class SetversionTask extends Task
                     $minor,
                     ++$bugfix
                 );
+
                 $build = null;
                 break;
 
@@ -191,7 +193,7 @@ class SetversionTask extends Task
                 // Reset the build type if asked for a new one
                 if (strtolower($buildType) !== strtolower($this->releasetype)) {
                     $buildType = $this->releasetype;
-                    $build = 0;
+                    $build     = 0;
                 }
 
                 $build++;
@@ -199,6 +201,7 @@ class SetversionTask extends Task
 
             case self::RELEASETYPE_CUSTOM:
                 $newVersion = $this->customValue;
+
                 $build = null;
                 break;
 
@@ -209,6 +212,7 @@ class SetversionTask extends Task
                     $minor,
                     $bugfix
                 );
+
                 $build = null;
                 break;
         }
@@ -223,6 +227,7 @@ class SetversionTask extends Task
 
     /**
      * checks releasetype attribute
+     *
      * @return void
      * @throws BuildException
      */
@@ -232,6 +237,7 @@ class SetversionTask extends Task
         if (is_null($this->releasetype)) {
             throw new BuildException('releasetype attribute is required', $this->location);
         }
+
         // known releasetypes
         $releaseTypes = array(
             self::RELEASETYPE_MAJOR,
@@ -245,24 +251,26 @@ class SetversionTask extends Task
         );
 
         if (!in_array($this->releasetype, $releaseTypes)) {
-            throw new BuildException(sprintf(
-                'Unknown Releasetype %s..Must be one of Major, Minor or Bugfix, Stable',
-                $this->releasetype
-            ), $this->location);
+            throw new BuildException(
+                sprintf(
+                    'Unknown Releasetype %s..Must be one of Major, Minor or Bugfix, Stable',
+                    $this->releasetype
+                ),
+                $this->location
+            );
         }
     }
 
     /**
      * checks file attribute
+     *
      * @return void
      * @throws BuildException
      */
     protected function checkFile()
     {
         // check File
-        if ($this->file === null ||
-            strlen($this->file) == 0
-        ) {
+        if ($this->file === null || strlen($this->file) == 0) {
             throw new BuildException('You must specify a Joomla manifest file', $this->location);
         }
 
@@ -275,19 +283,17 @@ class SetversionTask extends Task
         if (!preg_match(self::REGEX, $content)) {
             throw new BuildException('Unable to find version tag', $this->location);
         }
-
     }
 
     /**
      * checks property attribute
+     *
      * @return void
      * @throws BuildException
      */
     protected function checkProperty()
     {
-        if (is_null($this->property) ||
-            strlen($this->property) === 0
-        ) {
+        if (is_null($this->property) || strlen($this->property) === 0) {
             throw new BuildException('Property for publishing version number is not set', $this->location);
         }
 
@@ -296,6 +302,11 @@ class SetversionTask extends Task
         }
     }
 
+    /**
+     * @param string $newVersion
+     *
+     * @return void
+     */
     protected function updateFile($newVersion)
     {
         $content = file_get_contents($this->file);
@@ -312,6 +323,5 @@ class SetversionTask extends Task
 
             $this->log('Updated ' . basename($this->file) . ' to new version: ' . $newVersion);
         }
-
     }
 }
