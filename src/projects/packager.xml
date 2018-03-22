@@ -10,13 +10,13 @@
                 <phingcall target="update-creation"/>
 
                 <!-- Update the version for related extensions which are not on this repo, but still set to update -->
-                <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter="," />
+                <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter=","/>
 
                 <phingcall target="package">
                     <property name="package.file" value="${project.name.long}_${composer.extra.package-license}_${manifest.version}.zip"/>
                 </phingcall>
 
-                <phingcall target="version" />
+                <phingcall target="version"/>
             </then>
         </if>
     </target>
@@ -36,9 +36,9 @@
                 <phingcall target="update-creation"/>
 
                 <!-- Update the version for related extensions which are not on this repo, but still set to update -->
-                <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter="," />
+                <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter=","/>
 
-                <phingcall target="version" />
+                <phingcall target="version"/>
             </then>
         </if>
     </target>
@@ -82,7 +82,7 @@
 
                 <!-- Do we have this extension pre-packed? -->
                 <if>
-                    <available file="${extensions.path}/${extension}" type="dir" />
+                    <available file="${extensions.path}/${extension}" type="dir"/>
                     <then>
                         <!-- Look for the manifest file of this internal extension -->
                         <property name="extension.manifest" value="${extensions.path}/${extension}/${project.relatedExtensions.${extension}.element}.xml"/>
@@ -138,7 +138,7 @@
 
                 <!-- Do we have this extension pre-packed? -->
                 <if>
-                    <available file="${extensions.tmp.path}/${extension}" type="dir" />
+                    <available file="${extensions.tmp.path}/${extension}" type="dir"/>
                     <then>
                         <echo>The extension ${extension} is pre-packed. Ignoring...</echo>
                     </then>
@@ -156,7 +156,7 @@
                         <!-- Make sure we have the main extensions folder -->
                         <if>
                             <not>
-                                <available file="${extensions.tmp.path}" type="dir" />
+                                <available file="${extensions.tmp.path}" type="dir"/>
                             </not>
                             <then>
                                 <mkdir dir="${extensions.tmp.path}"/>
@@ -195,7 +195,7 @@
                 <if>
                     <contains string="${project.includes.${include}.source}" substring="${"/>
                     <then>
-                        <property name="project.includes.${include}.source" value="src/" override="true" />
+                        <property name="project.includes.${include}.source" value="src/" override="true"/>
                     </then>
                 </if>
 
@@ -203,7 +203,7 @@
                 <if>
                     <contains string="${project.includes.${include}.destination}" substring="${"/>
                     <then>
-                        <property name="project.includes.${include}.destination" value="" override="true" />
+                        <property name="project.includes.${include}.destination" value="" override="true"/>
                     </then>
                 </if>
 
@@ -236,7 +236,7 @@
         <mkdir dir="${packages.tmp.path}"/>
 
         <!-- Merge and minify files -->
-        <phingcall target="pre-build" />
+        <phingcall target="pre-build"/>
 
 
         <!-- Copy the installer library, if there is a custom installer script -->
@@ -283,33 +283,33 @@
         <if>
             <istrue value="${capabilities.parallel}"/>
             <then>
-                <foreach_parallel list="${project.includes}" param="include" target="pack-includes" delimiter="," threadCount="${builder.thread.count}" />
+                <foreach_parallel list="${project.includes}" param="include" target="pack-includes" delimiter="," threadCount="${builder.thread.count}"/>
             </then>
             <else>
-                <foreach list="${project.includes}" param="include" target="pack-includes" delimiter="," />
+                <foreach list="${project.includes}" param="include" target="pack-includes" delimiter=","/>
             </else>
         </if>
 
         <!-- Check if is a template or extension -->
         <if>
-            <equals arg1="${composer.type}" arg2="joomla.template" />
+            <equals arg1="${composer.type}" arg2="joomla.template"/>
             <then>
                 <!-- Template -->
-                <phingcall target="build-template" />
+                <phingcall target="build-template"/>
             </then>
             <else>
                 <!-- Extension -->
 
                 <!-- Copy the free source folder to a temporary location -->
                 <if>
-                   <equals arg1="${project.hasFreeVersion}" arg2="1"/>
-                   <then>
+                    <equals arg1="${project.hasFreeVersion}" arg2="1"/>
+                    <then>
                         <copy todir="${packages.tmp.path}" overwrite="true">
                             <fileset dir="${project.free.source.path}" id="free-code">
                                 <include name="**"/>
                             </fileset>
                         </copy>
-                   </then>
+                    </then>
                 </if>
 
                 <!-- Pro extensions -->
@@ -329,24 +329,24 @@
                             <equals arg1="${composer.type}" arg2="joomla.component"/>
                             <then>
                                 <if>
-                                    <available file="${packages.tmp.path}/admin/language" type="dir" />
+                                    <available file="${packages.tmp.path}/admin/language" type="dir"/>
                                     <then>
                                         <foreach param="dirname" absparam="absname" target="merge-language-files">
                                             <fileset dir="${packages.tmp.path}/admin/language/">
-                                                <type type="dir" />
-                                                <depth max="0" min="0" />
+                                                <type type="dir"/>
+                                                <depth max="0" min="0"/>
                                             </fileset>
                                         </foreach>
                                     </then>
                                 </if>
 
                                 <if>
-                                    <available file="${packages.tmp.path}/site/language" type="dir" />
+                                    <available file="${packages.tmp.path}/site/language" type="dir"/>
                                     <then>
                                         <foreach param="dirname" absparam="absname" target="merge-language-files">
                                             <fileset dir="${packages.tmp.path}/site/language/">
-                                                <type type="dir" />
-                                                <depth max="0" min="0" />
+                                                <type type="dir"/>
+                                                <depth max="0" min="0"/>
                                             </fileset>
                                         </foreach>
                                     </then>
@@ -355,8 +355,8 @@
                             <else>
                                 <foreach param="dirname" absparam="absname" target="merge-language-files">
                                     <fileset dir="${packages.tmp.path}/language/">
-                                        <type type="dir" />
-                                        <depth max="0" min="0" />
+                                        <type type="dir"/>
+                                        <depth max="0" min="0"/>
                                     </fileset>
                                 </foreach>
                             </else>
@@ -370,10 +370,10 @@
         <if>
             <istrue value="${capabilities.parallel}"/>
             <then>
-                <foreach_parallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}" />
+                <foreach_parallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}"/>
             </then>
             <else>
-                <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," />
+                <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter=","/>
             </else>
         </if>
 
@@ -401,7 +401,7 @@
                     <equals arg1="${project.movePackage}" arg2="1"/>
                     <then>
                         <echo>Moving package...</echo>
-                        <move file="${packages.path}/${package.file}" tofile="${project.movePackageTo}/${package.file}" overwrite="true" />
+                        <move file="${packages.path}/${package.file}" tofile="${project.movePackageTo}/${package.file}" overwrite="true"/>
                     </then>
                 </if>
 
@@ -419,17 +419,17 @@
 
         <!-- Show what are the branches are being used for each sub project -->
         <if>
-            <equals arg1="${buildingdirectly}" arg2="1" />
+            <equals arg1="${buildingdirectly}" arg2="1"/>
             <then>
                 <if>
                     <equals arg1="${composer.extra.package-license}" arg2="pro"/>
                     <then>
                         <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro" override="true"/>
-                        <property name="project.${composer.extra.name}-Pro.path" value="${project.path}" />
+                        <property name="project.${composer.extra.name}-Pro.path" value="${project.path}"/>
                     </then>
                     <else>
                         <property name="projects" value="AllediaBuilder,${composer.extra.name}" override="true"/>
-                        <property name="project.${composer.extra.name}.path" value="${project.path}" />
+                        <property name="project.${composer.extra.name}.path" value="${project.path}"/>
                     </else>
                 </if>
                 <!-- Inject the installer on the projects property, if needed -->
@@ -440,10 +440,10 @@
                     </then>
                 </if>
 
-                <property name="project.AllediaBuilder.path" value="${builder.path}" />
+                <property name="project.AllediaBuilder.path" value="${builder.path}"/>
 
                 <phingcall target="show-branches">
-                    <property name="projects" value="${projects},${project.relatedExtensions},${project.includes}" />
+                    <property name="projects" value="${projects},${project.relatedExtensions},${project.includes}"/>
                 </phingcall>
 
                 <echo>Version: ${manifest.version}</echo>
@@ -455,17 +455,17 @@
 
     <target name="pre-build">
         <if>
-            <isset property="manifest.alledia.minify.suffix" />
+            <isset property="manifest.alledia.minify.suffix"/>
             <then>
-                <property name="minify.suffix" value="${manifest.alledia.minify.suffix}" />
+                <property name="minify.suffix" value="${manifest.alledia.minify.suffix}"/>
             </then>
             <else>
-                <property name="minify.suffix" value=".min" />
+                <property name="minify.suffix" value=".min"/>
             </else>
         </if>
 
         <!-- Minify bundling scripts -->
-        <mergeminify manifest="${project.manifest}" basePath="${project.source.path}" suffix="${minify.suffix}" />
+        <mergeminify manifest="${project.manifest}" basePath="${project.source.path}" suffix="${minify.suffix}"/>
     </target>
 
     <target name="merge-language-files" hidden="true">
@@ -473,32 +473,32 @@
     </target>
 
     <target name="build-template" hidden="true">
-        <xmlproperty file="${project.source.path}/templateDetails.xml" prefix="templateDetails" keepRoot="false" />
+        <xmlproperty file="${project.source.path}/templateDetails.xml" prefix="templateDetails" keepRoot="false"/>
 
         <if>
-            <available file="${project.path}/readme.properties" type="file" />
+            <available file="${project.path}/readme.properties" type="file"/>
             <then>
-                <property file="${project.path}/readme.properties" />
+                <property file="${project.path}/readme.properties"/>
             </then>
         </if>
 
-        <property name="project.wright.path" value="${project.path}/wright/src" />
+        <property name="project.wright.path" value="${project.path}/wright/src"/>
 
         <!-- Copy in framework -->
-        <available file="${project.wright.path}/wright" type="dir" property="wright.exists" />
+        <available file="${project.wright.path}/wright" type="dir" property="wright.exists"/>
         <if>
-            <equals arg1="${wright.exists}" arg2="true" />
+            <equals arg1="${wright.exists}" arg2="true"/>
             <then>
-                <xmlproperty file="${project.wright.path}/templateDetails.xml" prefix="wrightDetails" keepRoot="false" />
+                <xmlproperty file="${project.wright.path}/templateDetails.xml" prefix="wrightDetails" keepRoot="false"/>
 
                 <copy todir="${packages.tmp.path}/wright" overwrite="true">
                     <fileset dir="${project.wright.path}/wright">
-                        <exclude name=".svn" />
-                        <exclude name=".svn/**" />
-                        <exclude name=".git" />
-                        <exclude name=".git/**" />
-                        <exclude name=".project" />
-                        <exclude name=".DS_Store" />
+                        <exclude name=".svn"/>
+                        <exclude name=".svn/**"/>
+                        <exclude name=".git"/>
+                        <exclude name=".git/**"/>
+                        <exclude name=".project"/>
+                        <exclude name=".DS_Store"/>
                     </fileset>
                 </copy>
             </then>
@@ -507,139 +507,139 @@
         <!-- Copy the template files -->
         <copy todir="${packages.tmp.path}" overwrite="true">
             <fileset dir="${project.source.path}">
-                <exclude name=".svn" />
-                <exclude name=".svn/**" />
-                <exclude name=".git" />
-                <exclude name=".git/**" />
-                <exclude name=".project" />
-                <exclude name=".DS_Store" />
+                <exclude name=".svn"/>
+                <exclude name=".svn/**"/>
+                <exclude name=".git"/>
+                <exclude name=".git/**"/>
+                <exclude name=".project"/>
+                <exclude name=".DS_Store"/>
             </fileset>
         </copy>
 
         <!-- If it's the Wright Framework itself -->
         <if>
-            <equals arg1="${project.is_wright}" arg2="1" />
+            <equals arg1="${project.is_wright}" arg2="1"/>
             <then>
-                <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}" templatename="wright" documentationLink="${readme.docs}" />
+                <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}" templatename="wright" documentationLink="${readme.docs}"/>
             </then>
             <else>
                 <!-- Copy common Wright files (without replacing to prevail any template specific override) -->
-                <copy file="${project.wright.path}/index.php" tofile="${packages.tmp.path}/index.php" />
-                <copy file="${project.wright.path}/favicon.ico" tofile="${packages.tmp.path}/favicon.ico" />
-                <copy file="${project.wright.path}/component.php" tofile="${packages.tmp.path}/component.php" />
+                <copy file="${project.wright.path}/index.php" tofile="${packages.tmp.path}/index.php"/>
+                <copy file="${project.wright.path}/favicon.ico" tofile="${packages.tmp.path}/favicon.ico"/>
+                <copy file="${project.wright.path}/component.php" tofile="${packages.tmp.path}/component.php"/>
                 <if>
-                    <available file="${project.wright.path}/wrighttemplate.php" />
+                    <available file="${project.wright.path}/wrighttemplate.php"/>
                     <then>
-                        <copy file="${project.wright.path}/wrighttemplate.php" tofile="${packages.tmp.path}/wrighttemplate.php" />
+                        <copy file="${project.wright.path}/wrighttemplate.php" tofile="${packages.tmp.path}/wrighttemplate.php"/>
                     </then>
                 </if>
 
                 <!-- Updates template/wright version in wright.php and other template details -->
-                <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}_${wrightDetails.version}" templatename="${manifest.name}" documentationLink="${readme.docs}" />
+                <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}_${wrightDetails.version}" templatename="${manifest.name}" documentationLink="${readme.docs}"/>
 
                 <!-- html, css and js folders only copied for responsive (Wright v.3) templates, until standardized in Wright v.2 -->
                 <copy todir="${packages.tmp.path}/html">
                     <fileset dir="${project.wright.path}/html">
-                        <exclude name=".svn" />
-                        <exclude name=".svn/**" />
-                        <exclude name=".git" />
-                        <exclude name=".git/**" />
-                        <exclude name=".project" />
-                        <exclude name=".DS_Store" />
+                        <exclude name=".svn"/>
+                        <exclude name=".svn/**"/>
+                        <exclude name=".git"/>
+                        <exclude name=".git/**"/>
+                        <exclude name=".project"/>
+                        <exclude name=".DS_Store"/>
                     </fileset>
                 </copy>
                 <copy todir="${packages.tmp.path}/css">
                     <fileset dir="${project.wright.path}/css">
-                        <exclude name=".svn" />
-                        <exclude name=".svn/**" />
-                        <exclude name=".git" />
-                        <exclude name=".git/**" />
-                        <exclude name=".project" />
-                        <exclude name=".DS_Store" />
+                        <exclude name=".svn"/>
+                        <exclude name=".svn/**"/>
+                        <exclude name=".git"/>
+                        <exclude name=".git/**"/>
+                        <exclude name=".project"/>
+                        <exclude name=".DS_Store"/>
                     </fileset>
                 </copy>
                 <copy todir="${packages.tmp.path}/js">
                     <fileset dir="${project.wright.path}/js">
-                        <exclude name=".svn" />
-                        <exclude name=".svn/**" />
-                        <exclude name=".git" />
-                        <exclude name=".git/**" />
-                        <exclude name=".project" />
-                        <exclude name=".DS_Store" />
+                        <exclude name=".svn"/>
+                        <exclude name=".svn/**"/>
+                        <exclude name=".git"/>
+                        <exclude name=".git/**"/>
+                        <exclude name=".project"/>
+                        <exclude name=".DS_Store"/>
                     </fileset>
                 </copy>
             </else>
         </if>
 
         <!-- Sets version in template language files -->
-        <available file="${packages.tmp.path}/language" type="dir" property="language.exists" />
+        <available file="${packages.tmp.path}/language" type="dir" property="language.exists"/>
         <if>
-            <equals arg1="${language.exists}" arg2="true" />
+            <equals arg1="${language.exists}" arg2="true"/>
             <then>
-                <templateversion todir="${packages.tmp.path}" template="${templateDetails.name}" version="${templateDetails.version}" />
+                <templateversion todir="${packages.tmp.path}" template="${templateDetails.name}" version="${templateDetails.version}"/>
             </then>
         </if>
 
-        <phingcall target="build-assets" />
+        <phingcall target="build-assets"/>
     </target>
 
     <target name="build-assets" hidden="true">
-        <property name="write.build.path" value="${packages.tmp.path}/wright/build" />
+        <property name="write.build.path" value="${packages.tmp.path}/wright/build"/>
 
         <!-- Check if the CSS folder exists. If not, make one -->
         <if>
             <not>
-                <available file="${packages.tmp.path}/css" type="dir" />
+                <available file="${packages.tmp.path}/css" type="dir"/>
             </not>
             <then>
-                <mkdir dir="${packages.tmp.path}/css" />
+                <mkdir dir="${packages.tmp.path}/css"/>
             </then>
         </if>
 
         <!-- Check if the JS folder exists. If not, make one -->
         <if>
             <not>
-                <available file="${packages.tmp.path}/js" type="dir" />
+                <available file="${packages.tmp.path}/js" type="dir"/>
             </not>
             <then>
-                <mkdir dir="${packages.tmp.path}/js" />
+                <mkdir dir="${packages.tmp.path}/js"/>
             </then>
         </if>
 
         <!-- Build the CSS and JS code -->
         <!-- Node.JS tasks for building the latest CSS and JS code -->
-        <exec command="sh install.sh" logoutput="true" dir="${write.build.path}" returnProperty="returnValue" />
+        <exec command="sh install.sh" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
 
         <!-- Look for errors on the last command -->
         <if>
-            <equals arg1="${returnValue}" arg2="1" />
+            <equals arg1="${returnValue}" arg2="1"/>
             <then>
-                <fail msg="Error found on the last executed command. Please, check the logs." />
+                <fail msg="Error found on the last executed command. Please, check the logs."/>
             </then>
         </if>
 
-        <exec command="node build.js" logoutput="true" dir="${write.build.path}" returnProperty="returnValue" />
+        <exec command="node build.js" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
 
         <!-- Look for errors on the last command -->
         <if>
-            <equals arg1="${returnValue}" arg2="1" />
+            <equals arg1="${returnValue}" arg2="1"/>
             <then>
-                <fail msg="Error found on the last executed command. Please, check the logs." />
+                <fail msg="Error found on the last executed command. Please, check the logs."/>
             </then>
         </if>
 
-        <delete dir="${write.build.path}/.cache" />
-        <delete dir="${write.build.path}/node_modules" />
+        <delete dir="${write.build.path}/.cache"/>
+        <delete dir="${write.build.path}/node_modules"/>
         <!-- Copy builder LESS and all files to sources -->
-        <mkdir dir="${packages.tmp.path}/sources" />
-        <mkdir dir="${packages.tmp.path}/sources/less" />
-        <mkdir dir="${packages.tmp.path}/sources/wright" />
-        <mkdir dir="${packages.tmp.path}/sources/wright/build" />
+        <mkdir dir="${packages.tmp.path}/sources"/>
+        <mkdir dir="${packages.tmp.path}/sources/less"/>
+        <mkdir dir="${packages.tmp.path}/sources/wright"/>
+        <mkdir dir="${packages.tmp.path}/sources/wright/build"/>
         <copy todir="${packages.tmp.path}/sources/less" overwrite="true">
-            <fileset dir="${packages.tmp.path}/less" />
+            <fileset dir="${packages.tmp.path}/less"/>
         </copy>
         <copy todir="${packages.tmp.path}/sources/wright/build" overwrite="true">
-            <fileset dir="${write.build.path}" />
+            <fileset dir="${write.build.path}"/>
         </copy>
     </target>
 
@@ -787,7 +787,7 @@
                 <phingcall target="update-creation"/>
 
                 <!-- Update the version for related extensions which are not on this repo, but still set to update -->
-                <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter="," />
+                <foreach list="${project.relatedExtensions}" param="extension" target="set-version-related-extensions" delimiter=","/>
             </then>
         </if>
 
