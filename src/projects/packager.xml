@@ -485,9 +485,9 @@
         <property name="project.wright.path" value="${project.path}/wright/src"/>
 
         <!-- Copy in framework -->
-        <available file="${project.wright.path}/wright" type="dir" property="wright.exists"/>
+        <available file="${project.wright.path}/wright" type="dir" property="wright.exists" value="1"/>
         <if>
-            <equals arg1="${wright.exists}" arg2="true"/>
+            <equals arg1="${wright.exists}" arg2="1"/>
             <then>
                 <xmlproperty file="${project.wright.path}/templateDetails.xml" prefix="wrightDetails" keepRoot="false"/>
 
@@ -523,51 +523,56 @@
                 <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}" templatename="wright" documentationLink="${readme.docs}"/>
             </then>
             <else>
-                <!-- Copy common Wright files (without replacing to prevail any template specific override) -->
-                <copy file="${project.wright.path}/index.php" tofile="${packages.tmp.path}/index.php"/>
-                <copy file="${project.wright.path}/favicon.ico" tofile="${packages.tmp.path}/favicon.ico"/>
-                <copy file="${project.wright.path}/component.php" tofile="${packages.tmp.path}/component.php"/>
                 <if>
-                    <available file="${project.wright.path}/wrighttemplate.php"/>
+                    <equals arg1="${wright.exists}" arg2="1"/>
                     <then>
-                        <copy file="${project.wright.path}/wrighttemplate.php" tofile="${packages.tmp.path}/wrighttemplate.php"/>
+                        <!-- Copy common Wright files (without replacing to prevail any template specific override) -->
+                        <copy file="${project.wright.path}/index.php" tofile="${packages.tmp.path}/index.php"/>
+                        <copy file="${project.wright.path}/favicon.ico" tofile="${packages.tmp.path}/favicon.ico"/>
+                        <copy file="${project.wright.path}/component.php" tofile="${packages.tmp.path}/component.php"/>
+                        <if>
+                            <available file="${project.wright.path}/wrighttemplate.php"/>
+                            <then>
+                                <copy file="${project.wright.path}/wrighttemplate.php" tofile="${packages.tmp.path}/wrighttemplate.php"/>
+                            </then>
+                        </if>
+
+                        <!-- Updates template/wright version in wright.php and other template details -->
+                        <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}_${wrightDetails.version}" templatename="${manifest.name}" documentationLink="${readme.docs}"/>
+
+                        <!-- html, css and js folders only copied for responsive (Wright v.3) templates, until standardized in Wright v.2 -->
+                        <copy todir="${packages.tmp.path}/html">
+                            <fileset dir="${project.wright.path}/html">
+                                <exclude name=".svn"/>
+                                <exclude name=".svn/**"/>
+                                <exclude name=".git"/>
+                                <exclude name=".git/**"/>
+                                <exclude name=".project"/>
+                                <exclude name=".DS_Store"/>
+                            </fileset>
+                        </copy>
+                        <copy todir="${packages.tmp.path}/css">
+                            <fileset dir="${project.wright.path}/css">
+                                <exclude name=".svn"/>
+                                <exclude name=".svn/**"/>
+                                <exclude name=".git"/>
+                                <exclude name=".git/**"/>
+                                <exclude name=".project"/>
+                                <exclude name=".DS_Store"/>
+                            </fileset>
+                        </copy>
+                        <copy todir="${packages.tmp.path}/js">
+                            <fileset dir="${project.wright.path}/js">
+                                <exclude name=".svn"/>
+                                <exclude name=".svn/**"/>
+                                <exclude name=".git"/>
+                                <exclude name=".git/**"/>
+                                <exclude name=".project"/>
+                                <exclude name=".DS_Store"/>
+                            </fileset>
+                        </copy>
                     </then>
                 </if>
-
-                <!-- Updates template/wright version in wright.php and other template details -->
-                <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}_${wrightDetails.version}" templatename="${manifest.name}" documentationLink="${readme.docs}"/>
-
-                <!-- html, css and js folders only copied for responsive (Wright v.3) templates, until standardized in Wright v.2 -->
-                <copy todir="${packages.tmp.path}/html">
-                    <fileset dir="${project.wright.path}/html">
-                        <exclude name=".svn"/>
-                        <exclude name=".svn/**"/>
-                        <exclude name=".git"/>
-                        <exclude name=".git/**"/>
-                        <exclude name=".project"/>
-                        <exclude name=".DS_Store"/>
-                    </fileset>
-                </copy>
-                <copy todir="${packages.tmp.path}/css">
-                    <fileset dir="${project.wright.path}/css">
-                        <exclude name=".svn"/>
-                        <exclude name=".svn/**"/>
-                        <exclude name=".git"/>
-                        <exclude name=".git/**"/>
-                        <exclude name=".project"/>
-                        <exclude name=".DS_Store"/>
-                    </fileset>
-                </copy>
-                <copy todir="${packages.tmp.path}/js">
-                    <fileset dir="${project.wright.path}/js">
-                        <exclude name=".svn"/>
-                        <exclude name=".svn/**"/>
-                        <exclude name=".git"/>
-                        <exclude name=".git/**"/>
-                        <exclude name=".project"/>
-                        <exclude name=".DS_Store"/>
-                    </fileset>
-                </copy>
             </else>
         </if>
 
@@ -608,7 +613,12 @@
 
         <!-- Build the CSS and JS code -->
         <!-- Node.JS tasks for building the latest CSS and JS code -->
-        <exec command="sh install.sh" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
+        <if>
+            <equals arg1="${wright.exists}" arg2="1"/>
+            <then>
+                <exec command="sh install.sh" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
+            </then>
+        </if>
 
         <!-- Look for errors on the last command -->
         <if>
@@ -618,7 +628,12 @@
             </then>
         </if>
 
-        <exec command="node build.js" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
+        <if>
+            <equals arg1="${wright.exists}" arg2="1"/>
+            <then>
+                <exec command="node build.js" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
+            </then>
+        </if>
 
         <!-- Look for errors on the last command -->
         <if>
@@ -633,14 +648,24 @@
         <!-- Copy builder LESS and all files to sources -->
         <mkdir dir="${packages.tmp.path}/sources"/>
         <mkdir dir="${packages.tmp.path}/sources/less"/>
-        <mkdir dir="${packages.tmp.path}/sources/wright"/>
-        <mkdir dir="${packages.tmp.path}/sources/wright/build"/>
+        <if>
+            <equals arg1="${wright.exists}" arg2="1"/>
+            <then>
+                <mkdir dir="${packages.tmp.path}/sources/wright"/>
+                <mkdir dir="${packages.tmp.path}/sources/wright/build"/>
+            </then>
+        </if>
         <copy todir="${packages.tmp.path}/sources/less" overwrite="true">
             <fileset dir="${packages.tmp.path}/less"/>
         </copy>
-        <copy todir="${packages.tmp.path}/sources/wright/build" overwrite="true">
-            <fileset dir="${write.build.path}"/>
-        </copy>
+        <if>
+            <equals arg1="${wright.exists}" arg2="1"/>
+            <then>
+                <copy todir="${packages.tmp.path}/sources/wright/build" overwrite="true">
+                    <fileset dir="${write.build.path}"/>
+                </copy>
+            </then>
+        </if>
     </target>
 
     <!-- Update creation date in Joomla manifest file -->
