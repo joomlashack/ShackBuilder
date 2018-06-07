@@ -485,9 +485,9 @@
         <property name="project.wright.path" value="${project.path}/wright/src"/>
 
         <!-- Copy in framework -->
-        <available file="${project.wright.path}/wright" type="dir" property="wright.exists" value="1"/>
+        <available file="${project.wright.path}/wright" type="dir" property="wright.exists"/>
         <if>
-            <equals arg1="${wright.exists}" arg2="1"/>
+            <equals arg1="${wright.exists}" arg2="true"/>
             <then>
                 <xmlproperty file="${project.wright.path}/templateDetails.xml" prefix="wrightDetails" keepRoot="false"/>
 
@@ -524,7 +524,7 @@
             </then>
             <else>
                 <if>
-                    <equals arg1="${wright.exists}" arg2="1"/>
+                    <equals arg1="${wright.exists}" arg2="true"/>
                     <then>
                         <!-- Copy common Wright files (without replacing to prevail any template specific override) -->
                         <copy file="${project.wright.path}/index.php" tofile="${packages.tmp.path}/index.php"/>
@@ -611,56 +611,42 @@
             </then>
         </if>
 
-        <!-- Build the CSS and JS code -->
-        <!-- Node.JS tasks for building the latest CSS and JS code -->
+        <available file="${write.build.path}" type="dir" property="write.build.path.exists"/>
         <if>
-            <equals arg1="${wright.exists}" arg2="1"/>
+            <equals arg1="${write.build.path.exists}" arg2="true"/>
             <then>
+                <!-- Build the CSS and JS code -->
+                <!-- Node.JS tasks for building the latest CSS and JS code -->
                 <exec command="sh install.sh" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
-            </then>
-        </if>
 
-        <!-- Look for errors on the last command -->
-        <if>
-            <equals arg1="${returnValue}" arg2="1"/>
-            <then>
-                <fail msg="Error found on the last executed command. Please, check the logs."/>
-            </then>
-        </if>
+                <!-- Look for errors on the last command -->
+                <if>
+                    <equals arg1="${returnValue}" arg2="1"/>
+                    <then>
+                        <fail msg="Error found on the last executed command. Please, check the logs."/>
+                    </then>
+                </if>
 
-        <if>
-            <equals arg1="${wright.exists}" arg2="1"/>
-            <then>
                 <exec command="node build.js" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
-            </then>
-        </if>
 
-        <!-- Look for errors on the last command -->
-        <if>
-            <equals arg1="${returnValue}" arg2="1"/>
-            <then>
-                <fail msg="Error found on the last executed command. Please, check the logs."/>
-            </then>
-        </if>
+                <!-- Look for errors on the last command -->
+                <if>
+                    <equals arg1="${returnValue}" arg2="1"/>
+                    <then>
+                        <fail msg="Error found on the last executed command. Please, check the logs."/>
+                    </then>
+                </if>
 
-        <delete dir="${write.build.path}/.cache"/>
-        <delete dir="${write.build.path}/node_modules"/>
-        <!-- Copy builder LESS and all files to sources -->
-        <mkdir dir="${packages.tmp.path}/sources"/>
-        <mkdir dir="${packages.tmp.path}/sources/less"/>
-        <if>
-            <equals arg1="${wright.exists}" arg2="1"/>
-            <then>
+                <delete dir="${write.build.path}/.cache"/>
+                <delete dir="${write.build.path}/node_modules"/>
+                <!-- Copy builder LESS and all files to sources -->
+                <mkdir dir="${packages.tmp.path}/sources"/>
+                <mkdir dir="${packages.tmp.path}/sources/less"/>
                 <mkdir dir="${packages.tmp.path}/sources/wright"/>
                 <mkdir dir="${packages.tmp.path}/sources/wright/build"/>
-            </then>
-        </if>
-        <copy todir="${packages.tmp.path}/sources/less" overwrite="true">
-            <fileset dir="${packages.tmp.path}/less"/>
-        </copy>
-        <if>
-            <equals arg1="${wright.exists}" arg2="1"/>
-            <then>
+                <copy todir="${packages.tmp.path}/sources/less" overwrite="true">
+                    <fileset dir="${packages.tmp.path}/less"/>
+                </copy>
                 <copy todir="${packages.tmp.path}/sources/wright/build" overwrite="true">
                     <fileset dir="${write.build.path}"/>
                 </copy>
