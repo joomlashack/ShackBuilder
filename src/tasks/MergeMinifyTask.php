@@ -36,11 +36,13 @@ class MergeMinifyTask extends Task
      * the composer.json file
      *
      * @param string $path The path for the manifest xml file
+     *
      * @return void
+     * @throws Exception
      */
     public function setManifest($path)
     {
-        if (empty($path) || ! file_exists(realpath($path))) {
+        if (empty($path) || !file_exists(realpath($path))) {
             throw new Exception("Invalid XML file path");
         }
 
@@ -52,11 +54,13 @@ class MergeMinifyTask extends Task
      * the composer.json file
      *
      * @param string $path The path for the basePath xml file
+     *
      * @return void
+     * @throws Exception
      */
     public function setBasePath($path)
     {
-        if (empty($path) || ! file_exists(realpath($path))) {
+        if (empty($path) || !file_exists(realpath($path))) {
             throw new Exception("Invalid base path");
         }
 
@@ -88,13 +92,11 @@ class MergeMinifyTask extends Task
      * The method that runs the task
      *
      * @return void
+     * @throws Exception
      */
     public function main()
     {
         $xml = simplexml_load_file($this->manifest);
-
-        $extensions = array();
-
 
         // Single files
         if (!empty($xml->alledia->minify->script)) {
@@ -105,6 +107,7 @@ class MergeMinifyTask extends Task
 
         // Scripts bundle
         if (!empty($xml->alledia->minify->scripts)) {
+            /** @var AppendTask $append */
             $append = $this->project->createTask("append");
             $append->setOwningTarget($this->getOwningTarget());
             $append->setTaskName($this->getTaskName());
@@ -143,10 +146,11 @@ class MergeMinifyTask extends Task
      * @param  string $file
      *
      * @return void
+     * @throws Exception
      */
     protected function minify($file)
     {
-        // Minify files
+        /** @var JsMinTask $minify */
         $minify = $this->project->createTask('jsMin');
         $minify->init();
         $minify->setTargetDir($this->basePath);
