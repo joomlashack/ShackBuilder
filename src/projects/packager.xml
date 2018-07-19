@@ -453,11 +453,16 @@
     </target>
 
     <target name="compile-sass-file">
-        <basename file="${scss.file}" property="scss.file.base" suffix=".scss"/>
-        <property name="scss.file.source" value="${project.source.path}/${scss.file}"/>
-        <property name="scss.file.destination" value="${scss.destination}/${scss.file.base}.css"/>
-        <echo message="SOURCE: ${scss.file.source}"/>
-        <echo message="DEST: ${scss.file.destination}"/>
+        <if>
+            <isset property="scss.destination"/>
+            <then>
+                <basename file="${scss.file.tag}" property="scss.file.base"/>
+                <property name="scss.file.destination" value="${scss.destination}/${scss.file.base}"/>
+            </then>
+            <else>
+                <property name="scss.file.destination" value="${project.source.path}/${scss.file.tag}"/>
+            </else>
+        </if>
         <exec command="node-sass --output-style=compressed ${scss.file.source} > ${scss.file.destination}"/>
     </target>
 
@@ -472,11 +477,11 @@
                         <property name="scss.destination" value="${project.source.path}/${manifest.alledia.scss.destination}"/>
                         <mkdir dir="${scss.destination}"/>
                     </then>
-                    <else>
-                        <property name="scss.destination" value=""/>
-                    </else>
                 </if>
-                <foreach list="${manifest.alledia.scss.file}" target="compile-sass-file" param="scss.file"/>
+                <foreach target="compile-sass-file" param="scss.file.tag" absparam="scss.file.source">
+                    <filelist files="${manifest.alledia.scss.file}" dir="${project.source.path}"/>
+                    <mapper type="glob" from="*.scss" to="*.css"/>
+                </foreach>
             </then>
         </if>
 
