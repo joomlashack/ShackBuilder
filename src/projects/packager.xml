@@ -452,7 +452,7 @@
 
     </target>
 
-    <target name="compile-sass-file">
+    <target name="compile-scss-file">
         <if>
             <isset property="scss.destination"/>
             <then>
@@ -478,7 +478,7 @@
                         <mkdir dir="${scss.destination}"/>
                     </then>
                 </if>
-                <foreach target="compile-sass-file" param="scss.file.tag" absparam="scss.file.source">
+                <foreach target="compile-scss-file" param="scss.file.tag" absparam="scss.file.source">
                     <filelist files="${manifest.alledia.scss.file}" dir="${project.source.path}"/>
                     <mapper type="glob" from="*.scss" to="*.css"/>
                 </foreach>
