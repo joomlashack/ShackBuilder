@@ -102,7 +102,7 @@
                                             <available file="${extension.manifest}" type="file"/>
                                             <then/>
                                             <else>
-                                                <echo level= "warning">Manifest file not found: ${extension.manifest}</echo>
+                                                <echo level="warning">Manifest file not found: ${extension.manifest}</echo>
                                             </else>
                                         </if>
                                     </else>
