@@ -210,15 +210,19 @@ requires node-sass to be installed. During development you can use `phing pre-bu
 want to build a new package.
 
     <alledia>
-        ...
         <scss destination="folder-name" style="compressed">
             <file>scss-file-name</file>
         </scss>
     </alledia>
 
-Folder and file paths are all relative to the project source folder. All attributes for
-the `<scss>` tag are optional. By default the destination file will be the same folder as
-the source file. The default for output style will be `compressed`.
+Folder and file paths are all relative to the project source folder. `<scss>` tag accepts the
+following attributes:
+
+|Attribute|Value|
+|---|---|
+|destination|Folder name [**default to same as original**]
+|style      |nested&#124;expanded&#124;compact&#124;**compressed**|
+
 
 #### Installing node-sass
 You need to have npm/node installed first. For full details see
