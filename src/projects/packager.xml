@@ -463,7 +463,7 @@
                 <property name="scss.file.destination" value="${project.source.path}/${scss.file.tag}"/>
             </else>
         </if>
-        <exec command="node-sass --output-style=compressed ${scss.file.source} > ${scss.file.destination}"/>
+        <exec command="node-sass --output-style=${scss.style} ${scss.file.source} ${scss.file.destination}"/>
     </target>
 
     <target name="pre-build">
@@ -477,6 +477,15 @@
                         <property name="scss.destination" value="${project.source.path}/${manifest.alledia.scss.destination}"/>
                         <mkdir dir="${scss.destination}"/>
                     </then>
+                </if>
+                <if>
+                    <matches string="${manifest.alledia.scss.style}" pattern="^(nested|expanded|compact|compressed)$"/>
+                    <then>
+                        <property name="scss.style" value="${manifest.alledia.scss.style}"/>
+                    </then>
+                    <else>
+                        <property name="scss.style" value="compressed"/>
+                    </else>
                 </if>
                 <foreach target="compile-scss-file" param="scss.file.tag" absparam="scss.file.source">
                     <filelist files="${manifest.alledia.scss.file}" dir="${project.source.path}"/>
