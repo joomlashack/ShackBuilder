@@ -452,8 +452,35 @@
 
     </target>
 
+    <target name="compile-sass-file">
+        <basename file="${scss.file}" property="scss.file.base" suffix=".scss"/>
+        <property name="scss.file.source" value="${project.source.path}/${scss.file}"/>
+        <property name="scss.file.destination" value="${scss.destination}/${scss.file.base}.css"/>
+        <echo message="SOURCE: ${scss.file.source}"/>
+        <echo message="DEST: ${scss.file.destination}"/>
+        <exec command="node-sass --output-style=compressed ${scss.file.source} > ${scss.file.destination}"/>
+    </target>
 
     <target name="pre-build">
+        <!-- SCSS compiling -->
+        <if>
+            <isset property="manifest.alledia.scss.file"/>
+            <then>
+                <if>
+                    <isset property="manifest.alledia.scss.destination"/>
+                    <then>
+                        <property name="scss.destination" value="${project.source.path}/${manifest.alledia.scss.destination}"/>
+                        <mkdir dir="${scss.destination}"/>
+                    </then>
+                    <else>
+                        <property name="scss.destination" value=""/>
+                    </else>
+                </if>
+                <foreach list="${manifest.alledia.scss.file}" target="compile-sass-file" param="scss.file"/>
+            </then>
+        </if>
+
+        <!-- Minify bundling scripts -->
         <if>
             <isset property="manifest.alledia.minify.suffix"/>
             <then>
@@ -464,7 +491,6 @@
             </else>
         </if>
 
-        <!-- Minify bundling scripts -->
         <mergeminify manifest="${project.manifest}" basePath="${project.source.path}" suffix="${minify.suffix}"/>
     </target>
 

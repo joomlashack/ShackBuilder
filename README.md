@@ -204,6 +204,34 @@ This will result on new files:
 
     composer global require tedivm/jshrink
 
+### Compiling SCSS Files
+SASS SCSS files can be compiled by inclusion of the `<scss>` tag under the `<alledia>` tag. This
+requires node-sass to be installed. During development you can use `phing pre-build` if you don't
+want to build a new package.
+
+    <alledia>
+        ...
+        <scss destination="folder-name" style="compressed">
+            <file>scss-file-name</file>
+        </scss>
+    </alledia>
+
+Folder and file paths are all relative to the project source folder. All attributes for
+the `<scss>` tag are optional. By default the destination file will be the same folder as
+the source file. The default for output style will be `compressed`.
+
+#### Installing node-sass
+You need to have npm/node installed first. For full details see
+[nvm on github](https://github.com/creationix/nvm). Try this command to install nvm:
+
+```
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+```
+Once npm is installed you can install node-sass:
+```
+npm -g install node-sass
+```   
+
 ### Obsolete items
 
 Obsolete items will be unistalled or deleted before install any related extension.
