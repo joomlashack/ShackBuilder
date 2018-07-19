@@ -471,6 +471,14 @@
         <if>
             <isset property="manifest.alledia.scss.file"/>
             <then>
+                <trycatch>
+                    <try>
+                        <exec command="node-sass -v" outputProperty="scss.test" checkreturn="true"/>
+                    </try>
+                    <catch>
+                        <fail message="node-sass command is not available for compiling scss files"/>
+                    </catch>
+                </trycatch>
                 <if>
                     <isset property="manifest.alledia.scss.destination"/>
                     <then>
