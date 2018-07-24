@@ -1,20 +1,19 @@
 {
     "name": "alledia/allediabuilder",
-    "description": "Builder scripts for Alledia/OSTraining extensions",
+    "description": "Builder scripts for Joomlashack/OSTraining extensions",
     "license": "GPL-2+",
     "keywords": ["alledia", "builder", "phing"],
     "homepage": "https://github.com/OSTraining/AllediaBuilder",
     "authors": [
         {
-            "name": "Alledia",
-            "email": "hello@alledia.com"
+            "name": "Joomlashack",
+            "email": "help@joomlashack.com"
         }
     ],
     "require": {
-        "php": ">=5.3",
+        "php": ">=5.6",
         "phing/phing": "dev-master",
         "codeception/codeception": "*",
-        "symfony/yaml": "~2.6",
-        "fabpot/php-cs-fixer": "^1.12"
+        "symfony/yaml": "~2.6"
     }
 }
