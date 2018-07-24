@@ -70,22 +70,4 @@
             </then>
         </if>
     </target>
-
-    <target name="cs-fix" description="Run php-cs-fixer on the ./src dir">
-        <!-- Check if we have a custom config file, if not, run the default fixers -->
-        <if>
-            <available file=".php_cs" type="file"/>
-            <then>
-                <echo message="Please, wait... fixing the code (based on custom config file: .php_cs)" />
-                <exec command="${builder.vendor.bin.path}/php-cs-fixer fix" escape="false" outputProperty="cmd.output" />
-            </then>
-            <else>
-                <echo message="Please, wait... fixing the code (based on default command)" />
-                <exec command="${builder.vendor.bin.path}/php-cs-fixer fix --fixers=align_equals,encoding,concat_with_spaces,-psr0 --level=psr2 ." dir="./src" escape="false" outputProperty="cmd.output" />
-            </else>
-        </if>
-
-        <echo message="${cmd.output}" />
-    </target>
-
 </project>
