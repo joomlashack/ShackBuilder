@@ -454,6 +454,9 @@
     </target>
 
     <target name="compile-scss-file">
+        <basename file="${scss.file.tag}" property="scss.file.base" suffix="scss"/>
+        <property name="scss.file.source" value="${project.source.path}/${scss.file.tag}"/>
+
         <available property="scss.file.exists" file="${scss.file.source}" type="file" value="1"/>
         <if>
             <equals arg1="${scss.file.exists}" arg2="1"/>
@@ -461,17 +464,16 @@
                 <if>
                     <isset property="scss.destination"/>
                     <then>
-                        <basename file="${scss.file.tag}" property="scss.file.base"/>
-                        <property name="scss.file.destination" value="${scss.destination}/${scss.file.base}"/>
+                        <property name="scss.file.destination" value="${scss.destination}/${scss.file.base}.css"/>
                     </then>
                     <else>
-                        <property name="scss.file.destination" value="${project.source.path}/${scss.file.tag}"/>
+                        <property name="scss.file.destination" value="${project.source.path}/${scss.file.base}.css"/>
                     </else>
                 </if>
             </then>
             <else>
                 <echo message="${scss.file.source}: Does not exist"/>
-                <fail/>
+                <fail message="${scss.file.source}: Does not exist"/>
             </else>
         </if>
 
@@ -518,10 +520,7 @@
                         <property name="scss.style" value="compressed"/>
                     </else>
                 </if>
-                <foreach target="compile-scss-file" param="scss.file.tag" absparam="scss.file.source">
-                    <filelist files="${manifest.alledia.scss.file}" dir="${project.source.path}"/>
-                    <mapper type="glob" from="*.scss" to="*.css"/>
-                </foreach>
+                <foreach target="compile-scss-file" list="${manifest.alledia.scss.file}" param="scss.file.tag"/>
             </then>
         </if>
 
