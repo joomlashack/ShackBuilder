@@ -454,14 +454,24 @@
     </target>
 
     <target name="compile-scss-file">
+        <available property="scss.file.exists" file="${scss.file.source}" type="file" value="1"/>
         <if>
-            <isset property="scss.destination"/>
+            <equals arg1="${scss.file.exists}" arg2="1"/>
             <then>
-                <basename file="${scss.file.tag}" property="scss.file.base"/>
-                <property name="scss.file.destination" value="${scss.destination}/${scss.file.base}"/>
+                <if>
+                    <isset property="scss.destination"/>
+                    <then>
+                        <basename file="${scss.file.tag}" property="scss.file.base"/>
+                        <property name="scss.file.destination" value="${scss.destination}/${scss.file.base}"/>
+                    </then>
+                    <else>
+                        <property name="scss.file.destination" value="${project.source.path}/${scss.file.tag}"/>
+                    </else>
+                </if>
             </then>
             <else>
-                <property name="scss.file.destination" value="${project.source.path}/${scss.file.tag}"/>
+                <echo message="${scss.file.source}: Does not exist"/>
+                <fail/>
             </else>
         </if>
 
@@ -488,7 +498,8 @@
                         <exec command="node-sass -v" outputProperty="scss.test" checkreturn="true"/>
                     </try>
                     <catch>
-                        <fail message="node-sass command is not available for compiling scss files"/>
+                        <echo message="node-sass command is not available for compiling scss files"/>
+                        <fail/>
                     </catch>
                 </trycatch>
                 <if>
