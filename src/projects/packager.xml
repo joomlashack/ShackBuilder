@@ -102,7 +102,8 @@
                                             <available file="${extension.manifest}" type="file"/>
                                             <then/>
                                             <else>
-                                                <echo level="warning">Manifest file not found: ${extension.manifest}</echo>
+                                                <echo level="warning">Manifest file not found: ${extension.manifest}
+                                                </echo>
                                             </else>
                                         </if>
                                     </else>
@@ -463,16 +464,18 @@
                 <property name="scss.file.destination" value="${project.source.path}/${scss.file.tag}"/>
             </else>
         </if>
+
         <exec command="node-sass --output-style=${scss.style} ${scss.file.source} ${scss.file.destination}" returnProperty="scss.result" outputProperty="scss.output"/>
         <if>
-            <not>
-                <equals arg1="${scss.result}" arg2="0"/>
-            </not>
+            <equals arg1="${scss.result}" arg2="0"/>
             <then>
-                <fail message="${scss.output}"/>
+                <echo message="${scss.file.tag} [OK]" level="info"/>
             </then>
+            <else>
+                <echo message="${scss.file.tag} [ERROR]${line.separator}${scss.output}${line.separator}${line.separator}" level="info"/>
+                <fail message="SCSS Compile Failed"/>
+            </else>
         </if>
-
     </target>
 
     <target name="pre-build">
