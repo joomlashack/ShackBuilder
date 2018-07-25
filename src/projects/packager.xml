@@ -463,7 +463,16 @@
                 <property name="scss.file.destination" value="${project.source.path}/${scss.file.tag}"/>
             </else>
         </if>
-        <exec command="node-sass --output-style=${scss.style} ${scss.file.source} ${scss.file.destination}"/>
+        <exec command="node-sass --output-style=${scss.style} ${scss.file.source} ${scss.file.destination}" returnProperty="scss.result" outputProperty="scss.output"/>
+        <if>
+            <not>
+                <equals arg1="${scss.result}" arg2="0"/>
+            </not>
+            <then>
+                <fail message="${scss.output}"/>
+            </then>
+        </if>
+
     </target>
 
     <target name="pre-build">
