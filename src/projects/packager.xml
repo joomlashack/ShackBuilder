@@ -454,9 +454,6 @@
     </target>
 
     <target name="compile-scss-file">
-        <basename file="${scss.file.tag}" property="scss.file.base" suffix="scss"/>
-        <property name="scss.file.source" value="${project.source.path}/${scss.file.tag}"/>
-
         <available property="scss.file.exists" file="${scss.file.source}" type="file" value="1"/>
         <if>
             <equals arg1="${scss.file.exists}" arg2="1"/>
@@ -464,12 +461,14 @@
                 <if>
                     <isset property="scss.destination"/>
                     <then>
-                        <property name="scss.file.destination" value="${scss.destination}/${scss.file.base}.css"/>
+                        <basename file="${scss.file.base}" property="scss.file.name"/>
+                        <property name="scss.file.destination" value="${scss.destination}/${scss.file.name}"/>
                     </then>
                     <else>
-                        <property name="scss.file.destination" value="${project.source.path}/${scss.file.base}.css"/>
+                        <property name="scss.file.destination" value="${project.source.path}/${scss.file.base}"/>
                     </else>
                 </if>
+
             </then>
             <else>
                 <echo message="${scss.file.source}: Does not exist"/>
@@ -481,10 +480,10 @@
         <if>
             <equals arg1="${scss.result}" arg2="0"/>
             <then>
-                <echo message="${scss.file.tag} [OK]" level="info"/>
+                <echo message="${scss.file.base} [OK]" level="info"/>
             </then>
             <else>
-                <echo message="${scss.file.tag} [ERROR]${line.separator}${scss.output}${line.separator}${line.separator}" level="info"/>
+                <echo message="${scss.file.base} [ERROR]${line.separator}${scss.output}${line.separator}${line.separator}" level="info"/>
                 <fail message="SCSS Compile Failed"/>
             </else>
         </if>
@@ -520,7 +519,10 @@
                         <property name="scss.style" value="compressed"/>
                     </else>
                 </if>
-                <foreach target="compile-scss-file" list="${manifest.alledia.scss.file}" param="scss.file.tag"/>
+                <foreach target="compile-scss-file" absparam="scss.file.source" param="scss.file.base">
+                    <mapper type="glob" from="*.scss" to="*.css"/>
+                    <filelist dir="${project.source.path}" files="${manifest.alledia.scss.file}"/>
+                </foreach>
             </then>
         </if>
 
