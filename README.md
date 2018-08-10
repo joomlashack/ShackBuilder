@@ -1,9 +1,9 @@
-[![Alledia](https://www.alledia.com/images/logo_circle_small.png)](https://www.alledia.com)
+[![Joomlashack](https://www.joomlashack.com/images/logo_circle_small.png)](https://www.joomlashack.com)
 
 Alledia Builder
-===========
+===============
 
-Common Build Scripts to build our extensions.
+Common Build Scripts to build Joomlashack extensions.
 
 ## Requirements
 
@@ -370,6 +370,7 @@ To build the extension packages, go inside the extension folder you want to buil
 
 * build
 * build-new
+* pre-build
 * symlink
 * unlink
 * test-bootstrap
