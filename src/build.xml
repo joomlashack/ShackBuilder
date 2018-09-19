@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Alledia Joomla Phing Builder" default="build">
-    <property name="builder.version" value="3.14.6"/>
+    <property name="builder.version" value="3.14.7"/>
 
     <!-- Display basic information -->
     <echo message="Version ${builder.version} for Joomla! extensions"/>
