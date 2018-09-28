@@ -116,23 +116,20 @@ You can automatically pack other extensions while building the package. You just
         ...
 
         <relatedExtensions>
-            <extension
-                type="library"
-                element="allediaframework"
-                uninstall="false">AllediaFramework</extension>
+            <extension type="library"
+                       element="allediaframework"
+                       uninstall="false">AllediaFramework</extension>
 
-            <extension
-                type="component"
-                element="anotherextension1"
-                uninstall="true">AnotherExtension1</extension>
+            <extension type="component"
+                       element="anotherextension1"
+                       uninstall="true">AnotherExtension1</extension>
 
-            <extension
-                type="plugin"
-                element="anyplugin"
-                folder="content"
-                publish="true"
-                uninstall="true"
-                ordering="first">AnyPlugin</extension>
+            <extension type="plugin"
+                       element="anyplugin"
+                       folder="content"
+                       publish="true"
+                       uninstall="true"
+                       ordering="first">AnyPlugin</extension>
         </relatedExtensions>
 
         ...
@@ -246,13 +243,9 @@ For file and folder, use relative paths to the site root.
         ...
 
         <obsolete>
-            <extension
-                type="plugin"
-                group="system"
-                element="osoldextension"
-                publish="true"
-                ordering="first"
-                >OSOldExtension</extension>
+            <extension type="plugin"
+                       group="system"
+                       element="oldshortelementname"/>
 
             <file>/components/com_mycomponent/oldfile.php</file>
             <file>/administrator/components/com_mycomponent/oldfile.php</file>
