@@ -115,13 +115,17 @@ You can automatically pack other extensions while building the package. You just
     <alledia>
         ...
 
-        <relatedExtensions>
+        <relatedExtensions publish="false"
+                           downgrade="false"
+                           uninstall="false">
             <extension type="library"
                        element="allediaframework"
+                       downgrade="false"
                        uninstall="false">AllediaFramework</extension>
 
             <extension type="component"
                        element="anotherextension1"
+                       downgrade="true"
                        uninstall="true">AnotherExtension1</extension>
 
             <extension type="plugin"
@@ -129,19 +133,24 @@ You can automatically pack other extensions while building the package. You just
                        folder="content"
                        publish="true"
                        uninstall="true"
+                       downgrade="true"
                        ordering="first">AnyPlugin</extension>
         </relatedExtensions>
 
         ...
     </alledia>
 
-If you already have a newer version installed for any related extension, it will be ignored. Otherwise, it will install or update.
-
 #### Extension attributes
 
-* publish: force to publish the extension right after install it (only if it is new)
-* uninstall: flag to indicate that this extension should be uninstalled if the main extension is uninstalled
-* ordering: first, last, 1..n - only for plugins, it set an specific order (only if it is new)
+Defaults can be set in the &lt;relatedExtensions&gt; tag. Defaults when nothing specified anywhere are in [brackets].   
+
+* publish [false]: force to publish the plugin right after install (only if it is new)
+* downgrade [false]: downgrade on update of the main extension
+* uninstall [false]: uninstall when the main extension is uninstalled
+* ordering: for new installs of plugins, force a specfic order. Accepted values:
+  * first, 0, 1
+  * last, *
+  * &#91;before|after&#93;:shortelementname
 
 ### Merge and minify scripts
 
