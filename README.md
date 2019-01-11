@@ -21,6 +21,7 @@ Create a new file on your project folder, name as `build.properties`. By default
     test.container.joomla25=1
     test.container.joomla34=1
 
+If using global.properties, there's a bug that requires project.hasFreeVersion=1 to be in it (and possibly not within the build.properties).
 
 #### Optional properties
 
