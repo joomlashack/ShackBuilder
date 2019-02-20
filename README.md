@@ -232,13 +232,37 @@ following attributes:
 
 
 #### Installing node-sass
-You need to have npm/node installed first. For full details see
-[nvm on github](https://github.com/creationix/nvm). Try this command to install nvm:
+You need to have npm/node installed first.
+
+##### linux/MacOS 
+For full details and the latest versions, 
+see [nvm on github](https://github.com/creationix/nvm). 
+
+Use this terminal command to install nvm:
 
 ```
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 ```
-Once npm is installed you can install node-sass:
+
+##### Windows
+See the [official nodejs site](https://nodejs.org/en/) for details and latest versions.
+
+Download and run the appropriate Windows installer for your system:
+
+* [32-bit installer](https://nodejs.org/dist/v10.15.1/node-v10.15.1-x86.msi)
+* [64-bit installer](https://nodejs.org/dist/v10.15.1/node-v10.15.1-x64.msi)
+
+#### Test your installation and install node-sass
+
+These commands in a terminal window (Mac) or cmd window (Windows) should now
+respond with the version number of the installed software:
+```
+npm -v
+node -v
+
+```
+Once successfully installed, you can easily install node-sass:
+
 ```
 npm -g install node-sass
 ```   
