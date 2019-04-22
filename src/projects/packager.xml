@@ -383,6 +383,7 @@
         <if>
             <equals arg1="${project.phplint}" arg2="1"/>
             <then>
+                <echo message="Running PhpLint: [${php.interpreter}] v${php.version}"/>
                 <phplint haltonfailure="true">
                     <fileset dir="${packages.tmp.path}">
                         <include name="**/*.php"/>
