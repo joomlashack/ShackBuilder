@@ -155,7 +155,7 @@ Defaults can be set in the &lt;relatedExtensions&gt; tag. Defaults when nothing 
 
 ### Merge and minify scripts
 
-Scripts can be minified and optionally merged creating a bundle file. This requires the JsShrink library and setting the global property `home.path` on the AllediaBuilder/global.properties file.
+Scripts can be minified and optionally merged creating a bundle file. This requires the JShrink library and setting the global property `home.path` on the AllediaBuilder/global.properties file.
 
 To minify script files you create a `<minify>` tag inside the `<alledia>` tag. 
 You can specify single script files, as well create bundle files.
@@ -207,7 +207,7 @@ This will result on new files:
 * media/js/script-bundle.js
 * media/js/script-bundle.min.js
 
-#### Installing JSShrink using composer
+#### Installing JShrink using composer
 
     composer global require tedivm/jshrink
 
