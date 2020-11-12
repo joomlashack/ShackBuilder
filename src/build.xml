@@ -129,4 +129,18 @@
     <import file="${builder.path}/src/projects/releaser.xml"/>
     <import file="${builder.path}/src/projects/tester.xml"/>
     <import file="${builder.path}/src/projects/codeception.xml"/>
+
+    <taskdef name="copylanguage" classname="CopyLanguageTask"/>
+    <target name="copy-language">
+        <echo level="warning">Create language files from existing files</echo>
+
+        <input propertyName="language.source"
+               message="From: "
+               defaultValue="en-GB"/>
+
+        <input propertyName="language.target"
+               message="  To: "/>
+
+        <copylanguage from="${language.source}" to="${language.target}"/>
+    </target>
 </project>
