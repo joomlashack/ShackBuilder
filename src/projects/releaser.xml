@@ -42,11 +42,6 @@
 
         <!-- @TODO: Check if the version is not already published on GitHub -->
 
-        <!-- Display the current branches -->
-        <phingcall target="show-branches">
-            <property name="projects" value="${projects}"/>
-        </phingcall>
-
         <!-- Build the project -->
         <phingcall target="build" />
 

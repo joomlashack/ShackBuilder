@@ -418,40 +418,6 @@
                 </if>
             </then>
         </if>
-
-        <!-- Show what are the branches are being used for each sub project -->
-        <if>
-            <equals arg1="${buildingdirectly}" arg2="1"/>
-            <then>
-                <if>
-                    <equals arg1="${composer.extra.package-license}" arg2="pro"/>
-                    <then>
-                        <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro" override="true"/>
-                        <property name="project.${composer.extra.name}-Pro.path" value="${project.path}"/>
-                    </then>
-                    <else>
-                        <property name="projects" value="AllediaBuilder,${composer.extra.name}" override="true"/>
-                        <property name="project.${composer.extra.name}.path" value="${project.path}"/>
-                    </else>
-                </if>
-                <!-- Inject the installer on the projects property, if needed -->
-                <if>
-                    <isset property="manifest.scriptfile"/>
-                    <then>
-                        <property name="projects" value="AllediaInstaller,${projects}" override="true"/>
-                    </then>
-                </if>
-
-                <property name="project.AllediaBuilder.path" value="${builder.path}"/>
-
-                <phingcall target="show-branches">
-                    <property name="projects" value="${projects},${project.relatedExtensions},${project.includes}"/>
-                </phingcall>
-
-                <echo>Version: ${manifest.version}</echo>
-            </then>
-        </if>
-
     </target>
 
     <target name="compile-scss-file">
@@ -875,9 +841,5 @@
             </then>
         </if>
 
-    </target>
-
-    <target name="show-branches">
-        <showbranches projects="${projects}"/>
     </target>
 </project>

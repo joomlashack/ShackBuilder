@@ -27,7 +27,6 @@
     <includepath classpath="${builder.path}/src/tasks"/>
     <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask"/>
     <taskdef name="setversion" classname="SetversionTask"/>
-    <taskdef name="showbranches" classname="ShowBranchesTask"/>
     <taskdef name="mergefiles" classname="MergeFilesTask"/>
     <taskdef name="getrelatedextensions" classname="RelatedExtensionsTask"/>
     <taskdef name="getincludes" classname="IncludesTask"/>
