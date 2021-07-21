@@ -6,7 +6,7 @@
         <if>
             <isset property="release.type"/>
             <then>
-                <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version" customvalue="${release.custom_version}"/>
+                <setVersion releasetype="${release.type}" file="${project.manifest}" property="manifest.version" customvalue="${release.custom_version}"/>
                 <phingcall target="update-creation"/>
 
                 <!-- Update the version for related extensions which are not on this repo, but still set to update -->
@@ -32,7 +32,7 @@
         <if>
             <isset property="release.type"/>
             <then>
-                <setversion releasetype="${release.type}" file="${project.manifest}" property="manifest.version" customvalue="${release.custom_version}"/>
+                <setVersion releasetype="${release.type}" file="${project.manifest}" property="manifest.version" customvalue="${release.custom_version}"/>
                 <phingcall target="update-creation"/>
 
                 <!-- Update the version for related extensions which are not on this repo, but still set to update -->
@@ -116,7 +116,7 @@
                 <if>
                     <available file="${extension.manifest}"/>
                     <then>
-                        <setversion releasetype="custom" file="${extension.manifest}" property="extension.version" customvalue="${manifest.version}"/>
+                        <setVersion releasetype="custom" file="${extension.manifest}" property="extension.version" customvalue="${manifest.version}"/>
                         <phingcall target="update-creation">
                             <property name="project.manifest" value="${extension.manifest}"/>
                         </phingcall>
@@ -284,7 +284,7 @@
         <if>
             <istrue value="${capabilities.parallel}"/>
             <then>
-                <foreach_parallel list="${project.includes}" param="include" target="pack-includes" delimiter="," threadCount="${builder.thread.count}"/>
+                <foreachParallel list="${project.includes}" param="include" target="pack-includes" delimiter="," threadCount="${builder.thread.count}"/>
             </then>
             <else>
                 <foreach list="${project.includes}" param="include" target="pack-includes" delimiter=","/>
@@ -371,7 +371,7 @@
         <if>
             <istrue value="${capabilities.parallel}"/>
             <then>
-                <foreach_parallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}"/>
+                <foreachParallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}"/>
             </then>
             <else>
                 <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter=","/>
@@ -504,11 +504,11 @@
             </else>
         </if>
 
-        <mergeminify manifest="${project.manifest}" basePath="${project.source.path}" suffix="${minify.suffix}"/>
+        <mergeMinify manifest="${project.manifest}" basePath="${project.source.path}" suffix="${minify.suffix}"/>
     </target>
 
     <target name="merge-language-files" hidden="true">
-        <mergefiles basepath="${absname}" pattern=".pro." replace="."/>
+        <mergeFiles basepath="${absname}" pattern=".pro." replace="."/>
     </target>
 
     <target name="build-template" hidden="true">
@@ -559,7 +559,7 @@
         <if>
             <equals arg1="${project.is_wright}" arg2="1"/>
             <then>
-                <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}" templatename="wright" documentationLink="${readme.docs}"/>
+                <templateDetails todir="${packages.tmp.path}" version="${templateDetails.version}" templatename="wright" documentationLink="${readme.docs}"/>
             </then>
             <else>
                 <if>
@@ -577,7 +577,7 @@
                         </if>
 
                         <!-- Updates template/wright version in wright.php and other template details -->
-                        <templatedetails todir="${packages.tmp.path}" version="${templateDetails.version}_${wrightDetails.version}" templatename="${manifest.name}" documentationLink="${readme.docs}"/>
+                        <templateDetails todir="${packages.tmp.path}" version="${templateDetails.version}_${wrightDetails.version}" templatename="${manifest.name}" documentationLink="${readme.docs}"/>
 
                         <!-- html, css and js folders only copied for responsive (Wright v.3) templates, until standardized in Wright v.2 -->
                         <copy todir="${packages.tmp.path}/html">
@@ -620,7 +620,7 @@
         <if>
             <equals arg1="${language.exists}" arg2="true"/>
             <then>
-                <templateversion todir="${packages.tmp.path}" template="${templateDetails.name}" version="${templateDetails.version}"/>
+                <templateVersion todir="${packages.tmp.path}" template="${templateDetails.name}" version="${templateDetails.version}"/>
             </then>
         </if>
 
@@ -833,7 +833,7 @@
                 <equals arg1="${release.id}" arg2="0"/>
             </not>
             <then>
-                <setversion releasetype="${new.release.type}" file="${project.manifest}" property="manifest.version" customvalue="${new.release.custom_version}"/>
+                <setVersion releasetype="${new.release.type}" file="${project.manifest}" property="manifest.version" customvalue="${new.release.custom_version}"/>
                 <phingcall target="update-creation"/>
 
                 <!-- Update the version for related extensions which are not on this repo, but still set to update -->

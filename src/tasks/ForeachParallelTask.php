@@ -19,10 +19,8 @@
  */
 
 /**
- * <foreach_parallel> task
- *
- * Task definition for the foreach_parallel task.  This task takes a list with
- * delimited values, and executes a target for each value with set param in parallel.
+ * This task takes a list with delimited values, and executes a target for each value
+ * with set param in parallel.
  *
  * ATTENTION: if the order of the individual tasks is important, do not use this!!!
  *
@@ -32,7 +30,7 @@
  *       So I copied the class and modified it, instead of inherited it.
  *
  * Usage:
- * <foreach_parallel list="values" target="targ" param="name" delimiter="|" threadCount="4" />
+ * <foreachParallel list="values" target="targ" param="name" delimiter="|" threadCount="4" />
  *
  * Attributes:
  * list        --> The list of values to process, with the delimiter character,

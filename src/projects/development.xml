@@ -62,7 +62,7 @@
                         </copy>
 
                         <!-- Merge language files -->
-                        <mergefiles basepath="${language.tmp.path}" pattern=".pro." replace="."/>
+                        <mergeFiles basepath="${language.tmp.path}" pattern=".pro." replace="."/>
 
                         <echo message="Language files merged"/>
                     </then>

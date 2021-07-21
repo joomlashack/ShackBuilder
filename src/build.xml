@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Alledia Joomla Phing Builder" default="build">
-    <property name="builder.version" value="3.15.1"/>
+    <property name="builder.version" value="3.16.0"/>
+    <echo message="AllediaBuilder Version ${builder.version}"/>
 
-    <!-- Display basic information -->
-    <echo message="Version ${builder.version} for Joomla! extensions"/>
+    <property name="builder.path.source" value="${builder.path}/src"/>
+    <available file="${builder.path.source}" type="dir" property="builder.path.source.exists"/>
+    <fail unless="builder.path.source.exists">-
+        Unable to initialize builder:
+    </fail>
+    <includepath classpath="${builder.path.source}"/>
 
     <!-- Global properties -->
     <if>
-        <available file="${builder.path}/global.properties" type="file" />
+        <available file="${builder.path}/global.properties" type="file"/>
         <then>
-            <property file="${builder.path}/global.properties" />
+            <property file="${builder.path}/global.properties"/>
         </then>
-        <else>
-            <property name="builder.thread.count" value="2" />
-        </else>
     </if>
+    <property name="builder.thread.count" value="2"/>
 
-    <property name="builder.vendor.bin.path" value="${builder.path}/vendor/bin" />
+    <property name="builder.vendor.bin.path" value="${builder.path}/vendor/bin"/>
 
     <!-- check capabilities -->
     <php function="extension_loaded" returnProperty="capabilities.parallel">
@@ -25,18 +28,18 @@
 
     <!-- Include the external tasks -->
     <includepath classpath="${builder.path}/src/tasks"/>
-    <taskdef name="propertiesfromcomposer" classname="PropertiesFromComposerTask"/>
-    <taskdef name="setversion" classname="SetversionTask"/>
-    <taskdef name="mergefiles" classname="MergeFilesTask"/>
-    <taskdef name="getrelatedextensions" classname="RelatedExtensionsTask"/>
-    <taskdef name="getincludes" classname="IncludesTask"/>
-    <taskdef name="foreach_parallel" classname="ForeachParallelTask" />
-    <taskdef name="templateversion" classname="TemplateVersionTask" />
-    <taskdef name="templatedetails" classname="TemplateDetailsTask" />
-    <taskdef name="mergeminify" classname="MergeMinifyTask" />
+    <taskdef name="propertiesFromComposer" classname="tasks.PropertiesFromComposerTask"/>
+    <taskdef name="setVersion" classname="tasks.SetversionTask"/>
+    <taskdef name="mergeFiles" classname="tasks.MergeFilesTask"/>
+    <taskdef name="getRelatedExtensions" classname="tasks.RelatedExtensionsTask"/>
+    <taskdef name="getIncludes" classname="tasks.IncludesTask"/>
+    <taskdef name="foreachParallel" classname="tasks.ForeachParallelTask"/>
+    <taskdef name="templateVersion" classname="tasks.TemplateVersionTask"/>
+    <taskdef name="templateDetails" classname="tasks.TemplateDetailsTask"/>
+    <taskdef name="mergeMinify" classname="tasks.MergeMinifyTask"/>
 
     <if>
-        <available file="${home.path}/.composer/vendor/autoload.php" property="exi" />
+        <available file="${home.path}/.composer/vendor/autoload.php" property="exi"/>
         <then>
             <autoloader autoloaderpath="${home.path}/.composer/vendor/autoload.php"/>
         </then>
@@ -53,7 +56,7 @@
         </then>
     </if>
 
-    <propertiesfromcomposer file="${project.path}/composer.json" prefix="composer" />
+    <propertiesFromComposer file="${project.path}/composer.json" prefix="composer"/>
 
     <property name="project.source.path" value="${project.path}/src"/>
     <property name="project.name.short" value="${composer.extra.element-short}"/>
@@ -117,17 +120,15 @@
             </if>
         </else>
     </if>
-    <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false" collapseAttributes="true" />
+    <xmlproperty file="${project.manifest}" prefix="manifest" keepRoot="false" collapseAttributes="true"/>
 
-    <getrelatedextensions file="${project.manifest}" property="project.relatedExtensions" ignoreRelatedExtensions="${ignoreRelatedExtensions}"/>
+    <getRelatedExtensions file="${project.manifest}" property="project.relatedExtensions" ignoreRelatedExtensions="${ignoreRelatedExtensions}"/>
 
-    <getincludes file="${project.manifest}" property="project.includes" ignoreIncludes="${ignoreIncludes}"/>
+    <getIncludes file="${project.manifest}" property="project.includes" ignoreIncludes="${ignoreIncludes}"/>
 
     <import file="${builder.path}/src/projects/development.xml"/>
     <import file="${builder.path}/src/projects/packager.xml"/>
     <import file="${builder.path}/src/projects/releaser.xml"/>
-    <import file="${builder.path}/src/projects/tester.xml"/>
-    <import file="${builder.path}/src/projects/codeception.xml"/>
 
     <taskdef name="copylanguage" classname="CopyLanguageTask"/>
     <target name="copy-language">
