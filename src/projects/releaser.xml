@@ -31,11 +31,6 @@
         <property name="project.AllediaBuilder.path" value="${builder.path}" />
         <property name="projects" value="${projects},${project.relatedExtensions}" override="true"/>
 
-        <!-- Check the repositories status -->
-        <phingcall target="check-repo-status-for-projects">
-            <property name="projects" value="${projects}"/>
-        </phingcall>
-
         <!-- @TODO: You can't release a stable release from non-master branch -->
 
         <!-- @TODO: You can't release a non stable release from master -->
@@ -50,74 +45,5 @@
         <!-- @TODO: Release to Github -->
 
         <!-- @TODO: Release to deployment server -->
-    </target>
-
-    <target name="check-repo-status-for-projects">
-        <if>
-            <istrue value="${capabilities.parallel}"/>
-            <then>
-                <foreachParallel list="${projects}" param="subproject" target="check-repo-status" delimiter="," threadCount="${builder.thread.count}" />
-            </then>
-            <else>
-                <foreach list="${projects}" param="subproject" target="check-repo-status" delimiter=","/>
-            </else>
-        </if>
-    </target>
-
-    <target name="check-repo-status">
-        <property name="subproject.path" value="${project.${subproject}.path}"/>
-        <php expression="strtolower(${subproject})" returnProperty="subproject.name.short"/>
-
-        <if>
-            <not>
-                <available file="${subproject.path}" type="dir" />
-            </not>
-            <then>
-                <fail message="Repository path ${subproject.path} not found"/>
-            </then>
-        </if>
-
-        <!-- Fetch all tags -->
-        <gitfetchall projectName="${subproject}" path="${subproject.path}"/>
-        <!-- Do we have any uncommited change? -->
-        <gitstatus projectName="${subproject}" path="${subproject.path}"/>
-        <!-- Do we have a tag for the current head? -->
-        <gittagged projectName="${subproject}" path="${subproject.path}"/>
-
-        <!-- Check if we are on the right version -->
-        <if>
-            <available file="${subproject.path}/composer.json" />
-            <then>
-                <propertiesFromComposer file="${subproject.path}/composer.json" prefix="subproject-composer" />
-
-                <!-- Parse the manifest file and get properties -->
-                <property name="subproject.manifest" value="${subproject.path}/src/${subproject.name.short}.xml"/>
-                <if>
-                    <not>
-                        <available file="${subproject.manifest}" property="subproject.manifest.exists"/>
-                    </not>
-                    <then>
-                        <property name="subproject.manifest" value="${subproject.path}/src/${subproject.type}_${subproject.name.short}.xml" override="true"/>
-                    </then>
-                </if>
-
-                <if>
-                    <available file="${subproject.manifest}"/>
-                    <then>
-                        <xmlproperty file="${subproject.manifest}" prefix="subproject-manifest" keepRoot="false" />
-
-                        <!-- Is the tag equals the current version? -->
-                        <if>
-                            <not>
-                                <equals arg1="${subproject-manifest.version}" arg2="${current-tag-version}"/>
-                            </not>
-                            <then>
-                                <fail message="The ${subproject}'s version on manifest (${subproject-manifest.version}) and tag name (${current-tag}) don't match." />
-                            </then>
-                        </if>
-                    </then>
-                </if>
-            </then>
-        </if>
     </target>
 </project>

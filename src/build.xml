@@ -4,10 +4,6 @@
     <echo message="AllediaBuilder Version ${builder.version}"/>
 
     <property name="builder.path.source" value="${builder.path}/src"/>
-    <available file="${builder.path.source}" type="dir" property="builder.path.source.exists"/>
-    <fail unless="builder.path.source.exists">-
-        Unable to initialize builder:
-    </fail>
     <includepath classpath="${builder.path.source}"/>
 
     <!-- Global properties -->
@@ -18,6 +14,7 @@
         </then>
     </if>
     <property name="builder.thread.count" value="2"/>
+    <property name="project.hasFreeVersion" value="0"/>
 
     <property name="builder.vendor.bin.path" value="${builder.path}/vendor/bin"/>
 
@@ -37,6 +34,7 @@
     <taskdef name="templateVersion" classname="tasks.TemplateVersionTask"/>
     <taskdef name="templateDetails" classname="tasks.TemplateDetailsTask"/>
     <taskdef name="mergeMinify" classname="tasks.MergeMinifyTask"/>
+    <taskdef name="copyLanguage" classname="tasks.CopyLanguageTask"/>
 
     <if>
         <available file="${home.path}/.composer/vendor/autoload.php" property="exi"/>
@@ -45,8 +43,7 @@
         </then>
     </if>
 
-    <!-- Properties -->
-    <!-- Try to get the project path from the build.properties, for deployment environment -->
+    <!-- Get the project path from the build.properties -->
     <if>
         <not>
             <isset property="project.path"/>
@@ -75,7 +72,9 @@
                             <property name="project.free.source.path" value="${project.${composer.extra.name}.path}/src"/>
                         </then>
                         <else>
-                            <fail message="Missed project.${composer.extra.name}.path property"/>
+                            <fail>-
+Missing path to Free version: project.${composer.extra.name}.path property
+                            </fail>
                         </else>
                     </if>
                 </then>
@@ -126,12 +125,7 @@
 
     <getIncludes file="${project.manifest}" property="project.includes" ignoreIncludes="${ignoreIncludes}"/>
 
-    <import file="${builder.path}/src/projects/development.xml"/>
-    <import file="${builder.path}/src/projects/packager.xml"/>
-    <import file="${builder.path}/src/projects/releaser.xml"/>
-
-    <taskdef name="copylanguage" classname="CopyLanguageTask"/>
-    <target name="copy-language">
+    <target name="copy-language" description="Copy language files from one code to a new one">
         <echo level="warning">Create language files from existing files</echo>
 
         <input propertyName="language.source"
@@ -141,6 +135,13 @@
         <input propertyName="language.target"
                message="  To: "/>
 
-        <copylanguage from="${language.source}" to="${language.target}"/>
+        <copyLanguage from="${language.source}" to="${language.target}"/>
     </target>
+
+    <!-- Load sub-projects -->
+    <import>
+        <fileset dir="${builder.path.source}/projects">
+            <include name="*.xml"/>
+        </fileset>
+    </import>
 </project>

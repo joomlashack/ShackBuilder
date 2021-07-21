@@ -52,7 +52,7 @@
     </target>
 
     <!-- Create Current Release in a tmp folder -->
-    <target name="build-tmp" description="Generate package file for current version">
+    <target name="build-tmp" hidden="true">
         <property name="manifest.version" value="0.0.0" override="false"/>
         <phingcall target="package">
             <property name="buildingdirectly" value="0"/>
@@ -127,7 +127,7 @@
     </target>
 
     <!-- Pack the extension into a project -->
-    <target name="pack-related-extensions">
+    <target name="pack-related-extensions" hidden="true">
         <if>
             <not>
                 <contains string="${extension}" substring="${"/>
@@ -150,7 +150,9 @@
                         <if>
                             <contains string="${extension.path}" substring="${"/>
                             <then>
-                                <fail message="Missed related extension path property: project.${extension}.path"/>
+                                <fail>-
+Missing related extension path property: project.${extension}.path
+                                </fail>
                             </then>
                         </if>
 
@@ -174,7 +176,7 @@
     </target>
 
     <!-- Pack the includes into a project -->
-    <target name="pack-includes">
+    <target name="pack-includes" hidden="true">
         <if>
             <not>
                 <contains string="${include}" substring="${"/>
@@ -188,7 +190,9 @@
                 <if>
                     <contains string="${include.path}" substring="${"/>
                     <then>
-                        <fail message="Missed include path property: project.${include}.path"/>
+                        <fail>-
+Missing include path property: project.${include}.path
+                        </fail>
                     </then>
                 </if>
 
@@ -215,7 +219,7 @@
     </target>
 
     <!-- Create Package without identifying version info -->
-    <target name="package">
+    <target name="package" hidden="true">
         <property name="package.path" value="${packages.path}/${package.file}"/>
 
         <!-- Remove the package, if exists -->
@@ -248,7 +252,9 @@
                 <if>
                     <contains string="${project.AllediaInstaller.path}" substring="${"/>
                     <then>
-                        <fail message="Missed the project.AllediaInstaller.path property"/>
+                        <fail>-
+Missing the project.AllediaInstaller.path property
+                        </fail>
                     </then>
                 </if>
 
@@ -420,7 +426,7 @@
         </if>
     </target>
 
-    <target name="compile-scss-file">
+    <target name="compile-scss-file" hidden="true">
         <available property="scss.file.exists" file="${scss.file.source}" type="file" value="1"/>
         <if>
             <equals arg1="${scss.file.exists}" arg2="1"/>
@@ -439,7 +445,9 @@
             </then>
             <else>
                 <echo message="${scss.file.source}: Does not exist"/>
-                <fail message="${scss.file.source}: Does not exist"/>
+                <fail>-
+${scss.file.source}: Does not exist
+                </fail>
             </else>
         </if>
 
@@ -450,13 +458,17 @@
                 <echo message="${scss.file.base} [OK]" level="info"/>
             </then>
             <else>
-                <echo message="${scss.file.base} [ERROR]${line.separator}${scss.output}${line.separator}${line.separator}" level="info"/>
-                <fail message="SCSS Compile Failed"/>
+                <echo level="info">-
+"${scss.file.base} [ERROR]${line.separator}${scss.output}${line.separator}${line.separator}
+                </echo>
+                <fail>-
+SCSS Compile Failed
+                </fail>
             </else>
         </if>
     </target>
 
-    <target name="pre-build">
+    <target name="pre-build" description="Compile and minify designated files">
         <!-- SCSS compiling -->
         <if>
             <isset property="manifest.alledia.scss.file"/>
@@ -466,8 +478,9 @@
                         <exec command="node-sass -v" outputProperty="scss.test" checkreturn="true"/>
                     </try>
                     <catch>
-                        <echo message="node-sass command is not available for compiling scss files"/>
-                        <fail/>
+                        <fail>-
+node-sass command is not available for compiling scss files
+                        </fail>
                     </catch>
                 </trycatch>
                 <if>
@@ -662,7 +675,9 @@
                 <if>
                     <equals arg1="${returnValue}" arg2="1"/>
                     <then>
-                        <fail msg="Error found on the last executed command. Please, check the logs."/>
+                        <fail>-
+Error found on the last executed command. Please, check the logs.
+                        </fail>
                     </then>
                 </if>
 
@@ -672,7 +687,9 @@
                 <if>
                     <equals arg1="${returnValue}" arg2="1"/>
                     <then>
-                        <fail msg="Error found on the last executed command. Please, check the logs."/>
+                        <fail>-
+Error found on the last executed command. Please, check the logs.
+                        </fail>
                     </then>
                 </if>
 
@@ -694,7 +711,7 @@
     </target>
 
     <!-- Update creation date in Joomla manifest file -->
-    <target name="update-creation">
+    <target name="update-creation" description="Update creation date in all manifests">
         <tstamp prefix="creation"/>
 
         <property name="creation.find" value=""><![CDATA[<creationDate>.*</creationDate>]]></property>
