@@ -104,7 +104,7 @@ npm -v
 ```
 
 ### Installing Node Modules
-Once you have [installed Node JS](#installing-node.js), you can easily
+Once you have [installed Node JS](#installing-nodejs), you can easily
 install the needed modules using npm.
 
 To process SCSS files, the node-sass node.js package must be installed.
