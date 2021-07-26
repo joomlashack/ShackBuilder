@@ -4,6 +4,7 @@
     "license"    : "GPL-2.0-or-later",
     "keywords"   : [
         "alledia",
+        "joomlashack",
         "builder",
         "phing"
     ],
@@ -15,8 +16,9 @@
         }
     ],
     "require"    : {
-        "php"                    : ">=7.2.5",
-        "ext-json"               : "*",
-        "phing/phing"            : "dev-master"
+        "php"          : ">=7.2.5",
+        "ext-json"     : "*",
+        "ext-simplexml": "*",
+        "phing/phing"  : "dev-master"
     }
 }

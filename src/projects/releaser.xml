@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Releaser">
-    <taskdef name="gitstatus" classname="GitStatusTask" />
-    <taskdef name="gitfetchall" classname="GitFetchAllTask" />
-    <taskdef name="gittagged" classname="GitTaggedTask" />
-
     <!-- Create a new release and publish -->
     <target name="release" description="Check, create and release the package">
         <!-- Get the list of related projects -->
