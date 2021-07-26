@@ -261,7 +261,7 @@ Missing the project.AllediaInstaller.path property
                 <property name="installer.source.path" value="${project.AllediaInstaller.path}/src"/>
 
                 <if>
-                    <equals arg1="${composer.type}" arg2="joomla.component"/>
+                    <equals arg1="${composer.type}" arg2="joomla-component"/>
                     <then>
                         <property name="installer.tmp.path" value="${packages.tmp.path}/admin"/>
                     </then>
@@ -299,7 +299,7 @@ Missing the project.AllediaInstaller.path property
 
         <!-- Check if is a template or extension -->
         <if>
-            <equals arg1="${composer.type}" arg2="joomla.template"/>
+            <equals arg1="${composer.type}" arg2="joomla-template"/>
             <then>
                 <!-- Template -->
                 <phingcall target="build-template"/>
@@ -333,7 +333,7 @@ Missing the project.AllediaInstaller.path property
 
                         <!-- Merge language files -->
                         <if>
-                            <equals arg1="${composer.type}" arg2="joomla.component"/>
+                            <equals arg1="${composer.type}" arg2="joomla-component"/>
                             <then>
                                 <if>
                                     <available file="${packages.tmp.path}/admin/language" type="dir"/>

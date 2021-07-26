@@ -3,7 +3,7 @@
     <!-- Create a temporary merged language file for local development with symlink -->
     <target name="merge-languages" description="Create merged language files">
         <if>
-            <equals arg1="${composer.type}" arg2="joomla.component"/>
+            <equals arg1="${composer.type}" arg2="joomla-component"/>
             <then>
                 <!-- Admin -->
                 <phingcall target="merge-languages-subtask">

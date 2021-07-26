@@ -7,9 +7,12 @@
  */
 
 require_once 'phing/Task.php';
+require_once 'TraitShack.php';
 
 class PropertiesFromComposerTask extends Task
 {
+    use TraitShack;
+
     /**
      * JSON file with the properties
      *
@@ -25,16 +28,14 @@ class PropertiesFromComposerTask extends Task
     protected $prefix;
 
     /**
-     * The setter for the attribute "file". It should point to
-     * the composer.json file
+     * @param ?string $path
      *
-     * @param string $path The path for the composer.json file
      * @return void
      */
-    public function setFile($path)
+    public function setFile(?string $path)
     {
-        if (empty($path) || ! file_exists(realpath($path))) {
-            throw new Exception("Invalid composer.json file path", 1);
+        if (empty($path) || !file_exists(realpath($path))) {
+            $this->throwError('Invalid composer.json file path');
         }
 
         $this->file = $path;
@@ -60,9 +61,7 @@ class PropertiesFromComposerTask extends Task
     }
 
     /**
-     * The method that runs the task
-     *
-     * @return void
+     * @inheritDoc
      */
     public function main()
     {
@@ -72,52 +71,20 @@ class PropertiesFromComposerTask extends Task
 
         $json = json_decode(file_get_contents($this->file), true);
 
-        $self = $this;
-        $setProperties = function (&$propertyName, $propertyValue) use (&$setProperties, &$self) {
-            if (is_array($propertyValue)) {
-                foreach ($propertyValue as $name => $value) {
-                    $name = $propertyName . '.' . $name;
-
-                    $setProperties($name, $value);
-                }
-
-            } else {
-                $project = $self->getProject();
-                $project->setProperty($propertyName, $propertyValue);
+        // Verify project.type
+        if (array_key_exists('type', $json)) {
+            if (!array_key_exists($json['type'], $this->types)) {
+                $this->throwError('Invalid Joomla Extension Type: ' . $json['type']);
             }
-        };
-
-        $name = $this->prefix;
-        $setProperties($name, $json);
-
-        // Set the project.type property
-        $types = array(
-            'joomla.plugin' => 'plg',
-            'joomla.module' => 'mod',
-            'joomla.template' => 'tpl',
-            'joomla.component' => 'com',
-            'joomla.package' => 'pkg',
-            'joomla.file' => 'file',
-            'joomla.cli' => 'cli',
-            'joomla.library' => 'lib'
-        );
-        
-        if (!array_key_exists($json['type'], $types)) {
-            throw new Exception("Invalid Joomla Extension Type: " . $json['type'], 1);
+        } else {
+            $this->throwError('Missing composer property: Unable to determine Joomla type');
         }
 
-        $this->project->setProperty('project.type', $types[$json['type']]);
+        $name = $this->prefix;
+        $this->setProperties($name, $json);
+
+        $this->project->setProperty('project.type', $this->types[$json['type']]);
 
         $this->log('Loaded composer.json data into properties');
-    }
-
-    /**
-     * Return the protect attribute project
-     *
-     * @return mixed
-     */
-    public function getProject()
-    {
-        return $this->project;
     }
 }
