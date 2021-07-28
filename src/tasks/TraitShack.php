@@ -58,17 +58,22 @@ trait TraitShack
      * Execution stops on call
      *
      * @param string|string[] $messages
+     * @param ?Location       $location
      *
      * @return void
      */
-    protected function throwError($messages)
+    protected function throwError($messages, ?Location $location = null)
     {
-        if (is_string($messages)) {
+        if (!is_array($messages)) {
             $messages = [$messages];
         }
 
         foreach ($messages as $message) {
             $this->log($message, Project::MSG_ERR);
+        }
+
+        if ($location) {
+            $this->log($location->toString(), Project::MSG_ERR);
         }
         die;
     }
