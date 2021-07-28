@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ShackBuilder" default="build">
+<project name="ShackBuilder" default="copy">
     <property name="builder.include.name" value="${phing.project.name} for includes"/>
-    <echo message="${phing.project.name} ${builder.version}"/>
+    <echo message="${builder.include.name} ${builder.version}"/>
 
     <!-- Properties -->
     <!-- Try to get the project path from the build.properties, for deployment environment -->
