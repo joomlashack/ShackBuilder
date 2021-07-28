@@ -1,9 +1,24 @@
 <?php
 /**
- * @package   AllediaBuilder
- * @contact   www.joomlashack.com, hello@joomlashack.com
- * @copyright 2017 Joomlashack.com, All rights reserved
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ * @package   ShackBuilder
+ * @contact   www.joomlashack.com, help@joomlashack.com
+ * @copyright 2017-2021 Joomlashack.com. All rights reserved
+ * @license   https://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
+ * This file is part of ShackBuilder.
+ *
+ * ShackBuilder is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ShackBuilder is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 require_once "phing/Task.php";
@@ -27,7 +42,7 @@ class TemplateVersionTask extends Task
 	{
 		$this->template = $str;
 	}
-	
+
 	/**
 	 * The setter for the attribute "todir"
 	 */
@@ -48,7 +63,7 @@ class TemplateVersionTask extends Task
     {
       // nothing to do here
     }
-	
+
 	protected function updateLanguageFile($fileName)
 	{
 		$path = '/language/' . $fileName;
@@ -66,7 +81,7 @@ class TemplateVersionTask extends Task
 
 		$content = file_get_contents($path);
 		$content = str_replace('{version}', $this->version, $content);
-	
+
 		file_put_contents($path, $content);
 
 		$this->log("Updated version in file " . $path);

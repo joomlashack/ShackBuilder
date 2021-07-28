@@ -1,24 +1,27 @@
 <?php
 
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the LGPL. For more information please see
- * <http://phing.info>.
- */
-
 /**
+ * @package   ShackBuilder
+ * @contact   www.joomlashack.com, help@joomlashack.com
+ * @copyright 2016-2021 Joomlashack.com. All rights reserved
+ * @license   https://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
+ * This file is part of ShackBuilder.
+ *
+ * ShackBuilder is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ShackBuilder is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ *
  * This task takes a list with delimited values, and executes a target for each value
  * with set param in parallel.
  *
@@ -72,27 +75,31 @@ class ForeachParallelTask extends Task
 
     /**
      * Array of filelists
+     *
      * @var array
      */
     private $filelists = array();
 
     /**
      * Target to execute.
+     *
      * @var string
      */
     private $calleeTarget;
 
     /**
      * Total number of files processed
+     *
      * @var integer
      */
     private $total_files = 0;
 
     /**
      * Total number of directories processed
+     *
      * @var integer
      */
-    private $total_dirs  = 0;
+    private $total_dirs = 0;
 
     private function getCallee()
     {
@@ -107,6 +114,7 @@ class ForeachParallelTask extends Task
 
     /**
      * This method does the work.
+     *
      * @return void
      */
     public function main()
@@ -141,21 +149,22 @@ class ForeachParallelTask extends Task
         }
 
         if (trim($this->list)) {
-            $arr = explode($this->delimiter, $this->list);
+            $arr           = explode($this->delimiter, $this->list);
             $total_entries = 0;
 
             foreach ($arr as $value) {
-                $value = trim($value);
+                $value     = trim($value);
                 $premapped = '';
                 if ($mapper !== null) {
                     $premapped = $value;
-                    $value = $mapper->main($value);
+                    $value     = $mapper->main($value);
                     if ($value === null) {
                         continue;
                     }
                     $value = array_shift($value);
                 }
-                $this->log("Setting param '$this->param' to value '$value'" . ($premapped ? " (mapped from '$premapped')" : ''), Project::MSG_VERBOSE);
+                $this->log("Setting param '$this->param' to value '$value'" . ($premapped ? " (mapped from '$premapped')" : ''),
+                    Project::MSG_VERBOSE);
                 $callee = $this->getCallee();
                 $callee->setTarget($this->calleeTarget);
                 $callee->setInheritAll(true);
@@ -193,9 +202,11 @@ class ForeachParallelTask extends Task
         $parallelManager->execute();
 
         if ($this->list === null) {
-            $this->log("Processed {$this->total_dirs} directories and {$this->total_files} files", Project::MSG_VERBOSE);
+            $this->log("Processed {$this->total_dirs} directories and {$this->total_files} files",
+                Project::MSG_VERBOSE);
         } else {
-            $this->log("Processed $total_entries entr" . ($total_entries > 1 ? 'ies' : 'y') . " in list", Project::MSG_VERBOSE);
+            $this->log("Processed $total_entries entr" . ($total_entries > 1 ? 'ies' : 'y') . " in list",
+                Project::MSG_VERBOSE);
         }
     }
 
@@ -207,19 +218,24 @@ class ForeachParallelTask extends Task
      * @param array     $srcFiles
      * @param array     $srcDirs
      */
-    protected function process(DocBlox_Parallel_Manager $parallelManager, Task $callee, PhingFile $fromDir, $srcFiles, $srcDirs)
-    {
+    protected function process(
+        DocBlox_Parallel_Manager $parallelManager,
+        Task $callee,
+        PhingFile $fromDir,
+        $srcFiles,
+        $srcDirs
+    ) {
         $mapper = null;
 
         if ($this->mapperElement !== null) {
             $mapper = $this->mapperElement->getImplementation();
         }
 
-        $filecount = count($srcFiles);
+        $filecount         = count($srcFiles);
         $this->total_files += $filecount;
 
         for ($j = 0; $j < $filecount; $j++) {
-            $value = $srcFiles[$j];
+            $value     = $srcFiles[$j];
             $premapped = "";
 
             if ($this->absparam) {
@@ -231,7 +247,7 @@ class ForeachParallelTask extends Task
 
             if ($mapper !== null) {
                 $premapped = $value;
-                $value = $mapper->main($value);
+                $value     = $mapper->main($value);
                 if ($value === null) {
                     continue;
                 }
@@ -239,7 +255,8 @@ class ForeachParallelTask extends Task
             }
 
             if ($this->param) {
-                $this->log("Setting param '$this->param' to value '$value'" . ($premapped ? " (mapped from '$premapped')" : ''), Project::MSG_VERBOSE);
+                $this->log("Setting param '$this->param' to value '$value'" . ($premapped ? " (mapped from '$premapped')" : ''),
+                    Project::MSG_VERBOSE);
                 $prop = $callee->createProperty();
                 $prop->setOverride(true);
                 $prop->setName($this->param);
@@ -254,11 +271,11 @@ class ForeachParallelTask extends Task
             $parallelManager->addWorker($worker);
         }
 
-        $dircount = count($srcDirs);
+        $dircount         = count($srcDirs);
         $this->total_dirs += $dircount;
 
-        for ($j = 0; $j <  $dircount; $j++) {
-            $value = $srcDirs[$j];
+        for ($j = 0; $j < $dircount; $j++) {
+            $value     = $srcDirs[$j];
             $premapped = "";
 
             if ($this->absparam) {
@@ -270,7 +287,7 @@ class ForeachParallelTask extends Task
 
             if ($mapper !== null) {
                 $premapped = $value;
-                $value = $mapper->main($value);
+                $value     = $mapper->main($value);
                 if ($value === null) {
                     continue;
                 }
@@ -278,7 +295,8 @@ class ForeachParallelTask extends Task
             }
 
             if ($this->param) {
-                $this->log("Setting param '$this->param' to value '$value'" . ($premapped ? " (mapped from '$premapped')" : ''), Project::MSG_VERBOSE);
+                $this->log("Setting param '$this->param' to value '$value'" . ($premapped ? " (mapped from '$premapped')" : ''),
+                    Project::MSG_VERBOSE);
                 $prop = $callee->createProperty();
                 $prop->setOverride(true);
                 $prop->setName($this->param);
@@ -296,31 +314,32 @@ class ForeachParallelTask extends Task
 
     public function setList($list)
     {
-        $this->list = (string) $list;
+        $this->list = (string)$list;
     }
 
     public function setTarget($target)
     {
-        $this->calleeTarget = (string) $target;
+        $this->calleeTarget = (string)$target;
     }
 
     public function setParam($param)
     {
-        $this->param = (string) $param;
+        $this->param = (string)$param;
     }
 
     public function setAbsparam($absparam)
     {
-        $this->absparam = (string) $absparam;
+        $this->absparam = (string)$absparam;
     }
 
     public function setDelimiter($delimiter)
     {
-        $this->delimiter = (string) $delimiter;
+        $this->delimiter = (string)$delimiter;
     }
 
     /**
      * Sets the maximum number of threads / processes to use
+     *
      * @param int $threadCount
      */
     public function setThreadCount($threadCount)
@@ -365,12 +384,13 @@ class ForeachParallelTask extends Task
 
     /**
      * Supports embedded <filelist> element.
+     *
      * @return FileList
      */
     public function createFileList()
     {
         $num = array_push($this->filelists, new FileList());
 
-        return $this->filelists[$num-1];
+        return $this->filelists[$num - 1];
     }
 }
