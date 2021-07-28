@@ -1,14 +1,13 @@
 {
-    "name"       : "alledia/allediabuilder",
-    "description": "Builder scripts for Joomlashack/OSTraining extensions",
+    "name"       : "joomlashack/shackbuilder",
+    "description": "Builder scripts for Joomlashack extensions",
     "license"    : "GPL-2.0-or-later",
     "keywords"   : [
-        "alledia",
         "joomlashack",
         "builder",
         "phing"
     ],
-    "homepage"   : "https://github.com/OSTraining/AllediaBuilder",
+    "homepage"   : "https://github.com/joomlashack/ShackBuilder",
     "authors"    : [
         {
             "name" : "Joomlashack",
