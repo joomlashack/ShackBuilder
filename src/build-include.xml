@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ShackBuilder" default="build">
-    <property name="builder.include.name" value="Shack Builder for includes"/>
+    <property name="builder.include.name" value="${phing.project.name} for includes"/>
     <echo message="${phing.project.name} ${builder.version}"/>
 
     <!-- Properties -->
