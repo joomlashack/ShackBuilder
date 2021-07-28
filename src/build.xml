@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Alledia Joomla Phing Builder" default="build">
-    <property name="builder.version" value="3.16.0"/>
-    <echo message="AllediaBuilder Version ${builder.version}"/>
+<project default="build">
+    <property name="builder.name" value="ShackBuilder"/>
+    <property name="builder.version" value="4.0.0"/>
+    <echo message="${builder.name} Version ${builder.version}"/>
 
     <property name="builder.path.source" value="${builder.path}/src"/>
     <includepath classpath="${builder.path.source}"/>

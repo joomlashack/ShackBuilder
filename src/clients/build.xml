@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Alledia Extension Builder" default="build">
-    <property name="builder.client.version" value="3.16.0"/>
-    <echo message="AllediaBuilder Client Version ${builder.client.version}"/>
+<project name="ShackBuilder Client" default="build">
+    <property name="builder.client.version" value="4.0.0"/>
+    <echo message="${phing.project.name} Version ${builder.client.version}"/>
 
     <if>
         <available file="./build.properties" type="file"/>
@@ -30,6 +30,4 @@ Missing 'build.xml' file in builder source path
             </fail>
         </else>
     </if>
-
-
 </project>

@@ -6,12 +6,10 @@
         <if>
             <equals arg1="${composer.extra.package-license}" arg2="pro"/>
             <then>
-                <!-- <property name="projects" value="AllediaBuilder,${composer.extra.name},${composer.extra.name}-Pro"/> -->
                 <property name="projects" value="${composer.extra.name},${composer.extra.name}-Pro"/>
                 <property name="project.${composer.extra.name}-Pro.path" value="${project.path}" />
             </then>
             <else>
-                <!-- <property name="projects" value="AllediaBuilder,${composer.extra.name}"/> -->
                 <property name="projects" value="${composer.extra.name}"/>
                 <property name="project.${composer.extra.name}.path" value="${project.path}" />
             </else>
@@ -20,11 +18,11 @@
         <if>
             <isset property="manifest.scriptfile"/>
             <then>
-                <property name="projects" value="AllediaInstaller,${projects}" override="true"/>
+                <property name="projects" value="ShackInstaller,${projects}" override="true"/>
             </then>
         </if>
 
-        <property name="project.AllediaBuilder.path" value="${builder.path}" />
+        <property name="project.ShackBuilder.path" value="${builder.path}" />
         <property name="projects" value="${projects},${project.relatedExtensions}" override="true"/>
 
         <!-- @TODO: You can't release a stable release from non-master branch -->

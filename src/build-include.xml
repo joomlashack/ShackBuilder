@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Alledia Include Phing Builder" default="build">
-    <property name="builder.version" value="3.15.1"/>
-
-    <!-- Display basic information -->
-    <echo message="Version ${builder.version} for includes"/>
-
-    <!-- Include the external tasks -->
-    <includepath classpath="${builder.path}/src/tasks"/>
+<project name="ShackBuilder" default="build">
+    <property name="builder.include.name" value="Shack Builder for includes"/>
+    <echo message="${phing.project.name} ${builder.version}"/>
 
     <!-- Properties -->
     <!-- Try to get the project path from the build.properties, for deployment environment -->

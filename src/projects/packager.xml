@@ -250,15 +250,25 @@ Missing include path property: project.${include}.path
             <then>
                 <!-- Check if the installer library path is set -->
                 <if>
-                    <contains string="${project.AllediaInstaller.path}" substring="${"/>
+                    <contains string="${project.ShackInstaller.path}" substring="${"/>
                     <then>
                         <fail>-
-Missing the project.AllediaInstaller.path property
+Missing the project.ShackInstaller.path property
                         </fail>
                     </then>
                 </if>
 
-                <property name="installer.source.path" value="${project.AllediaInstaller.path}/src"/>
+                <property name="installer.source.path" value="${project.ShackInstaller.path}/src"/>
+                <if>
+                    <not>
+                        <available file="${installer.source.path}" type="dir"/>
+                    </not>
+                    <then>
+                        <fail>-
+Unable to find directory: ${installer.source.path}
+                        </fail>
+                    </then>
+                </if>
 
                 <if>
                     <equals arg1="${composer.type}" arg2="joomla-component"/>
