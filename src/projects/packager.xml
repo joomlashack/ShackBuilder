@@ -426,7 +426,7 @@ Unable to find directory: ${installer.source.path}
                 <!-- Remove tmp folder -->
                 <if>
                     <not>
-                        <equals arg1="${debug}" arg2="1"/>
+                        <equals arg1="${builder.debug}" arg2="1"/>
                     </not>
                     <then>
                         <delete dir="${packages.tmp.path}"/>
