@@ -17,6 +17,7 @@
     "require"    : {
         "php"          : ">=7.2.5",
         "ext-json"     : "*",
+        "ext-libxml"   : "*",
         "ext-simplexml": "*",
         "phing/phing"  : "dev-master"
     }
