@@ -35,22 +35,62 @@ trait TraitShack
     ];
 
     /**
-     * @param string $propertyName
-     * @param mixed  $propertyValue
+     * @param string $name
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    protected function getProperty(string $name, $default = null)
+    {
+        $value = $this->project->getProperty($name);
+        if ($value === null && $default !== null) {
+            $value = $this->project->getProperty($default) ?: $default;
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param string $name
+     * @param ?string $value
+     *
+     * @return ?string
+     */
+    protected function setProperty(string $name, ?string $value): ?string
+    {
+        $previous = $this->project->getProperty($name);
+
+        $this->project->setProperty($name, $value);
+
+        return $previous;
+    }
+
+    /**
+     * @param string          $propertyName
+     * @param mixed           $propertyValue
+     * @param string|string[] $ignoreProperties
      *
      * @return void
      */
-    protected function setProperties(string $propertyName, $propertyValue)
+    protected function setProperties(string $propertyName, $propertyValue, $ignoreProperties = [])
     {
         if (is_array($propertyValue)) {
-            foreach ($propertyValue as $name => $value) {
-                $name = $propertyName . '.' . $name;
+            if ($ignoreProperties && is_string($ignoreProperties)) {
+                $ignoreProperties = [$ignoreProperties];
+            }
 
-                $this->setProperties($name, $value);
+            if (array_search($propertyName, $ignoreProperties) === false) {
+                foreach ($propertyValue as $name => $value) {
+                    $name = $propertyName . '.' . $name;
+
+                    if (array_search($name, $ignoreProperties) === false) {
+                        $this->setProperties($name, $value, $ignoreProperties);
+                    }
+                }
             }
 
         } else {
-            $this->getProject()->setProperty($propertyName, $propertyValue);
+            $this->setProperty($propertyName, $propertyValue);
         }
     }
 
