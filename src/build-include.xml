@@ -55,7 +55,7 @@
                 <equals arg1="${project.type}" arg2="com" />
             </not>
             <then>
-                <!-- Move files drom the admin folder, if exists -->
+                <!-- Move files from the admin folder, if exists -->
                 <if>
                     <available file="${packages.tmp.path}/admin" type="dir" />
                     <then>
