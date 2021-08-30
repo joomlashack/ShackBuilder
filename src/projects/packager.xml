@@ -243,14 +243,15 @@ Missing include path property: project.${include}.path
         <!-- Merge and minify files -->
         <phingcall target="pre-build"/>
 
-
         <!-- Copy the installer library, if there is a custom installer script -->
         <if>
             <isset property="manifest.scriptfile"/>
             <then>
                 <!-- Check if the installer library path is set -->
                 <if>
-                    <contains string="${project.ShackInstaller.path}" substring="${"/>
+                    <not>
+                        <isset property="project.ShackInstaller.path"/>
+                    </not>
                     <then>
                         <fail>-
 Missing the project.ShackInstaller.path property
@@ -287,7 +288,7 @@ Unable to find directory: ${installer.source.path}
                     </fileset>
                 </copy>
 
-                <!-- Installer media - it is separated because componentes use admin/site subfolders folders -->
+                <!-- Installer media - it is separated because components use admin/site subfolders folders -->
                 <copy todir="${packages.tmp.path}/media">
                     <fileset dir="${installer.source.path}/media" id="installer-media-code">
                         <include name="**"/>
@@ -469,7 +470,7 @@ ${scss.file.source}: Does not exist
             </then>
             <else>
                 <echo level="info">-
-"${scss.file.base} [ERROR]${line.separator}${scss.output}${line.separator}${line.separator}
+                    "${scss.file.base} [ERROR]${line.separator}${scss.output}${line.separator}${line.separator}
                 </echo>
                 <fail>-
 SCSS Compile Failed
