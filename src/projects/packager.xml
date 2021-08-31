@@ -143,8 +143,6 @@
                         <!-- Is the extension path set? -->
                         <property name="extension.path" value="${project.${extension}.path}"/>
 
-                        <echo message="${extension.path}" level="warning"/>
-
                         <fail unless="extension.path">-
 Missing related extension property: project.${extension}.path
                         </fail>
