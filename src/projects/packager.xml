@@ -288,7 +288,7 @@ Unable to find directory: ${installer.source.path}
                 </if>
             </then>
             <else>
-                <echo message="No Include Tags" level="warning"/>
+                <echo message="No Included Repositories" level="warning"/>
             </else>
         </if>
 
@@ -383,7 +383,7 @@ Unable to find directory: ${installer.source.path}
                 </if>
             </then>
             <else>
-                <echo message="No Related" level="warning"/>
+                <echo message="No Related Extensions" level="warning"/>
             </else>
         </if>
 
