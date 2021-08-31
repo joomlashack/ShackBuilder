@@ -129,9 +129,7 @@
     <!-- Pack the extension into a project -->
     <target name="pack-related-extensions" hidden="true">
         <if>
-            <not>
-                <contains string="${extension}" substring="${"/>
-            </not>
+            <isset property="extension"/>
             <then>
                 <echo>Packing the related extension: ${extension}</echo>
 
