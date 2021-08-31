@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ShackBuilder" default="copy">
     <property name="builder.include.name" value="ShackBuilder for includes"/>
-    <property name="builder.version" value="4.0.4"/>
+    <property name="builder.version" value="4.0.5"/>
     <echo message="${builder.include.name} ${builder.version}"/>
 
     <!-- Properties -->
