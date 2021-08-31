@@ -75,9 +75,11 @@
 
     <propertiesFromComposer file="${project.path}/composer.json" prefix="composer"/>
 
+    <!-- set default values -->
     <property name="project.source.path" value="${project.path}/src"/>
     <property name="project.name.short" value="${composer.extra.element-short}"/>
     <property name="project.name.long" value="${composer.extra.element}"/>
+    <property name="builder.debug" value="0"/>
 
     <!-- Set the free extension path -->
     <if>

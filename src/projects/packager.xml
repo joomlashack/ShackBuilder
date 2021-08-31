@@ -63,9 +63,7 @@
     <target name="set-version-related-extensions" hidden="true">
         <echo>set-version-related-extensions-${extension}</echo>
         <if>
-            <not>
-                <contains string="${extension}" substring="${"/>
-            </not>
+            <isset property="extension"/>
             <then>
                 <echo>Updating version for: ${extension}</echo>
 
@@ -145,14 +143,9 @@
                         <!-- Is the extension path set? -->
                         <property name="extension.path" value="${project.${extension}.path}"/>
 
-                        <if>
-                            <contains string="${extension.path}" substring="${"/>
-                            <then>
-                                <fail>-
-Missing related extension path property: project.${extension}.path
-                                </fail>
-                            </then>
-                        </if>
+                        <fail unless="extension.path">-
+Missing related extension property: project.${extension}.path
+                        </fail>
 
                         <!-- Make sure we have the main extensions folder -->
                         <if>
@@ -176,27 +169,23 @@ Missing related extension path property: project.${extension}.path
     <!-- Pack the includes into a project -->
     <target name="pack-includes" hidden="true">
         <if>
-            <not>
-                <contains string="${include}" substring="${"/>
-            </not>
+            <isset property="include"/>
             <then>
                 <echo>Packing the include: ${include}</echo>
 
-                <!-- Is the include path set? -->
-                <property name="include.path" value="${project.${include}.path}"/>
+                <property name="include.success" value="0" override="true"/>
 
-                <if>
-                    <contains string="${include.path}" substring="${"/>
-                    <then>
-                        <fail>-
-Missing include path property: project.${include}.path
-                        </fail>
-                    </then>
-                </if>
+                <!-- Is the include path set? -->
+                <property name="include.path" value="project.${include}.path"/>
+                <fail unless="include.path">-
+Missing include property: ${include.path}
+                </fail>
 
                 <!-- Check if we have a custom source for this include. If not, use src/ -->
                 <if>
-                    <contains string="${project.includes.${include}.source}" substring="${"/>
+                    <not>
+                        <isset property="project.includes.${include}.source"/>
+                    </not>
                     <then>
                         <property name="project.includes.${include}.source" value="src/" override="true"/>
                     </then>
@@ -204,14 +193,16 @@ Missing include path property: project.${include}.path
 
                 <!-- Check if we have a custom destination for this include -->
                 <if>
-                    <contains string="${project.includes.${include}.destination}" substring="${"/>
+                    <not>
+                        <isset property="project.includes.${include}.destination"/>
+                    </not>
                     <then>
-                        <property name="project.includes.${include}.destination" value="" override="true"/>
+                        <property name="project.includes.${include}.destination" value=""/>
                     </then>
                 </if>
 
                 <!-- Run the include phing script -->
-                <exec command="phing -f ${include.path}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path}/${project.includes.${include}.destination} -logger phing.listener.DefaultLogger -Dproject.type=${project.type} -Dinclude.source=${project.includes.${include}.source}" logoutput="true" checkreturn="true"/>
+                <exec command="phing -f ${${include.path}}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path}/${project.includes.${include}.destination} -logger phing.listener.DefaultLogger -Dproject.type=${project.type} -Dinclude.source=${project.includes.${include}.source}" logoutput="true" checkreturn="true"/>
             </then>
         </if>
     </target>
@@ -229,9 +220,9 @@ Missing include path property: project.${include}.path
             </then>
         </if>
 
-        <!-- Prepare the packages temporary folders -->
+        <!-- Prepare the package's temporary folders -->
         <if>
-            <available file="${packages.tmp.path}" type="dir"/>
+            <available file="${packages.tmp.path}" type="dir" property="packages.tmp.exists"/>
             <then>
                 <delete dir="${packages.tmp.path}"/>
             </then>
@@ -246,28 +237,15 @@ Missing include path property: project.${include}.path
             <isset property="manifest.scriptfile"/>
             <then>
                 <!-- Check if the installer library path is set -->
-                <if>
-                    <not>
-                        <isset property="project.ShackInstaller.path"/>
-                    </not>
-                    <then>
-                        <fail>-
-Missing the project.ShackInstaller.path property
-                        </fail>
-                    </then>
-                </if>
+                <fail unless="project.ShackInstaller.path">-
+Missing Installer property: project.ShackInstaller.path
+                </fail>
 
                 <property name="installer.source.path" value="${project.ShackInstaller.path}/src"/>
-                <if>
-                    <not>
-                        <available file="${installer.source.path}" type="dir"/>
-                    </not>
-                    <then>
-                        <fail>-
+                <available file="${installer.source.path}" type="dir" property="installer.source.path.exists"/>
+                <fail unless="installer.source.path">-
 Unable to find directory: ${installer.source.path}
-                        </fail>
-                    </then>
-                </if>
+                </fail>
 
                 <if>
                     <equals arg1="${composer.type}" arg2="joomla-component"/>
@@ -297,12 +275,20 @@ Unable to find directory: ${installer.source.path}
 
         <!-- Copy the resources specified by the include tag -->
         <if>
-            <istrue value="${capabilities.parallel}"/>
+            <isset property="project.includes"/>
             <then>
-                <foreachParallel list="${project.includes}" param="include" target="pack-includes" delimiter="," threadCount="${builder.thread.count}"/>
+                <if>
+                    <istrue value="${capabilities.parallel}"/>
+                    <then>
+                        <foreachParallel list="${project.includes}" param="include" target="pack-includes" delimiter="," threadCount="${builder.thread.count}"/>
+                    </then>
+                    <else>
+                        <foreach list="${project.includes}" param="include" target="pack-includes" delimiter=","/>
+                    </else>
+                </if>
             </then>
             <else>
-                <foreach list="${project.includes}" param="include" target="pack-includes" delimiter=","/>
+                <echo message="No Include Tags" level="warning"/>
             </else>
         </if>
 
@@ -384,12 +370,20 @@ Unable to find directory: ${installer.source.path}
 
         <!-- Pack related extensions -->
         <if>
-            <istrue value="${capabilities.parallel}"/>
+            <isset property="project.relatedExtensions"/>
             <then>
-                <foreachParallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}"/>
+                <if>
+                    <istrue value="${capabilities.parallel}"/>
+                    <then>
+                        <foreachParallel list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter="," threadCount="${builder.thread.count}"/>
+                    </then>
+                    <else>
+                        <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter=","/>
+                    </else>
+                </if>
             </then>
             <else>
-                <foreach list="${project.relatedExtensions}" param="extension" target="pack-related-extensions" delimiter=","/>
+                <echo message="No Related" level="warning"/>
             </else>
         </if>
 
@@ -424,12 +418,13 @@ Unable to find directory: ${installer.source.path}
 
                 <!-- Remove tmp folder -->
                 <if>
-                    <not>
-                        <equals arg1="${builder.debug}" arg2="1"/>
-                    </not>
+                    <istrue value="${builder.debug}"/>
                     <then>
-                        <delete dir="${packages.tmp.path}"/>
+                        <echoproperties destfile="packager.properties"/>
                     </then>
+                    <else>
+                        <delete dir="${packages.tmp.path}"/>
+                    </else>
                 </if>
             </then>
         </if>
