@@ -114,10 +114,30 @@ node-sass -v
 ``` 
 
 ### Phing properties
-Create a new file in your project folder, name as `build.properties`.
+Create a new file in your project folder, named `build.properties`.
 The only required setting is:
 
     builder.path=/path/to/AllediaBuilder/local/copy
+
+See [clients/build.dist.properties](src/clients/build.dist.properties)
+for more details on available properties.
+
+#### Global properties
+Many `build.properties` settings will be common to many projects.
+These properties can be set in `global.properties` in your local
+clone of this repository.
+
+On some systems, you may have to tell the builder where to find composer's
+autoload.php file. If you have installed the composer dependencies globally
+as described above, this is typically the home directory for your user account
+
+    home.path=/path/to/user/home/directory
+
+The builder expects to find the file `.composer/vendor/autoload.php` in the specified
+directory.
+
+See [global.dist.properties](global.dist.properties) for more properties that are appropriately
+set globally.
 
 ##### Alias for Related Extension's Path
 If you extension has one or more related extension/project,
@@ -141,7 +161,7 @@ from the `clients` folder here into the project's root folder.
 ### Free and Pro extensions
 All **free** repositories should be named as the product name.
 All **pro** repositories should start with the name of the free
-product, followed by **-Pro**. The local cloned folders, needs
+product, followed by **-Pro**. The local cloned folders, need
 to have the same name as the repository, for both.
 
 The **pro** extension package will be built grabbing the source
