@@ -95,7 +95,7 @@ has created a windows version that works perfectly for windows. For details see 
 
 Download and run the appropriate Windows installer for your system:
 
-Download [Windows installer v1.1.7](https://github.com/coreybutler/nvm-windows/releases/download/1.1.7/nvm-setup.zip)
+Download [Windows installer v1.1.8](https://github.com/coreybutler/nvm-windows/releases/download/1.1.8/nvm-setup.zip)
 
 Verify your installation of nvm/npm/node using these commands:
 ```bash
