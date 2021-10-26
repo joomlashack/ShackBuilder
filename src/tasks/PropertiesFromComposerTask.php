@@ -84,12 +84,22 @@ class PropertiesFromComposerTask extends Task
             $this->prefix = 'composer';
         }
 
-        $json = json_decode(file_get_contents($this->file), true);
+        $fileText = file_get_contents($this->file);
+        $json     = json_decode($fileText, true);
 
         // Verify project.type
         if (array_key_exists('type', $json)) {
-            if (!array_key_exists($json['type'], $this->types)) {
-                $this->throwError('Invalid Joomla Extension Type: ' . $json['type']);
+            $type = str_replace('.', '-', $json['type']);
+            if ($type != $json['type']) {
+                file_put_contents($this->file, str_replace($json['type'], $type, $fileText));
+                $json['type'] = $type;
+                $this->log('composer.json has been updated, be sure to review the changes', Project::MSG_WARN);
+            }
+
+            if (str_replace('.', '-', $json[''])) {
+                if (!array_key_exists($json['type'], $this->types)) {
+                    $this->throwError('Invalid Joomla Extension Type: ' . $json['type']);
+                }
             }
         } else {
             $this->throwError('Missing composer property: Unable to determine Joomla type');
