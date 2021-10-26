@@ -35,6 +35,19 @@ trait TraitShack
     ];
 
     /**
+     * @var string[]
+     */
+    protected $extensionTypes = [
+        'component' => 'com',
+        'plugin'    => 'plg',
+        'library'   => 'lib',
+        'file'      => 'file',
+        'module'    => 'mod',
+        'package'   => 'pkg',
+        'template'  => 'tpl'
+    ];
+
+    /**
      * @param string $name
      * @param mixed  $default
      *
@@ -154,5 +167,119 @@ trait TraitShack
         }
 
         return empty($result) ? null : $result;
+    }
+
+    /**
+     * @param string $type    Type code or full element name
+     * @param string $element Short element or base path
+     * @param ?string $path    Optional base path
+     *
+     * @return string
+     */
+    protected function findManifestFile(string $type, string $element, string $path = null): string
+    {
+        if (func_num_args() == 2) {
+            $elementParts = $this->getElementFromLong($type);
+
+            $path    = $element;
+            $type    = $elementParts->type;
+            $element = $elementParts->element;
+        }
+
+        if (!is_dir($path)) {
+            $this->throwError('Invalid Manifest path: ' . $path);
+        }
+
+        if (empty($this->extensionTypes[$type])) {
+            $this->throwError('Extension type not recognized: ' . $type);
+        }
+
+        switch ($type) {
+            case 'component':
+                $baseName = '/' . substr($element, 4);
+                break;
+
+            case 'template':
+                $baseName = '/templateDetails';
+                break;
+
+            default:
+                $baseName = '/' . $element;
+                break;
+        }
+
+        $manifestPath = $path . $baseName . '.xml';
+        if (!is_file($manifestPath)) {
+            $this->throwError('Manifest not found: ' . $manifestPath);
+        }
+
+        return $manifestPath;
+    }
+
+    /**
+     * @param string $elementLong
+     *
+     * @return Element
+     */
+    protected function getElementFromLong(string $elementLong): Element
+    {
+        $parts = explode('_', $elementLong);
+
+        $typeId = array_shift($parts);
+        $type   = array_search($typeId, $this->extensionTypes);
+        if (empty($type)) {
+            $this->throwError('Extension type unrecognized: ' . $typeId);
+        }
+
+        $folder = null;
+        switch ($type) {
+            case 'component':
+            case 'module':
+            case 'package':
+                // Long and short element are the same
+                $element = $elementLong;
+                break;
+
+            case 'library':
+            case 'file':
+            case 'template':
+                // short element is whatever is left
+                $element = join('_', $parts);
+                break;
+
+            case 'plugin':
+                // Folder is next item in the array
+                $folder  = array_shift($parts);
+                $element = join('_', $parts);
+                break;
+
+            default:
+                $this->throwError(sprintf('\'%s\' extensions are not recognized', $type));
+                die;
+        }
+
+        return new Element([
+            'type'    => $type,
+            'folder'  => $folder,
+            'element' => $element
+        ]);
+    }
+
+    /**
+     * @param string[] $strings
+     * @param string   $subject
+     *
+     * @return string[]
+     */
+    protected function findRegexStrings(array $strings, string $subject): array
+    {
+        $delimiter = '#';
+
+        $regex = addcslashes(sprintf('\s*(?:%s)', join('|', $strings)), $delimiter);
+        if (preg_match_all($delimiter . $regex . $delimiter, $subject, $matches)) {
+            return $matches[0];
+        }
+
+        return [];
     }
 }

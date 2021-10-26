@@ -55,6 +55,7 @@
     <taskdef name="templateDetails" classname="tasks.TemplateDetailsTask"/>
     <taskdef name="mergeMinify" classname="tasks.MergeMinifyTask"/>
     <taskdef name="copyLanguage" classname="tasks.CopyLanguageTask"/>
+    <taskdef name="standardsFixes" classname="tasks.StandardsFixesTask"/>
 
     <if>
         <available file="${home.path}/.composer/vendor/autoload.php" property="exi"/>
@@ -158,6 +159,10 @@ Missing path to Free version: project.${composer.extra.name}.path property
                message="  To: "/>
 
         <copyLanguage from="${language.source}" to="${language.target}"/>
+    </target>
+
+    <target name="standards" description="Check formatting/settigns in composer/manifest files">
+        <standardsFixes/>
     </target>
 
     <!-- Load sub-projects -->
