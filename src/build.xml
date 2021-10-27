@@ -162,6 +162,13 @@ Missing path to Free version: project.${composer.extra.name}.path property
     </target>
 
     <target name="standards" description="Check formatting/settigns in composer/manifest files">
+        <if>
+            <istrue value="${builder.debug}"/>
+            <then>
+                <echoproperties destfile="standards.properties"/>
+            </then>
+        </if>
+
         <standardsFixes manifest="${project.manifest}"/>
     </target>
 
