@@ -420,7 +420,7 @@ Unable to find directory: ${installer.source.path}
                 <if>
                     <istrue value="${builder.debug}"/>
                     <then>
-                        <echoproperties destfile="packager.properties"/>
+                        <echoproperties destfile="package.properties"/>
                     </then>
                     <else>
                         <delete dir="${packages.tmp.path}"/>
