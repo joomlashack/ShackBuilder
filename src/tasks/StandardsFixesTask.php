@@ -29,6 +29,11 @@ class StandardsFixesTask extends Task
     use TraitShack;
 
     /**
+     * @var string
+     */
+    protected $manifest = null;
+
+    /**
      * Preferred order of manifest headers
      *
      * @var string[]
@@ -48,17 +53,26 @@ class StandardsFixesTask extends Task
     ];
 
     /**
+     * @param string $path
+     *
+     * @return void
+     */
+    public function setManifest(string $path)
+    {
+        $this->manifest = $path;
+    }
+
+    /**
      * @inheritDoc
      */
     public function main()
     {
-        $manifestPath = $this->getProperty('project.manifest');
-        if (is_file($manifestPath)) {
-            $this->updateManifest($manifestPath);
-
-        } else {
-            $this->throwError('Manifest not found: ' . $manifestPath);
+        if (is_file($this->manifest) == false) {
+            $this->throwError('Manifest not found: ' . $this->manifest);
         }
+
+        $this->updateManifest($this->manifest);
+        $this->updateRelatedManifests($this->manifest);
 
         $composerPath = $this->getProperty('project.path') . '/composer.json';
         if (is_file($composerPath)) {
@@ -88,11 +102,11 @@ class StandardsFixesTask extends Task
             $composer = str_replace($match[0], $fixed, $composer);
         }
         if (preg_match('#"php"\s*:\s*"(.*)"#', $composer, $match)) {
-            $fixed = str_replace($match[1], '>=7.2.5', $match[0]);
+            $fixed    = str_replace($match[1], '>=7.2.5', $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }
         if (preg_match('#"target-platform"\s*:\s*"(.*)"#', $composer, $match)) {
-            $fixed = str_replace($match[1], '.*', $match[0]);
+            $fixed    = str_replace($match[1], '.*', $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }
 
@@ -106,15 +120,12 @@ class StandardsFixesTask extends Task
     }
 
     /**
+     * @param string $manifestPath
+     *
      * @return void
      */
-    protected function updateManifest($manifestPath = null)
+    protected function updateManifest(string $manifestPath)
     {
-        $manifestPath = $manifestPath ?: $this->getProperty('project.manifest');
-        if (is_file($manifestPath) == false) {
-            $this->throwError('Manifest not found: ' . $manifestPath);
-        }
-
         $manifestString = file_get_contents($manifestPath);
         $sha1           = sha1($manifestString);
 
@@ -180,6 +191,42 @@ class StandardsFixesTask extends Task
                 $basePath . ' manifest has been updated. Be sure to review the changes',
                 Project::MSG_WARN
             );
+        }
+    }
+
+    /**
+     * @param string $manifestPath
+     *
+     * @return void
+     */
+    protected function updateRelatedManifests(string $manifestPath)
+    {
+        /** @var SimpleXMLElement $manifest */
+        $manifest = $this->tryXmlFunctions(function () use ($manifestPath) {
+            return simplexml_load_file($manifestPath);
+        });
+
+        $basePath = $this->getProperty('project.source.path');
+
+        $relatedExtensions = explode(',', $this->getProperty('project.relatedExtensions'));
+        foreach ($relatedExtensions as $relatedExtension) {
+            $path = $this->getProperty('project.' . $relatedExtension . '.path');
+            if (empty($path)) {
+                $path = $basePath . '/extensions/' . $relatedExtension;
+                if (is_dir($path)) {
+                    $xpath     = sprintf("alledia/relatedExtensions/extension[text()='%s']", $relatedExtension);
+                    $extension = $manifest->xpath($xpath);
+                    $extension = reset($extension);
+
+                    $type    = (string)$extension['type'];
+                    $element = (string)$extension['element'];
+                    if ($extension instanceof SimpleXMLElement && $type && $element) {
+                        if ($manifestPath = $this->findManifestFile($type, $element, $path)) {
+                            $this->updateManifest($manifestPath);
+                        }
+                    }
+                }
+            }
         }
     }
 }

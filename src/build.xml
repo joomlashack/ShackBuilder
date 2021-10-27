@@ -162,7 +162,7 @@ Missing path to Free version: project.${composer.extra.name}.path property
     </target>
 
     <target name="standards" description="Check formatting/settigns in composer/manifest files">
-        <standardsFixes/>
+        <standardsFixes manifest="${project.manifest}"/>
     </target>
 
     <!-- Load sub-projects -->

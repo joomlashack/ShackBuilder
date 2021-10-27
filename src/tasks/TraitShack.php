@@ -64,7 +64,7 @@ trait TraitShack
     }
 
     /**
-     * @param string $name
+     * @param string  $name
      * @param ?string $value
      *
      * @return ?string
@@ -171,21 +171,13 @@ trait TraitShack
 
     /**
      * @param string $type    Type code or full element name
-     * @param string $element Short element or base path
-     * @param ?string $path    Optional base path
+     * @param string $element Short element
+     * @param string $path    Optional base path
      *
      * @return string
      */
-    protected function findManifestFile(string $type, string $element, string $path = null): string
+    protected function findManifestFile(string $type, string $element, string $path): string
     {
-        if (func_num_args() == 2) {
-            $elementParts = $this->getElementFromLong($type);
-
-            $path    = $element;
-            $type    = $elementParts->type;
-            $element = $elementParts->element;
-        }
-
         if (!is_dir($path)) {
             $this->throwError('Invalid Manifest path: ' . $path);
         }
@@ -196,7 +188,15 @@ trait TraitShack
 
         switch ($type) {
             case 'component':
-                $baseName = '/' . substr($element, 4);
+                if (strpos($element, 'com_') === 0) {
+                    $baseName = '/' . substr($element, 4);
+                }
+                break;
+
+            case 'module':
+                if (strpos($element, 'mod_') !== 0) {
+                    $baseName = '/mod_' . $element;
+                }
                 break;
 
             case 'template':
@@ -214,55 +214,6 @@ trait TraitShack
         }
 
         return $manifestPath;
-    }
-
-    /**
-     * @param string $elementLong
-     *
-     * @return Element
-     */
-    protected function getElementFromLong(string $elementLong): Element
-    {
-        $parts = explode('_', $elementLong);
-
-        $typeId = array_shift($parts);
-        $type   = array_search($typeId, $this->extensionTypes);
-        if (empty($type)) {
-            $this->throwError('Extension type unrecognized: ' . $typeId);
-        }
-
-        $folder = null;
-        switch ($type) {
-            case 'component':
-            case 'module':
-            case 'package':
-                // Long and short element are the same
-                $element = $elementLong;
-                break;
-
-            case 'library':
-            case 'file':
-            case 'template':
-                // short element is whatever is left
-                $element = join('_', $parts);
-                break;
-
-            case 'plugin':
-                // Folder is next item in the array
-                $folder  = array_shift($parts);
-                $element = join('_', $parts);
-                break;
-
-            default:
-                $this->throwError(sprintf('\'%s\' extensions are not recognized', $type));
-                die;
-        }
-
-        return new Element([
-            'type'    => $type,
-            'folder'  => $folder,
-            'element' => $element
-        ]);
     }
 
     /**
