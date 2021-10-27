@@ -79,7 +79,7 @@ class CopyLanguageTask extends Task
      */
     public function fromDir($directory)
     {
-        $this->fromDirectory;
+        $this->fromDirectory = $directory;
     }
 
     /**
