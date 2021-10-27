@@ -42,8 +42,8 @@ class StandardsFixesTask extends Task
         'copyright'    => null,
         'license'      => '<license>GNU GPL; see LICENSE file</license>',
         'description'  => null,
-        'creationDate' => null,
         'version'      => null,
+        'creationDate' => null,
         'variant'      => null
     ];
 
