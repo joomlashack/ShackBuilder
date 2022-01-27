@@ -94,18 +94,22 @@ class StandardsFixesTask extends Task
         $sha1     = sha1($composer);
 
         if (preg_match('#"type"\s*:\s*"(.*)"#', $composer, $match)) {
+            // no dots in type
             $fixed    = str_replace('.', '-', $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }
         if (preg_match('#"license"\s*:\s*"(.*)"#', $composer, $match)) {
+            // Standardize the license notice
             $fixed    = str_replace($match[1], 'GPL-2.0-or-later', $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }
         if (preg_match('#"php"\s*:\s*"(.*)"#', $composer, $match)) {
+            // Update minimum php version
             $fixed    = str_replace($match[1], '>=7.2.5', $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }
         if (preg_match('#"target-platform"\s*:\s*"(.*)"#', $composer, $match)) {
+            // Update for Joomla 3 & 4 compatibility
             $fixed    = str_replace($match[1], '.*', $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }

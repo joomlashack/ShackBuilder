@@ -22,6 +22,7 @@
  */
 
 require_once 'phing/Task.php';
+require_once 'TraitShack.php';
 
 /**
  * SetversionTask
@@ -35,6 +36,8 @@ require_once 'phing/Task.php';
  */
 class SetversionTask extends Task
 {
+    use TraitShack;
+
     /**
      * @var string $releasetype
      */
@@ -56,17 +59,17 @@ class SetversionTask extends Task
     protected $customValue;
 
     /* Regex to match for version number */
-    const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)(?:(a|b|rc)?(\d*))([^<]*)?(</version>)#m';
+    public const REGEX = '#(<version>\s*)(\d*)\.?(\d*)\.?(\d*)(?:(a|b|rc)?(\d*))([^<]*)?(</version>)#m';
 
-    /* Allowed Releastypes */
-    const RELEASETYPE_MAJOR  = 'MAJOR';
-    const RELEASETYPE_MINOR  = 'MINOR';
-    const RELEASETYPE_BUGFIX = 'BUGFIX';
-    const RELEASETYPE_ALPHA  = 'A';
-    const RELEASETYPE_BETA   = 'B';
-    const RELEASETYPE_RC     = 'RC';
-    const RELEASETYPE_CUSTOM = 'CUSTOM';
-    const RELEASETYPE_STABLE = 'STABLE';
+    /* Allowed Release types */
+    public const RELEASETYPE_MAJOR  = 'MAJOR';
+    public const RELEASETYPE_MINOR  = 'MINOR';
+    public const RELEASETYPE_BUGFIX = 'BUGFIX';
+    public const RELEASETYPE_ALPHA  = 'A';
+    public const RELEASETYPE_BETA   = 'B';
+    public const RELEASETYPE_RC     = 'RC';
+    public const RELEASETYPE_CUSTOM = 'CUSTOM';
+    public const RELEASETYPE_STABLE = 'STABLE';
 
     /**
      * Set Property for Releasetype (Minor, Major, Bugfix)
@@ -75,7 +78,7 @@ class SetversionTask extends Task
      *
      * @return void
      */
-    public function setReleasetype($releasetype)
+    public function setReleasetype(string $releasetype)
     {
         $this->releasetype = strtoupper($releasetype);
     }
@@ -87,7 +90,7 @@ class SetversionTask extends Task
      *
      * @return void
      */
-    public function setFile($file)
+    public function setFile(PhingFile $file)
     {
         $this->file = $file;
     }
@@ -95,13 +98,13 @@ class SetversionTask extends Task
     /**
      * Set name of property to be set
      *
-     * @param string $property
+     * @param string $name
      *
      * @return void
      */
-    public function setProperty($property)
+    public function setProperty(string $name)
     {
-        $this->property = $property;
+        $this->property = $name;
     }
 
     /**
@@ -111,7 +114,7 @@ class SetversionTask extends Task
      *
      * @return void
      */
-    public function setCustomvalue($customValue)
+    public function setCustomvalue(string $customValue)
     {
         $this->customValue = $customValue;
     }
@@ -130,10 +133,10 @@ class SetversionTask extends Task
         $this->checkProperty();
 
         // read file
-        $filecontent = trim(file_get_contents($this->file));
+        $fileContent = trim(file_get_contents($this->file));
 
         // get new version
-        $newVersion = $this->getVersion($filecontent);
+        $newVersion = $this->getVersion($fileContent);
 
         // Update the file
         $this->updateFile($newVersion);
@@ -146,24 +149,24 @@ class SetversionTask extends Task
     /**
      * Returns new version number corresponding to Release type
      *
-     * @param string $filecontent
+     * @param string $fileContent
      *
      * @return string
      */
-    protected function getVersion($filecontent)
+    protected function getVersion(string $fileContent): string
     {
         // init
         $newVersion = '';
 
         // Extract version
-        preg_match(self::REGEX, $filecontent, $match);
+        preg_match(self::REGEX, $fileContent, $match);
         list(, , $major, $minor, $bugfix, $buildType, $build, $sufix,) = $match;
 
         // Return new version number
         switch ($this->releasetype) {
             case self::RELEASETYPE_MAJOR:
                 $newVersion = sprintf(
-                    "%d.%d.%d",
+                    '%d.%d.%d',
                     ++$major,
                     0,
                     0
@@ -174,7 +177,7 @@ class SetversionTask extends Task
 
             case self::RELEASETYPE_MINOR:
                 $newVersion = sprintf(
-                    "%d.%d.%d",
+                    '%d.%d.%d',
                     $major,
                     ++$minor,
                     0
@@ -185,7 +188,7 @@ class SetversionTask extends Task
 
             case self::RELEASETYPE_BUGFIX:
                 $newVersion = sprintf(
-                    "%d.%d.%d",
+                    '%d.%d.%d',
                     $major,
                     $minor,
                     ++$bugfix
@@ -198,7 +201,7 @@ class SetversionTask extends Task
             case self::RELEASETYPE_BETA:
             case self::RELEASETYPE_RC:
                 $newVersion = sprintf(
-                    "%d.%d.%d",
+                    '%d.%d.%d',
                     $major,
                     $minor,
                     $bugfix
@@ -225,7 +228,7 @@ class SetversionTask extends Task
 
             case self::RELEASETYPE_STABLE:
                 $newVersion = sprintf(
-                    "%d.%d.%d",
+                    '%d.%d.%d',
                     $major,
                     $minor,
                     $bugfix
@@ -253,11 +256,11 @@ class SetversionTask extends Task
     {
         // check Releasetype
         if (is_null($this->releasetype)) {
-            throw new BuildException('releasetype attribute is required', $this->location);
+            $this->throwError('releasetype attribute is required', $this->location);
         }
 
-        // known releasetypes
-        $releaseTypes = array(
+        // known release types
+        $releaseTypes = [
             self::RELEASETYPE_MAJOR,
             self::RELEASETYPE_MINOR,
             self::RELEASETYPE_BUGFIX,
@@ -266,10 +269,10 @@ class SetversionTask extends Task
             self::RELEASETYPE_RC,
             self::RELEASETYPE_CUSTOM,
             self::RELEASETYPE_STABLE,
-        );
+        ];
 
-        if (!in_array($this->releasetype, $releaseTypes)) {
-            throw new BuildException(
+        if (in_array($this->releasetype, $releaseTypes) == false) {
+            $this->throwError(
                 sprintf(
                     'Unknown Releasetype %s..Must be one of Major, Minor or Bugfix, Stable',
                     $this->releasetype
@@ -289,17 +292,17 @@ class SetversionTask extends Task
     {
         // check File
         if ($this->file === null || strlen($this->file) == 0) {
-            throw new BuildException('You must specify a Joomla manifest file', $this->location);
+            $this->throwError('You must specify a Joomla manifest file', $this->location);
         }
 
         $content = file_get_contents($this->file);
         if (strlen($content) == 0) {
-            throw new BuildException(sprintf('Supplied file %s is empty', $this->file), $this->location);
+            $this->throwError(sprintf('Supplied file %s is empty', $this->file), $this->location);
         }
 
         // check for xml version tag
         if (!preg_match(self::REGEX, $content)) {
-            throw new BuildException('Unable to find version tag', $this->location);
+            $this->throwError('Unable to find version tag', $this->location);
         }
     }
 
@@ -312,11 +315,11 @@ class SetversionTask extends Task
     protected function checkProperty()
     {
         if (is_null($this->property) || strlen($this->property) === 0) {
-            throw new BuildException('Property for publishing version number is not set', $this->location);
+            $this->throwError('Property for publishing version number is not set', $this->location);
         }
 
         if ($this->releasetype === self::RELEASETYPE_CUSTOM && is_null($this->customValue)) {
-            throw new BuildException('Property for custom value is not set', $this->customValue);
+            $this->throwError('Property for custom value is not set: ' .  $this->customValue, $this->location);
         }
     }
 
@@ -325,7 +328,7 @@ class SetversionTask extends Task
      *
      * @return void
      */
-    protected function updateFile($newVersion)
+    protected function updateFile(string $newVersion)
     {
         $content = file_get_contents($this->file);
 
