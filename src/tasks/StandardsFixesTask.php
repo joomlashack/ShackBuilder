@@ -114,6 +114,11 @@ class StandardsFixesTask extends Task
             $composer = str_replace($match[0], $fixed, $composer);
         }
 
+        if (preg_match('#"name"\s*:\s*"(.*)"#', $composer, $match)) {
+            $fixed = str_replace($match[1], strtolower($match[1]), $match[0]);
+            $composer = str_replace($match[0], $fixed, $composer);
+        }
+
         if ($sha1 != sha1($composer)) {
             file_put_contents($composerPath, $composer);
             $this->log(
