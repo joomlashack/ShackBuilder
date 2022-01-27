@@ -716,6 +716,7 @@ Error found on the last executed command. Please, check the logs.
 
     <!-- Update creation date in Joomla manifest file -->
     <target name="update-creation" description="Update creation date in all manifests">
+        <php expression="ini_set('date.timezone', 'America/New_York');"/>
         <tstamp prefix="creation"/>
 
         <property name="creation.find" value=""><![CDATA[<creationDate>.*</creationDate>]]></property>
