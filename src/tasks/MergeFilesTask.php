@@ -50,8 +50,10 @@ class MergeFilesTask extends Task
      * Set the base path
      *
      * @param string $path
+     *
+     * @return void
      */
-    public function setBasePath($path)
+    public function setBasePath(string $path)
     {
         $this->basePath = $path;
     }
@@ -60,8 +62,10 @@ class MergeFilesTask extends Task
      * Set the pattern to locate the file pair
      *
      * @param string $pattern The pattern
+     *
+     * @return void
      */
-    public function setPattern($pattern)
+    public function setPattern(string $pattern)
     {
         $this->pattern = $pattern;
     }
@@ -70,22 +74,22 @@ class MergeFilesTask extends Task
      * Set the string to replace the pattern
      *
      * @param string $replace The string
+     *
+     * @return void
      */
-    public function setReplace($replace = '')
+    public function setReplace(string $replace = '')
     {
         $this->replace = $replace;
     }
 
     /**
-     * The method that runs the task
-     *
-     * @return void
+     * @inheritDoc
      */
     public function main()
     {
         // Locate files on the base path that match the pattern
-        $files = scandir($this->basePath);
-        $toMerge = array();
+        $files   = scandir($this->basePath);
+        $toMerge = [];
 
         foreach ($files as $file) {
             if (substr_count($file, $this->pattern)) {
