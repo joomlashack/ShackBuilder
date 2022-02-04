@@ -233,4 +233,26 @@ trait TraitShack
 
         return [];
     }
+
+    /**
+     * Initialize another task in the project
+     *
+     * @param string $taskName
+     *
+     * @return Task
+     */
+    protected function initProjectTask(string $taskName): Task
+    {
+        if ($task = $this->project->createTask($taskName)) {
+            $task->setOwningTarget($this->getOwningTarget());
+            $task->setTaskName($this->getTaskName());
+            $task->setLocation($this->getLocation());
+            $task->init();
+
+            return $task;
+        }
+
+        $this->throwError('Unable to initialize task: ' . $taskName);
+        die();
+    }
 }

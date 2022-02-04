@@ -99,19 +99,15 @@ class MergeMinifyTask extends Task
             // Scripts bundle
             if ($xml->alledia->minify->scripts) {
                 /** @var AppendTask $append */
-                $append = $this->project->createTask('append');
-                $append->setOwningTarget($this->getOwningTarget());
-                $append->setTaskName($this->getTaskName());
-                $append->setLocation($this->getLocation());
-                $append->init();
+                $append = $this->initProjectTask('append');
 
                 foreach ($xml->alledia->minify->scripts as $bundle) {
-                    if (!empty($bundle->script)) {
-                        $destination = $bundle['destination'];
+                    if ($bundle->script) {
+                        $destination = (string)$bundle['destination'];
 
                         // Remove destination, if exists
                         $fullPath = $this->basePath . '/' . $destination;
-                        if (file_exists($fullPath)) {
+                        if (is_file($fullPath)) {
                             unlink($fullPath);
                         }
 
