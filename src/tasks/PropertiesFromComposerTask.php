@@ -96,7 +96,7 @@ class PropertiesFromComposerTask extends Task
                 $this->log('composer.json has been updated, be sure to review the changes', Project::MSG_WARN);
             }
 
-            if (str_replace('.', '-', $json[''])) {
+            if (str_replace('.', '-', $json['type'])) {
                 if (!array_key_exists($json['type'], $this->types)) {
                     $this->throwError('Invalid Joomla Extension Type: ' . $json['type']);
                 }
