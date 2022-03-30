@@ -190,7 +190,10 @@ trait TraitShack
             case 'component':
                 if (strpos($element, 'com_') === 0) {
                     $baseName = '/' . substr($element, 4);
+                } else {
+                    $baseName = '/' . $element;
                 }
+
                 break;
 
             case 'module':
