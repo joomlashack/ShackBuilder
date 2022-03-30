@@ -143,8 +143,9 @@
                         <!-- Is the extension path set? -->
                         <property name="extension.path" value="${project.${extension}.path}"/>
 
-                        <fail unless="extension.path">-
-Missing related extension property: project.${extension}.path
+                        <available property="extension.path.exists" file="${extension.path}"/>
+                        <fail unless="extension.path.exists">-
+Related extension path property is missing: project.${extension}.path
                         </fail>
 
                         <!-- Make sure we have the main extensions folder -->
