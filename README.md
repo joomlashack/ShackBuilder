@@ -81,11 +81,24 @@ We recommend using nvm (Node Version Manager) to manage installation of npm (Nod
 and Node.
 
 #### MacOS
+Although some don't recommend it, nvm can be installed using homebrew
+```shell
+brew install nvm
+```
+When the install completes, look for instructions on adding lines to your terminal run file. On
+most normal systems this will be ~/.profile.
+```shell
+export NVM_DIR="$HOME/.nvm"
+  [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+```
+
+#### MacOS Manual installation
 See [Installing nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for full details.
 Summary - Use the following command in a terminal window:
 
 ```shell
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 ```
 
 #### Windows
@@ -97,10 +110,11 @@ Download and run the appropriate Windows installer for your system:
 
 Download [Windows installer v1.1.8](https://github.com/coreybutler/nvm-windows/releases/download/1.1.8/nvm-setup.zip)
 
-Verify your installation of nvm/npm/node using these commands:
-```bash
-nvm version
+#### Verify your nvm/npm/node installation
+```shell
+nvm -v
 npm -v
+node -v
 ```
 
 ### Installing Node Modules
