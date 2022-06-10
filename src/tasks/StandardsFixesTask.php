@@ -170,18 +170,41 @@ class StandardsFixesTask extends Task
         foreach ($manifestHeaders as $header => &$value) {
             $regex = sprintf('#(\s+)<%1$s>.*</%1$s>#', $header);
             if (preg_match($regex, $manifestString, $match)) {
+                if (
+                    in_array($header, ['creationDate', 'version'])
+                    && $this->manifest == $manifestPath
+                ) {
+                    // Set defaults for these when updating the primary extension
+                    $this->manifestHeaders[$header] = trim($match[0]);
+                }
+
                 $divider = $match[1];
                 if ($value === null) {
+                    // No default, copy to replacement string as-is
                     $value = $divider . trim($match[0]);
 
                 } else {
+                    // Force to default
                     $value = $divider . $value;
                 }
 
                 $manifestString = str_replace($match[0], '', $manifestString);
 
             } elseif ($value) {
+                // Force to default
                 $value = $divider . $value;
+
+            } elseif (in_array($header, ['name', 'description', 'copyright'])) {
+                // Require these
+                if ($header == 'copyright') {
+                    // Replicate copyright from primary manifest
+                    $mainManifest = $this->tryXmlFunctions(function () {
+                        return simplexml_load_file($this->manifest);
+                    });
+
+                    $value = (string)$mainManifest->copyright;
+                }
+                $value = sprintf($divider . '<%1$s>%2$s</%1$s>', $header, $value ?? '');
             }
         }
 
