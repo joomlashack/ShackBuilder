@@ -233,15 +233,15 @@ scripts and deploy server to extract information about your project.
         }
     }
 ```
-|Key|Description
-|---|---
-|type|extension type
-|extra.element|Full element name for the extension
-|extra.element-short|Short element name, without any type or folder prefix
-|extra.name|Extension name. On pro, used to detect the repo for the free extension
-|extra.folder|For plugins, the folder/type of plugin
-|client|'client' or 'admin'
-|package-license|'free', 'pro' or 'paid'
+|Key|Description|
+|---|---|
+|type|extension type|
+|extra.element|Full element name for the extension|
+|extra.element-short|Short element name, without any type or folder prefix|
+|extra.name|Extension name. On pro, used to detect the repo for the free extension|
+|extra.folder|For plugins, the folder/type of plugin|
+|client|'client' or 'admin'|
+|package-license|'free', 'pro' or 'paid'|
 
 ### Related Extensions
 You can automatically pack other extensions while building the package. You just need to specify the related extensions on the manifest file, using this tag as example:
@@ -274,12 +274,12 @@ You can automatically pack other extensions while building the package. You just
 Defaults can be set in the &lt;relatedExtensions&gt; tag. Defaults
 when nothing specified anywhere are in **bold**
 
-|tag|values|Description
-|---|------|-----------
-|downgrade|true&#124;**false**|Allow downgrade on update of the main extension.
-|uninstall|true&#124;**false**|Allow uninstall when the main extension is uninstalled.
-|publish|true&#124;**false**|Plugins only - Publish the right after new install (ignored on updates)
-|ordering|<ul><li>first, 0, 1</li><li>last, *</li><li>&#91;before&#124;after&#93;:shortelementname</li></ul>|Plugins only - force a specific order on new installs
+|tag|values|Description|
+|---|------|-----------|
+|downgrade|true&#124;**false**|Allow downgrade on update of the main extension.|
+|uninstall|true&#124;**false**|Allow uninstall when the main extension is uninstalled.|
+|publish|true&#124;**false**|Plugins only - Publish the right after new install (ignored on updates)|
+|ordering|<ul><li>first, 0, 1</li><li>last, *</li><li>&#91;before&#124;after&#93;:shortelementname</li></ul>|Plugins only - force a specific order on new installs|
 
 ### Merge and minify scripts
 Scripts can be minified and optionally merged creating a bundled file.
@@ -352,7 +352,7 @@ Folder and file paths are all relative to the project source folder.
 
 |Attribute|Value|
 |---------|-----|
-|destination|Folder name [**default to same as original**]
+|destination|Folder name [**default to same as original**]|
 |style      |nested&#124;expanded&#124;compact&#124;**compressed**|
 
 ### Obsolete items
