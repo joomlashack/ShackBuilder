@@ -389,9 +389,9 @@ Unable to find directory: ${installer.source.path}
         </if>
 
         <!-- PHP Lint -->
-        <property name="project.phplint" value="1" override="false"/>
+        <property name="builder.phplint" value="1" override="false"/>
         <if>
-            <equals arg1="${project.phplint}" arg2="1"/>
+            <equals arg1="${builder.phplint}" arg2="1"/>
             <then>
                 <echo message="Running PhpLint: [${php.interpreter}] v${php.version}"/>
                 <phplint haltonfailure="true">
