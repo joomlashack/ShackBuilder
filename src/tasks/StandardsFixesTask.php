@@ -115,7 +115,7 @@ class StandardsFixesTask extends Task
         }
 
         if (preg_match('#"name"\s*:\s*"(.*)"#', $composer, $match)) {
-            $fixed = str_replace($match[1], strtolower($match[1]), $match[0]);
+            $fixed    = str_replace($match[1], strtolower($match[1]), $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }
 
