@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   ShackBuilder
  * @contact   www.joomlashack.com, help@joomlashack.com
@@ -21,9 +22,11 @@
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 require_once 'phing/tasks/system/CopyTask.php';
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
 
-//require_once 'phing/Task.php';
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class CopyLanguageTask extends Task
 {
@@ -98,7 +101,8 @@ class CopyLanguageTask extends Task
 
         $this->log('Copy language files: ' . $this->from . ' => ' . $this->to, Project::MSG_WARN);
 
-        if (preg_match($codeRegex, $this->from)
+        if (
+            preg_match($codeRegex, $this->from)
             && preg_match($codeRegex, $this->to)
         ) {
             $this->fromDirectory = $this->fromDirectory ?: $this->project->getProperty('project.source.path');
@@ -137,6 +141,24 @@ class CopyLanguageTask extends Task
         $this->log('Invalid language code entered', Project::MSG_ERR);
     }
 
+    protected function getFileList(DirectoryIterator $di = null)
+    {
+        $di = $di ?: new DirectoryIterator($this->fromDirectory);
+
+        $files = [];
+        while ($di->valid()) {
+            $file = $di->current();
+            if ($file->isFile() && strpos($file->getFilename(), $this->from) !== false) {
+                $files[] = $file->getRealPath();
+            } elseif ($file->isDir() && !$file->isDot()) {
+                $files = array_merge($files, $this->getFileList(new DirectoryIterator($file->getRealPath())));
+            }
+            $di->next();
+        }
+
+        return $files;
+    }
+
     protected function copy($source, $target)
     {
         $dirs = array_filter(explode('/', str_replace($this->toDirectory, '', dirname($target))));
@@ -151,23 +173,5 @@ class CopyLanguageTask extends Task
         } while ($dirs);
 
         copy($source, $target);
-    }
-
-    protected function getFileList(DirectoryIterator $di = null)
-    {
-        $di = $di ?: new DirectoryIterator($this->fromDirectory);
-
-        $files = array();
-        while ($di->valid()) {
-            $file = $di->current();
-            if ($file->isFile() && strpos($file->getFilename(), $this->from) !== false) {
-                $files[] = $file->getRealPath();
-            } elseif ($file->isDir() && !$file->isDot()) {
-                $files = array_merge($files, $this->getFileList(new DirectoryIterator($file->getRealPath())));
-            }
-            $di->next();
-        }
-
-        return $files;
     }
 }

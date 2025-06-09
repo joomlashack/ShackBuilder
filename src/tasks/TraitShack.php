@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   ShackBuilder
  * @contact   www.joomlashack.com, help@joomlashack.com
@@ -20,6 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 trait TraitShack
 {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   ShackBuilder
  * @contact   www.joomlashack.com, help@joomlashack.com
@@ -21,7 +22,11 @@
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 require_once 'phing/Task.php';
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class IncludesTask extends Task
 {
@@ -53,26 +58,17 @@ class IncludesTask extends Task
      * the composer.json file
      *
      * @param string $path The path for the manifest xml file
+     *
      * @return void
+     * @throws Exception
      */
     public function setFile($path)
     {
-        if (empty($path) || ! file_exists(realpath($path))) {
-            throw new Exception("Invalid XML file path");
+        if (empty($path) || !file_exists(realpath($path))) {
+            throw new Exception('Invalid XML file path');
         }
 
         $this->file = $path;
-    }
-
-    /**
-     * The setter for the attribute "property"
-     *
-     * @param string $property The property to receive the result
-     * @return void
-     */
-    public function setProperty($property)
-    {
-        $this->property = $property;
     }
 
     /**
@@ -102,8 +98,8 @@ class IncludesTask extends Task
      */
     public function main()
     {
-        $xml = simplexml_load_file($this->file);
-        $includes = array();
+        $xml      = simplexml_load_file($this->file);
+        $includes = [];
 
         if (!empty($xml->alledia->include)) {
             foreach ($xml->alledia->include as $include) {
@@ -114,12 +110,12 @@ class IncludesTask extends Task
                     $value = (string)$value;
 
                     if (!empty($value)) {
-                        $this->project->setProperty($this->property . '.' . (string)$include . '.' . $key, $value);
+                        $this->project->setProperty($this->property . '.' . $include . '.' . $key, $value);
                     }
                 }
             }
 
-            $ignore = array();
+            $ignore = [];
             if (strpos($this->ignoreIncludes, '$') === 0) {
                 $this->ignoreIncludes = '';
             }
@@ -141,5 +137,16 @@ class IncludesTask extends Task
 
             $this->log('Loaded includes into properties');
         }
+    }
+
+    /**
+     * The setter for the attribute "property"
+     *
+     * @param string $property The property to receive the result
+     * @return void
+     */
+    public function setProperty($property)
+    {
+        $this->property = $property;
     }
 }

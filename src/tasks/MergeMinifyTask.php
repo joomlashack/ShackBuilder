@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   ShackBuilder
  * @contact   www.joomlashack.com, help@joomlashack.com
@@ -21,8 +22,12 @@
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 require_once 'phing/Task.php';
 require_once 'TraitShack.php';
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 
 class MergeMinifyTask extends Task
 {

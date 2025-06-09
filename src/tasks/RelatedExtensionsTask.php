@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   ShackBuilder
  * @contact   www.joomlashack.com, help@joomlashack.com
@@ -21,7 +22,12 @@
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 require_once 'phing/Task.php';
+// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+
 
 class RelatedExtensionsTask extends Task
 {
@@ -53,26 +59,17 @@ class RelatedExtensionsTask extends Task
      * the composer.json file
      *
      * @param string $path The path for the manifest xml file
+     *
      * @return void
+     * @throws Exception
      */
     public function setFile($path)
     {
-        if (empty($path) || ! file_exists(realpath($path))) {
-            throw new Exception("Invalid XML file path");
+        if (empty($path) || !file_exists(realpath($path))) {
+            throw new Exception('Invalid XML file path');
         }
 
         $this->file = $path;
-    }
-
-    /**
-     * The setter for the attribute "property"
-     *
-     * @param string $property The property to receive the result
-     * @return void
-     */
-    public function setProperty($property)
-    {
-        $this->property = $property;
     }
 
     /**
@@ -102,8 +99,8 @@ class RelatedExtensionsTask extends Task
      */
     public function main()
     {
-        $xml = simplexml_load_file($this->file);
-        $extensions = array();
+        $xml        = simplexml_load_file($this->file);
+        $extensions = [];
 
         if (!empty($xml->alledia->relatedExtensions)) {
             foreach ($xml->alledia->relatedExtensions->extension as $extension) {
@@ -123,7 +120,7 @@ class RelatedExtensionsTask extends Task
                 );
             }
 
-            $ignore = array();
+            $ignore = [];
             if (strpos($this->ignoreRelatedExtensions, '$') === 0) {
                 $this->ignoreRelatedExtensions = '';
             }
@@ -145,5 +142,16 @@ class RelatedExtensionsTask extends Task
 
             $this->log('Loaded related extensions into properties');
         }
+    }
+
+    /**
+     * The setter for the attribute "property"
+     *
+     * @param string $property The property to receive the result
+     * @return void
+     */
+    public function setProperty($property)
+    {
+        $this->property = $property;
     }
 }
