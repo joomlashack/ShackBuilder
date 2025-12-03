@@ -19,6 +19,6 @@
         "ext-json"     : "*",
         "ext-libxml"   : "*",
         "ext-simplexml": "*",
-        "phing/phing"  : "dev-master"
+        "phing/phing"  : "2.*"
     }
 }
