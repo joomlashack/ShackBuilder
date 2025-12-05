@@ -9,8 +9,8 @@ Common Build Scripts to build Joomlashack extensions.
 * Phing v2.16
 * php v7.4
 * JShrink v1.3.3
-* NodeJS v14.5.0
-  * node-sass
+* NodeJS v23.4.0
+  * sass
 
 ## Usage
 The default target builds and creates an install package using
@@ -121,10 +121,10 @@ node -v
 Once you have [installed Node JS](#installing-nodejs), you can easily
 install the needed modules using npm.
 
-To process SCSS files, the node-sass node.js package must be installed.
+To process SCSS files, the sass node.js package must be installed.
 ```bash
-npm -g install node-sass
-node-sass -v
+npm -g install sass
+sass --version
 ``` 
 
 ### Phing properties

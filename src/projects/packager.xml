@@ -456,7 +456,7 @@ ${scss.file.source}: Does not exist
             </else>
         </if>
 
-        <exec command="node-sass --output-style=${scss.style} ${scss.file.source} ${scss.file.destination}" returnProperty="scss.result" outputProperty="scss.output"/>
+        <exec command="sass --no-source-map --style=${scss.style} ${scss.file.source} ${scss.file.destination}" returnProperty="scss.result" outputProperty="scss.output"/>
         <if>
             <equals arg1="${scss.result}" arg2="0"/>
             <then>
@@ -480,11 +480,12 @@ SCSS Compile Failed
             <then>
                 <trycatch>
                     <try>
-                        <exec command="node-sass -v" outputProperty="scss.test" checkreturn="true"/>
+                        <exec command="sass --version" outputProperty="scss.test" checkreturn="true"/>
                     </try>
                     <catch>
                         <fail>-
-node-sass command is not available for compiling scss files
+sass command is not available for compiling scss files:
+${scss.test}
                         </fail>
                     </catch>
                 </trycatch>
