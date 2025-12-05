@@ -110,7 +110,7 @@ class StandardsFixesTask extends Task
         }
         if (preg_match('#"php"\s*:\s*"(.*)"#', $composer, $match)) {
             // Update minimum php version
-            $fixed    = str_replace($match[1], '>=7.2.5', $match[0]);
+            $fixed    = str_replace($match[1], '>=7.4', $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }
         if (preg_match('#"target-platform"\s*:\s*"(.*)"#', $composer, $match)) {

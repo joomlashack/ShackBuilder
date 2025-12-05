@@ -6,9 +6,9 @@ ShackBuilder
 Common Build Scripts to build Joomlashack extensions.
 
 ## Requirements
-* Phing v2.16
+* Phing v2.17
 * php v7.4
-* JShrink v1.3.3
+* JShrink v1.8.0
 * NodeJS v23.4.0
   * sass
 
@@ -229,7 +229,7 @@ scripts and deploy server to extract information about your project.
             }
         ],
         "require"          : {
-            "php"       : ">=7.2.5"
+            "php"       : ">=7.4"
         }
     }
 ```
@@ -244,7 +244,8 @@ scripts and deploy server to extract information about your project.
 |package-license|'free', 'pro' or 'paid'|
 
 ### Related Extensions
-You can automatically pack other extensions while building the package. You just need to specify the related extensions on the manifest file, using this tag as example:
+You can automatically pack other extensions while building the package. You only need specify the related
+extensions on the manifest file, using this tag as example:
 ```xml
     <alledia>
         <relatedExtensions publish="false"
@@ -270,6 +271,7 @@ You can automatically pack other extensions while building the package. You just
         </relatedExtensions>
     </alledia>
 ```
+**NOTE:** The tag content MUST NOT contain any newlines.
 
 Defaults can be set in the &lt;relatedExtensions&gt; tag. Defaults
 when nothing specified anywhere are in **bold**
@@ -338,7 +340,7 @@ This will result in new files:
 ### Compiling SCSS Files
 SASS SCSS files can be compiled by inclusion of the `<scss>`
 tag under the `<alledia>` tag.
-This [requires node-sass](#installing-node-modules) to be installed. 
+This [requires sass](#installing-node-modules) to be installed. 
 ```xml
     <alledia>
         <scss destination="folder-name" style="compressed">
