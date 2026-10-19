@@ -24,6 +24,7 @@
 
 namespace ShackBuilder\Tasks;
 
+use JShrink\Minifier;
 use Phing\Io\File;
 use Phing\Task;
 use Phing\Task\Ext\JsMin\JsMinTask;
@@ -146,9 +147,10 @@ class MergeMinifyTask extends Task
     protected function minify(string $file)
     {
         try {
-            /** @var JsMinTask $minify */
-            $minify = $this->project->createTask('jsMin');
-            if ($minify->init()) {
+            if (class_exists(Minifier::class)) {
+                /** @var JsMinTask $minify */
+                $minify = $this->project->createTask('jsMin');
+                $minify->init();
                 $minify->setTargetDir($this->basePath);
                 $minify->setFailonerror(true);
                 $minify->setSuffix($this->suffix);

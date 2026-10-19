@@ -160,7 +160,9 @@ Related extension path property is missing: project.${extension}.path
 
                         <!-- Run the related extension phing script -->
                         <mkdir dir="${extensions.tmp.path}/${extension}"/>
-                        <exec command="phing -f ${extension.path}/build.xml build -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -logger phing.listener.DefaultLogger" logoutput="true" checkreturn="true"/>
+                        <exec executable="phing" logoutput="true" checkreturn="true" escape="true">
+                            <arg line="-f ${extension.path}/build.xml build -Dpackages.tmp.path=${extensions.tmp.path}/${extension} -DignoreRelatedExtensions=${project.relatedExtensions} -logger Phing\Listener\DefaultLogger"/>
+                        </exec>
                     </else>
                 </if>
             </then>
@@ -203,7 +205,9 @@ Missing include property: ${include.path}
                 </if>
 
                 <!-- Run the include phing script -->
-                <exec command="phing -f ${${include.path}}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path}/${project.includes.${include}.destination} -logger phing.listener.DefaultLogger -Dproject.type=${project.type} -Dinclude.source=${project.includes.${include}.source}" logoutput="true" checkreturn="true"/>
+                <exec executable="phing" logoutput="true" checkreturn="true" escape="true">
+                    <arg line="-f ${${include.path}}/build.xml copy -Dpackages.tmp.path=${packages.tmp.path}/${project.includes.${include}.destination} -logger Phing\Listener\DefaultLogger -Dproject.type=${project.type} -Dinclude.source=${project.includes.${include}.source}"/>
+                </exec>
             </then>
         </if>
     </target>
@@ -456,7 +460,9 @@ ${scss.file.source}: Does not exist
             </else>
         </if>
 
-        <exec command="sass --no-source-map --style=${scss.style} ${scss.file.source} ${scss.file.destination}" returnProperty="scss.result" outputProperty="scss.output"/>
+        <exec executable="sass" returnProperty="scss.result" outputProperty="scss.output" escape="true">
+            <arg line="--no-source-map --style=${scss.style} ${scss.file.source} ${scss.file.destination}"/>
+        </exec>
         <if>
             <equals arg1="${scss.result}" arg2="0"/>
             <then>
@@ -480,7 +486,9 @@ SCSS Compile Failed
             <then>
                 <trycatch>
                     <try>
-                        <exec command="sass --version" outputProperty="scss.test" checkreturn="true"/>
+                        <exec executable="sass" outputProperty="scss.test" checkreturn="true">
+                            <arg value="--version"/>
+                        </exec>
                     </try>
                     <catch>
                         <fail>-
@@ -675,7 +683,9 @@ ${scss.test}
             <then>
                 <!-- Build the CSS and JS code -->
                 <!-- Node.JS tasks for building the latest CSS and JS code -->
-                <exec command="sh install.sh" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
+                <exec executable="sh" logoutput="true" dir="${write.build.path}" returnProperty="returnValue">
+                    <arg value="install.sh"/>
+                </exec>
 
                 <!-- Look for errors on the last command -->
                 <if>
@@ -687,7 +697,9 @@ Error found on the last executed command. Please, check the logs.
                     </then>
                 </if>
 
-                <exec command="node build.js" logoutput="true" dir="${write.build.path}" returnProperty="returnValue"/>
+                <exec executable="node" logoutput="true" dir="${write.build.path}" returnProperty="returnValue">
+                    <arg value="build.js"/>
+                </exec>
 
                 <!-- Look for errors on the last command -->
                 <if>
