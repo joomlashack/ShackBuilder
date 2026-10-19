@@ -52,8 +52,17 @@
  * @package   phing.tasks.ext
  */
 
-require_once 'phing/Task.php';
-require_once 'TraitShack.php';
+namespace ShackBuilder\Tasks;
+
+use Phing\Io\File;
+use Phing\Io\FileSystem;
+use Phing\Project;
+use Phing\Task;
+use Phing\Task\System\PhingCallTask;
+use Phing\Type\FileList;
+use Phing\Type\FileSet;
+use Phing\Type\Mapper;
+use Throwable;
 
 class ForeachParallelTask extends Task
 {
@@ -142,19 +151,14 @@ class ForeachParallelTask extends Task
             $this->throwError('You must supply a target to perform');
         }
 
-        include_once 'phing/contrib/DocBlox/Parallel/Manager.php';
-        include_once 'phing/contrib/DocBlox/Parallel/Worker.php';
-        include_once 'phing/contrib/DocBlox/Parallel/WorkerPipe.php';
-
-        if (!class_exists('DocBlox_Parallel_Worker')) {
+        if (!function_exists('pcntl_fork')) {
             $this->throwError(
-                'ForeachParallelTask depends on DocBlox being installed and on include_path.',
+                'ForeachParallelTask requires the pcntl extension to be loaded.',
                 $this->getLocation()
             );
         }
 
-        $parallelManager = new DocBlox_Parallel_Manager();
-        $parallelManager->setProcessLimit($this->threadCount);
+        $callees = [];
 
         $mapper = null;
 
@@ -162,9 +166,10 @@ class ForeachParallelTask extends Task
             $mapper = $this->mapperElement->getImplementation();
         }
 
+        $totalEntries = 0;
+
         if (trim($this->list)) {
-            $values       = explode($this->delimiter, $this->list);
-            $totalEntries = 0;
+            $values = explode($this->delimiter, $this->list);
 
             foreach ($values as $value) {
                 $value     = trim($value);
@@ -195,12 +200,8 @@ class ForeachParallelTask extends Task
                 $prop->setOverride(true);
                 $prop->setName($this->param);
                 $prop->setValue($value);
-                $worker = new DocBlox_Parallel_Worker(
-                    [$callee, 'main'],
-                    [$callee]
-                );
 
-                $parallelManager->addWorker($worker);
+                $callees[] = $callee;
                 $totalEntries++;
             }
         }
@@ -209,7 +210,7 @@ class ForeachParallelTask extends Task
         foreach ($this->filelists as $fileList) {
             $srcFiles = $fileList->getFiles($this->project);
 
-            $this->process($parallelManager, $this->getCallee(), $fileList->getDir($this->project), $srcFiles, []);
+            $this->collect($callees, $fileList->getDir($this->project), $srcFiles, []);
         }
 
         // filesets
@@ -218,10 +219,10 @@ class ForeachParallelTask extends Task
             $srcFiles = $ds->getIncludedFiles();
             $srcDirs  = $ds->getIncludedDirectories();
 
-            $this->process($parallelManager, $this->getCallee(), $fileset->getDir($this->project), $srcFiles, $srcDirs);
+            $this->collect($callees, $fileset->getDir($this->project), $srcFiles, $srcDirs);
         }
 
-        $parallelManager->execute();
+        $this->runParallel($callees);
 
         if ($this->list === null) {
             $this->log(
@@ -246,20 +247,19 @@ class ForeachParallelTask extends Task
     }
 
     /**
-     * Processes a list of files & directories
+     * Builds one callee per file/directory, each with its own independent
+     * PhingCallTask instance (safe to fork, since nothing is shared/mutated
+     * after being added to $callees).
      *
-     * @param Task      $callee
-     * @param PhingFile $fromDir
-     * @param array     $srcFiles
-     * @param array     $srcDirs
+     * @param PhingCallTask[] $callees
+     * @param File            $fromDir
+     * @param array           $srcFiles
+     * @param array           $srcDirs
+     *
+     * @return void
      */
-    protected function process(
-        DocBlox_Parallel_Manager $parallelManager,
-        Task $callee,
-        PhingFile $fromDir,
-        $srcFiles,
-        $srcDirs
-    ) {
+    protected function collect(array &$callees, File $fromDir, array $srcFiles, array $srcDirs)
+    {
         $mapper = null;
 
         if ($this->mapperElement !== null) {
@@ -270,80 +270,125 @@ class ForeachParallelTask extends Task
         $this->totalFiles += $filecount;
 
         for ($j = 0; $j < $filecount; $j++) {
-            $value     = $srcFiles[$j];
-            $preMapped = "";
-
-            if ($this->absolutePath) {
-                $prop = $callee->createProperty();
-                $prop->setOverride(true);
-                $prop->setName($this->absolutePath);
-                $prop->setValue($fromDir . FileSystem::getFileSystem()->getSeparator() . $value);
+            $callee = $this->buildCallee($mapper, $fromDir, $srcFiles[$j]);
+            if ($callee !== null) {
+                $callees[] = $callee;
             }
-
-            if ($mapper !== null) {
-                $preMapped = $value;
-                $value     = $mapper->main($value);
-                if ($value === null) {
-                    continue;
-                }
-                $value = array_shift($value);
-            }
-
-            if ($this->param) {
-                $this->log("Setting param '$this->param' to value '$value'" . ($preMapped ? " (mapped from '$preMapped')" : ''),
-                    Project::MSG_VERBOSE);
-                $prop = $callee->createProperty();
-                $prop->setOverride(true);
-                $prop->setName($this->param);
-                $prop->setValue($value);
-            }
-
-            $worker = new DocBlox_Parallel_Worker(
-                array($callee, 'main'),
-                array($callee)
-            );
-
-            $parallelManager->addWorker($worker);
         }
 
         $dircount         = count($srcDirs);
         $this->total_dirs += $dircount;
 
         for ($j = 0; $j < $dircount; $j++) {
-            $value     = $srcDirs[$j];
-            $preMapped = "";
-
-            if ($this->absolutePath) {
-                $prop = $callee->createProperty();
-                $prop->setOverride(true);
-                $prop->setName($this->absolutePath);
-                $prop->setValue($fromDir . FileSystem::getFileSystem()->getSeparator() . $value);
+            $callee = $this->buildCallee($mapper, $fromDir, $srcDirs[$j]);
+            if ($callee !== null) {
+                $callees[] = $callee;
             }
+        }
+    }
 
-            if ($mapper !== null) {
-                $preMapped = $value;
-                $value     = $mapper->main($value);
-                if ($value === null) {
-                    continue;
-                }
-                $value = array_shift($value);
+    /**
+     * @param ?object $mapper
+     * @param File    $fromDir
+     * @param string  $value
+     *
+     * @return ?PhingCallTask
+     */
+    protected function buildCallee($mapper, File $fromDir, string $value): ?PhingCallTask
+    {
+        $preMapped = '';
+
+        $callee = $this->getCallee();
+        $callee->setTarget($this->calleeTarget);
+        $callee->setInheritAll(true);
+        $callee->setInheritRefs(true);
+
+        if ($this->absolutePath) {
+            $prop = $callee->createProperty();
+            $prop->setOverride(true);
+            $prop->setName($this->absolutePath);
+            $prop->setValue($fromDir . FileSystem::getFileSystem()->getSeparator() . $value);
+        }
+
+        if ($mapper !== null) {
+            $preMapped = $value;
+            $value     = $mapper->main($value);
+            if ($value === null) {
+                return null;
             }
+            $value = array_shift($value);
+        }
 
-            if ($this->param) {
-                $this->log("Setting param '$this->param' to value '$value'" . ($preMapped ? " (mapped from '$preMapped')" : ''),
-                    Project::MSG_VERBOSE);
-                $prop = $callee->createProperty();
-                $prop->setOverride(true);
-                $prop->setName($this->param);
-                $prop->setValue($value);
-            }
-
-            $worker = new DocBlox_Parallel_Worker(
-                array($callee, 'main'),
-                array($callee)
+        if ($this->param) {
+            $this->log(
+                "Setting param '$this->param' to value '$value'" . ($preMapped ? " (mapped from '$preMapped')" : ''),
+                Project::MSG_VERBOSE
             );
+            $prop = $callee->createProperty();
+            $prop->setOverride(true);
+            $prop->setName($this->param);
+            $prop->setValue($value);
+        }
 
-            $parallelManager->addWorker($worker);
+        return $callee;
+    }
+
+    /**
+     * Runs each callee's target in its own forked child process, bounded by
+     * threadCount concurrent children. Replaces the DocBlox parallel worker
+     * library bundled with Phing 2.x, which has no equivalent in Phing 3.
+     *
+     * @param PhingCallTask[] $callees
+     *
+     * @return void
+     */
+    protected function runParallel(array $callees)
+    {
+        $active = [];
+
+        foreach ($callees as $callee) {
+            while (count($active) >= max(1, $this->threadCount)) {
+                $this->reapOne($active);
+            }
+
+            $pid = pcntl_fork();
+            if ($pid === -1) {
+                $this->throwError('Unable to fork a process for parallel execution', $this->getLocation());
+
+            } elseif ($pid === 0) {
+                $exitCode = 0;
+                try {
+                    $callee->main();
+                } catch (Throwable $error) {
+                    $this->log($error->getMessage(), Project::MSG_ERR);
+                    $exitCode = 1;
+                }
+                exit($exitCode);
+
+            } else {
+                $active[$pid] = true;
+            }
+        }
+
+        while (!empty($active)) {
+            $this->reapOne($active);
+        }
+    }
+
+    /**
+     * @param array $active Map of pid => true for still-running children
+     *
+     * @return void
+     */
+    protected function reapOne(array &$active)
+    {
+        $pid = pcntl_wait($status);
+        if ($pid > 0 && isset($active[$pid])) {
+            unset($active[$pid]);
+
+            if (pcntl_wexitstatus($status) !== 0) {
+                $this->throwError('A parallel task failed, see log above for details', $this->getLocation());
+            }
         }
     }
 
@@ -401,22 +446,11 @@ class ForeachParallelTask extends Task
     public function createMapper()
     {
         if ($this->mapperElement !== null) {
-            $this->throwError('Cannot define more than one mapper', $this->location);
+            $this->throwError('Cannot define more than one mapper', $this->getLocation());
         }
         $this->mapperElement = new Mapper($this->project);
 
         return $this->mapperElement;
-    }
-
-    /**
-     * @return Property
-     */
-    public function createProperty()
-    {
-        var_dump($this->callee);
-        die;
-
-        return $this->callee->createProperty();
     }
 
     /**

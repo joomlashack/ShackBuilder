@@ -6,8 +6,8 @@ ShackBuilder
 Common Build Scripts to build Joomlashack extensions.
 
 ## Requirements
-* Phing v2.17
-* php v7.4
+* Phing v3.1
+* php v8.1
 * JShrink v1.8.0
 * NodeJS v23.4.0
   * sass
@@ -60,7 +60,7 @@ composer --version
 
 Then you can install phing globally on your system using this command:
 ```shell
-composer global require phing/phing
+composer global require phing/phing:^3.1
 ```
 
 Verify phing is correctly installed with:
@@ -135,6 +135,11 @@ The only required setting is:
 
 See [clients/build.dist.properties](src/clients/build.dist.properties)
 for more details on available properties.
+
+Run `composer install` inside your local ShackBuilder checkout (the folder
+`builder.path` points to) at least once. The builder's custom Phing tasks
+are autoloaded from `${builder.path}/vendor/autoload.php`, which only
+exists once Composer has installed ShackBuilder's own dependencies.
 
 #### Global properties
 Many `build.properties` settings will be common to many projects.

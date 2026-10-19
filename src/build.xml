@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="build">
     <property name="builder.name" value="ShackBuilder"/>
-    <property name="builder.version" value="4.1.9"/>
+    <property name="builder.version" value="5.0.0b1"/>
     <echo message="${builder.name} Version ${builder.version}"/>
 
     <property name="builder.path.source" value="${builder.path}/src"/>
@@ -43,19 +43,21 @@
         <param value="pcntl"/>
     </php>
 
-    <!-- Include the external tasks -->
-    <includepath classpath="${builder.path}/src/tasks"/>
-    <taskdef name="propertiesFromComposer" classname="tasks.PropertiesFromComposerTask"/>
-    <taskdef name="setVersion" classname="tasks.SetversionTask"/>
-    <taskdef name="mergeFiles" classname="tasks.MergeFilesTask"/>
-    <taskdef name="getRelatedExtensions" classname="tasks.RelatedExtensionsTask"/>
-    <taskdef name="getIncludes" classname="tasks.IncludesTask"/>
-    <taskdef name="foreachParallel" classname="tasks.ForeachParallelTask"/>
-    <taskdef name="templateVersion" classname="tasks.TemplateVersionTask"/>
-    <taskdef name="templateDetails" classname="tasks.TemplateDetailsTask"/>
-    <taskdef name="mergeMinify" classname="tasks.MergeMinifyTask"/>
-    <taskdef name="copyLanguage" classname="tasks.CopyLanguageTask"/>
-    <taskdef name="standardsFixes" classname="tasks.StandardsFixesTask"/>
+    <!-- Load this repo's own PSR-4 autoloader, so the custom tasks below can be found -->
+    <autoloader autoloaderpath="${builder.path}/vendor/autoload.php"/>
+
+    <!-- Include the external tasks (PSR-4 autoloaded via ${builder.path}/vendor/autoload.php) -->
+    <taskdef name="propertiesFromComposer" classname="ShackBuilder\Tasks\PropertiesFromComposerTask"/>
+    <taskdef name="setVersion" classname="ShackBuilder\Tasks\SetversionTask"/>
+    <taskdef name="mergeFiles" classname="ShackBuilder\Tasks\MergeFilesTask"/>
+    <taskdef name="getRelatedExtensions" classname="ShackBuilder\Tasks\RelatedExtensionsTask"/>
+    <taskdef name="getIncludes" classname="ShackBuilder\Tasks\IncludesTask"/>
+    <taskdef name="foreachParallel" classname="ShackBuilder\Tasks\ForeachParallelTask"/>
+    <taskdef name="templateVersion" classname="ShackBuilder\Tasks\TemplateVersionTask"/>
+    <taskdef name="templateDetails" classname="ShackBuilder\Tasks\TemplateDetailsTask"/>
+    <taskdef name="mergeMinify" classname="ShackBuilder\Tasks\MergeMinifyTask"/>
+    <taskdef name="copyLanguage" classname="ShackBuilder\Tasks\CopyLanguageTask"/>
+    <taskdef name="standardsFixes" classname="ShackBuilder\Tasks\StandardsFixesTask"/>
 
     <if>
         <available file="${home.path}/.composer/vendor/autoload.php" property="exi"/>

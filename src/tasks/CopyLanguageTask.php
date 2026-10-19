@@ -22,11 +22,11 @@
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
-require_once 'phing/tasks/system/CopyTask.php';
-// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
+namespace ShackBuilder\Tasks;
 
-// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+use DirectoryIterator;
+use Phing\Project;
+use Phing\Task;
 
 class CopyLanguageTask extends Task
 {
@@ -141,7 +141,7 @@ class CopyLanguageTask extends Task
         $this->log('Invalid language code entered', Project::MSG_ERR);
     }
 
-    protected function getFileList(DirectoryIterator $di = null)
+    protected function getFileList(?DirectoryIterator $di = null)
     {
         $di = $di ?: new DirectoryIterator($this->fromDirectory);
 

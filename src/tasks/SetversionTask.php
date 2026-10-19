@@ -22,12 +22,11 @@
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
-require_once 'phing/Task.php';
-require_once 'TraitShack.php';
-// phpcs:enable PSR1.Files.SideEffects.FoundWithSymbols
+namespace ShackBuilder\Tasks;
 
-// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+use Phing\Exception\BuildException;
+use Phing\Io\File;
+use Phing\Task;
 
 /**
  * SetversionTask
@@ -49,7 +48,7 @@ class SetversionTask extends Task
     protected $releasetype;
 
     /**
-     * @var PhingFile file
+     * @var File file
      */
     protected $file;
 
@@ -91,11 +90,11 @@ class SetversionTask extends Task
     /**
      * Set Property for File containing versioninformation
      *
-     * @param PhingFile $file
+     * @param File $file
      *
      * @return void
      */
-    public function setFile(PhingFile $file)
+    public function setFile(File $file)
     {
         $this->file = $file;
     }
@@ -261,7 +260,7 @@ class SetversionTask extends Task
     {
         // check Releasetype
         if (is_null($this->releasetype)) {
-            $this->throwError('releasetype attribute is required', $this->location);
+            $this->throwError('releasetype attribute is required', $this->getLocation());
         }
 
         // known release types
@@ -282,7 +281,7 @@ class SetversionTask extends Task
                     'Unknown Releasetype %s..Must be one of Major, Minor or Bugfix, Stable',
                     $this->releasetype
                 ),
-                $this->location
+                $this->getLocation()
             );
         }
     }
@@ -297,17 +296,17 @@ class SetversionTask extends Task
     {
         // check File
         if ($this->file === null || strlen($this->file) == 0) {
-            $this->throwError('You must specify a Joomla manifest file', $this->location);
+            $this->throwError('You must specify a Joomla manifest file', $this->getLocation());
         }
 
         $content = file_get_contents($this->file);
         if (strlen($content) == 0) {
-            $this->throwError(sprintf('Supplied file %s is empty', $this->file), $this->location);
+            $this->throwError(sprintf('Supplied file %s is empty', $this->file), $this->getLocation());
         }
 
         // check for xml version tag
         if (!preg_match(self::REGEX, $content)) {
-            $this->throwError('Unable to find version tag', $this->location);
+            $this->throwError('Unable to find version tag', $this->getLocation());
         }
     }
 
@@ -320,11 +319,11 @@ class SetversionTask extends Task
     protected function checkProperty()
     {
         if (is_null($this->property) || strlen($this->property) === 0) {
-            $this->throwError('Property for publishing version number is not set', $this->location);
+            $this->throwError('Property for publishing version number is not set', $this->getLocation());
         }
 
         if ($this->releasetype === self::RELEASETYPE_CUSTOM && is_null($this->customValue)) {
-            $this->throwError('Property for custom value is not set: ' .  $this->customValue, $this->location);
+            $this->throwError('Property for custom value is not set: ' .  $this->customValue, $this->getLocation());
         }
     }
 

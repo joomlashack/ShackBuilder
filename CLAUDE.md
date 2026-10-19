@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-ShackBuilder is a shared Phing (v2.x, PHP >=7.4) build system for Joomlashack Joomla extensions. It does not build itself. Each extension repo copies `src/clients/build.xml` into its root and adds a `build.properties` with `builder.path=/path/to/ShackBuilder`. Phing then imports `src/build.xml` from this repo. There is no test suite. To exercise a change, run phing inside a client extension repo.
+ShackBuilder is a shared Phing (v3.x, PHP >=8.1) build system for Joomlashack Joomla extensions. It does not build itself. Each extension repo copies `src/clients/build.xml` into its root and adds a `build.properties` with `builder.path=/path/to/ShackBuilder`. Phing then imports `src/build.xml` from this repo. There is no test suite. To exercise a change, run phing inside a client extension repo.
 
 ## Commands (run from a client extension repo, not here)
 
@@ -27,7 +27,7 @@ Set `builder.debug=1` to keep `packages/tmp` and dump the properties (`package.p
 - **Free/Pro merge:** for `package-license=pro`, the free repo's `src/` (located via `project.<composer.extra.name>.path`) is copied into `packages/tmp` first. The pro `src/` is copied over it, and `*.pro.ini` language files are merged in.
 - **Recursive builds:** related extensions and includes are built by shelling out to `phing -f <other repo>/build.xml build|copy -Dpackages.tmp.path=...`. Passing `packages.tmp.path` is how a sub-build knows it is not "building directly" (`buildingdirectly=0`), so it skips zipping. Other repos are found through `project.<Name>.path` properties. `src/build-include.xml` is the lightweight entry used by include-only repos (target `copy`).
 - **Parallelism:** when the `pcntl` extension is loaded, related extensions and includes are built through `ForeachParallelTask`, a modified copy of Phing's foreach, with `builder.thread.count` threads.
-- **Custom tasks** (`src/tasks/*.php`): classes without a namespace, extending Phing `Task`, loaded via `<taskdef classname="tasks.XxxTask">`. Shared helpers (the composer-type ↔ prefix maps, `getProperty`/`setProperty`, XML helpers) live in `TraitShack.php`.
+- **Custom tasks** (`src/tasks/*.php`): classes in the `ShackBuilder\Tasks` namespace, extending `Phing\Task`, PSR-4 autoloaded (via this repo's own `vendor/autoload.php`, registered with `<autoloader>` in `src/build.xml`) and registered with `<taskdef classname="ShackBuilder\Tasks\XxxTask">`. Shared helpers (the composer-type ↔ prefix maps, `getProperty`/`setProperty`, XML helpers) live in `TraitShack.php`. Running `composer install` inside this repo is required for the autoloader to exist.
 - If a manifest has a `<scriptfile>`, ShackInstaller's `src/` is copied into the package. For components it goes into `admin/`. Templates take a separate path (`build-template`/`build-assets` in packager.xml).
 
 ## Releasing ShackBuilder

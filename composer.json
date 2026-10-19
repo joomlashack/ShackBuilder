@@ -15,10 +15,17 @@
         }
     ],
     "require"    : {
-        "php"          : ">=7.4",
+        "php"          : ">=8.1",
+        "ext-dom"      : "*",
         "ext-json"     : "*",
         "ext-libxml"   : "*",
         "ext-simplexml": "*",
-        "phing/phing"  : "2.*"
+        "ext-xml"      : "*",
+        "phing/phing"  : "^3.1"
+    },
+    "autoload"   : {
+        "psr-4": {
+            "ShackBuilder\\Tasks\\": "src/tasks/"
+        }
     }
 }

@@ -22,7 +22,11 @@
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+namespace ShackBuilder\Tasks;
+
+use Phing\Parser\Location;
+use Phing\Project;
+use Phing\Task;
 
 trait TraitShack
 {
@@ -129,9 +133,9 @@ trait TraitShack
         }
 
         if ($location) {
-            $this->log($location->toString(), Project::MSG_ERR);
+            $this->log((string)$location, Project::MSG_ERR);
         }
-        die;
+        die(1);
     }
 
     /**

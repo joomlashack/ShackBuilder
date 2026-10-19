@@ -22,11 +22,9 @@
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
-require_once 'phing/Task.php';
-// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
+namespace ShackBuilder\Tasks;
 
-// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+use Phing\Task;
 
 class MergeFilesTask extends Task
 {

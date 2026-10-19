@@ -22,12 +22,14 @@
  * along with ShackBuilder.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
-require_once 'phing/Task.php';
-require_once 'TraitShack.php';
-// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
+namespace ShackBuilder\Tasks;
 
-// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+use Phing\Io\File;
+use Phing\Task;
+use Phing\Task\Ext\JsMin\JsMinTask;
+use Phing\Task\System\AppendTask;
+use Phing\Type\FileSet;
+use Throwable;
 
 class MergeMinifyTask extends Task
 {
@@ -118,11 +120,11 @@ class MergeMinifyTask extends Task
 
                         // Merge files
                         foreach ($bundle->script as $script) {
-                            $append->setDestFile(new PhingFile($fullPath));
+                            $append->setDestFile(new File($fullPath));
                             $append->setOverwrite(false);
                             $append->setFixLastLine(true);
                             $append->setEol('unix');
-                            $append->setFile(new PhingFile($this->basePath . '/' . $script));
+                            $append->setFile(new File($this->basePath . '/' . $script));
                             $append->main();
                         }
 
@@ -151,7 +153,7 @@ class MergeMinifyTask extends Task
                 $minify->setFailonerror(true);
                 $minify->setSuffix($this->suffix);
 
-                $fileset = new Fileset();
+                $fileset = new FileSet();
                 $fileset->setDir($this->basePath);
                 $fileset->setIncludes($file);
 
