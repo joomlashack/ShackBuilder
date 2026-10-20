@@ -244,19 +244,28 @@ class StandardsFixesTask extends Task
 
         $basePath = $this->getProperty('project.source.path');
 
-        $relatedExtensions = explode(',', $this->getProperty('project.relatedExtensions'));
+        $relatedList = (string) $this->getProperty('project.relatedExtensions');
+        if ($relatedList === '') {
+            return;
+        }
+
+        $relatedExtensions = explode(',', $relatedList);
         foreach ($relatedExtensions as $relatedExtension) {
             $path = $this->getProperty('project.' . $relatedExtension . '.path');
             if (empty($path)) {
                 $path = $basePath . '/extensions/' . $relatedExtension;
                 if (is_dir($path)) {
                     $xpath     = sprintf("alledia/relatedExtensions/extension[text()='%s']", $relatedExtension);
-                    $extension = $manifest->xpath($xpath);
-                    $extension = reset($extension);
+                    $matches   = $manifest->xpath($xpath);
+                    $extension = $matches ? reset($matches) : false;
 
-                    $type    = (string)$extension['type'];
-                    $element = (string)$extension['element'];
-                    if ($extension instanceof SimpleXMLElement && $type && $element) {
+                    if (!$extension instanceof SimpleXMLElement) {
+                        continue;
+                    }
+
+                    $type    = (string) $extension['type'];
+                    $element = (string) $extension['element'];
+                    if ($type && $element) {
                         if ($manifestPath = $this->findManifestFile($type, $element, $path)) {
                             $this->updateManifest($manifestPath);
                         }
