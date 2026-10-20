@@ -119,7 +119,7 @@ class RelatedExtensionsTask extends Task
             }
 
             $ignore = [];
-            if (strpos($this->ignoreRelatedExtensions, '$') === 0) {
+            if (strpos((string) $this->ignoreRelatedExtensions, '$') === 0) {
                 $this->ignoreRelatedExtensions = '';
             }
 

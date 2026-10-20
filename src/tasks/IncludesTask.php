@@ -115,7 +115,7 @@ class IncludesTask extends Task
             }
 
             $ignore = [];
-            if (strpos($this->ignoreIncludes, '$') === 0) {
+            if (strpos((string) $this->ignoreIncludes, '$') === 0) {
                 $this->ignoreIncludes = '';
             }
 
