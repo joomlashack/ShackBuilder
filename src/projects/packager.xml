@@ -747,69 +747,52 @@ Error found on the last executed command. Please, check the logs.
     </target>
 
     <target name="prompt-new-version" hidden="true">
-        <echo><![CDATA[
-            ===========================================
-            Current version: ${manifest.version}
-            -------------------------------------------
-            New version level:
-
-            (1) Major
-            (2) Minor
-            (3) Bugfix
-            - - - - - - - - - - - - - - - - - - - - -
-            (4) Alpha
-            (5) Beta
-            (6) RC
-            (7) Custom
-            - - - - - - - - - - - - - - - - - - - - -
-            (8) Stable Release
-            ===========================================
-        ]]></echo>
+        <echo message="Current version: ${manifest.version}"/>
         <input
             propertyName="release.id"
-            validArgs="1, 2, 3, 4, 5, 6, 7, 8"
-            message="Release Type: "/>
+            validArgs="major,minor,bugfix,alpha,beta,rc,custom,stable"
+            message="New version level"/>
 
         <if>
-            <equals arg1="${release.id}" arg2="1"/>
+            <equals arg1="${release.id}" arg2="major"/>
             <then>
                 <property name="release.type" value="major"/>
             </then>
             <elseif>
-                <equals arg1="${release.id}" arg2="2"/>
+                <equals arg1="${release.id}" arg2="minor"/>
                 <then>
                     <property name="release.type" value="minor"/>
                 </then>
             </elseif>
             <elseif>
-                <equals arg1="${release.id}" arg2="3"/>
+                <equals arg1="${release.id}" arg2="bugfix"/>
                 <then>
                     <property name="release.type" value="bugfix"/>
                 </then>
             </elseif>
             <elseif>
-                <equals arg1="${release.id}" arg2="4"/>
+                <equals arg1="${release.id}" arg2="alpha"/>
                 <then>
                     <property name="release.type" value="a"/>
                     <phingcall target="prompt-new-dev-version"/>
                 </then>
             </elseif>
             <elseif>
-                <equals arg1="${release.id}" arg2="5"/>
+                <equals arg1="${release.id}" arg2="beta"/>
                 <then>
                     <property name="release.type" value="b"/>
                     <phingcall target="prompt-new-dev-version"/>
                 </then>
             </elseif>
             <elseif>
-                <equals arg1="${release.id}" arg2="6"/>
+                <equals arg1="${release.id}" arg2="rc"/>
                 <then>
                     <property name="release.type" value="rc"/>
                     <phingcall target="prompt-new-dev-version"/>
                 </then>
             </elseif>
             <elseif>
-                <equals arg1="${release.id}" arg2="7"/>
+                <equals arg1="${release.id}" arg2="custom"/>
                 <then>
                     <property name="release.type" value="custom"/>
                     <input
@@ -819,7 +802,7 @@ Error found on the last executed command. Please, check the logs.
                 </then>
             </elseif>
             <elseif>
-                <equals arg1="${release.id}" arg2="8"/>
+                <equals arg1="${release.id}" arg2="stable"/>
                 <then>
                     <property name="release.type" value="stable"/>
                 </then>
@@ -828,36 +811,26 @@ Error found on the last executed command. Please, check the logs.
     </target>
 
     <target name="prompt-new-dev-version" hidden="true">
-        <echo><![CDATA[
-            ===========================================
-            Are you starting a new release cycle?
-            -------------------------------------------
-            (1) Major
-            (2) Minor
-            (3) Bugfix
-            - - - - - - - - - - - - - - - - - - - - -
-            (0) No, keep current base version
-            ===========================================
-        ]]></echo>
+        <echo message="Are you starting a new release cycle?"/>
         <input
             propertyName="release.id"
-            validArgs="1, 2, 3, 7, 0"
-            defaultValue="0"
-            message="Release Type: "/>
+            validArgs="major,minor,bugfix,none"
+            defaultValue="none"
+            message="Release Type (none = keep current base version)"/>
 
         <if>
-            <equals arg1="${release.id}" arg2="1"/>
+            <equals arg1="${release.id}" arg2="major"/>
             <then>
                 <property name="new.release.type" value="major"/>
             </then>
             <elseif>
-                <equals arg1="${release.id}" arg2="2"/>
+                <equals arg1="${release.id}" arg2="minor"/>
                 <then>
                     <property name="new.release.type" value="minor"/>
                 </then>
             </elseif>
             <elseif>
-                <equals arg1="${release.id}" arg2="3"/>
+                <equals arg1="${release.id}" arg2="bugfix"/>
                 <then>
                     <property name="new.release.type" value="bugfix"/>
                 </then>
@@ -866,7 +839,7 @@ Error found on the last executed command. Please, check the logs.
 
         <if>
             <not>
-                <equals arg1="${release.id}" arg2="0"/>
+                <equals arg1="${release.id}" arg2="none"/>
             </not>
             <then>
                 <setVersion releasetype="${new.release.type}" file="${project.manifest}" property="manifest.version" customvalue="${new.release.custom_version}"/>
