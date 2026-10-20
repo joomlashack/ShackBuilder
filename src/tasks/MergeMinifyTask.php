@@ -30,6 +30,7 @@ use Phing\Task;
 use Phing\Task\Ext\JsMin\JsMinTask;
 use Phing\Task\System\AppendTask;
 use Phing\Type\FileSet;
+use SimpleXMLElement;
 use Throwable;
 
 class MergeMinifyTask extends Task
@@ -96,21 +97,31 @@ class MergeMinifyTask extends Task
     {
         try {
             $xml = simplexml_load_file($this->manifest);
+            if (!$xml instanceof SimpleXMLElement) {
+                $this->throwError('Unable to parse manifest: ' . $this->manifest);
+            }
+
+            // PHP 8+ returns null for a missing child of an empty element.
+            // Chaining ->minify->script warns: "Attempt to read property on null".
+            $minify = $xml->alledia->minify ?? null;
+            if (!$minify instanceof SimpleXMLElement) {
+                return;
+            }
 
             // Single files
-            if ($xml->alledia->minify->script) {
-                foreach ($xml->alledia->minify->script as $script) {
-                    $this->minify($script);
+            if (isset($minify->script)) {
+                foreach ($minify->script as $script) {
+                    $this->minify((string) $script);
                 }
             }
 
             // Scripts bundle
-            if ($xml->alledia->minify->scripts) {
+            if (isset($minify->scripts)) {
                 /** @var AppendTask $append */
                 $append = $this->initProjectTask('append');
 
-                foreach ($xml->alledia->minify->scripts as $bundle) {
-                    if ($bundle->script) {
+                foreach ($minify->scripts as $bundle) {
+                    if (isset($bundle->script)) {
                         $destination = (string)$bundle['destination'];
 
                         // Remove destination, if exists
