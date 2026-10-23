@@ -18,7 +18,7 @@ phing standards       # normalize composer.json / manifest formatting (Standards
 phing -l              # list targets
 ```
 
-Set `builder.debug=1` to keep `packages/tmp` and dump the properties (`package.properties`, `standards.properties`). Set `builder.phplint=1` (the default) to php-lint every packaged file.
+Set `builder.debug=1` to keep `packages/tmp` and dump the properties (`package.properties`, `standards.properties`).
 
 ## Architecture
 
