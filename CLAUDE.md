@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-ShackBuilder is a shared Phing (v3.x, PHP >=8.1) build system for Joomlashack Joomla extensions. It does not build itself. Each extension repo copies `src/clients/build.xml` into its root and adds a `build.properties` with `builder.path=/path/to/ShackBuilder`. Phing then imports `src/build.xml` from this repo. There is no test suite. To exercise a change, run phing inside a client extension repo.
+ShackBuilder is a shared Phing (v3.x, PHP >=8.4) build system for Joomlashack Joomla extensions. It does not build itself. Each extension repo copies `src/clients/build.xml` into its root and adds a `build.properties` with `builder.path=/path/to/ShackBuilder`. Phing then imports `src/build.xml` from this repo. There is no test suite. To exercise a change, run phing inside a client extension repo.
 
 ## Commands (run from a client extension repo, not here)
 

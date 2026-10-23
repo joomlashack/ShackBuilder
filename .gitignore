@@ -55,6 +55,5 @@ phing/.DS_Store
 vendor
 
 build.properties
-composer.lock
 
 tests/_output/*

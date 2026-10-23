@@ -7,9 +7,9 @@ Common Build Scripts to build Joomlashack extensions.
 
 ## Requirements
 * Phing v3.1
-* php v8.1
+* php v8.4
 * JShrink v1.8.0
-* NodeJS v23.4.0
+* NodeJS v26
   * sass
 
 ## Usage
