@@ -167,11 +167,15 @@ you must set its local copy path alias:
 You can set one line per related extension. Use this to map the
 installer library or any other required project.
 
-If a Pro version has a corresponding Free version, you must indicate
-this with two properties:
+If a Pro version has a corresponding Free version, you must set the
+path to it:
 
-  project.hasFreeVersion=1
   project.FreeExtensionName.path=/path/to/FreeExtension
+
+If a Pro version has no Free version, you must disable this
+(`project.hasFreeVersion` defaults to 1):
+
+  project.hasFreeVersion=0
 
 ### Phing script for each project
 Any project using this builder must copy the build.xml file
