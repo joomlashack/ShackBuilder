@@ -99,14 +99,25 @@ This changes the files in place, so review the changes before
 committing them. It updates:
 
 * `composer.json`: replaces dots in `type` with dashes, sets `license` to
-  `GPL-2.0-or-later`, sets the `php` requirement to `>=7.4`, sets
-  `target-platform` to `.*` and lowercases `name`.
+  `GPL-2.0-or-later`, sets the `php` requirement to `>=8.2` (see below),
+  sets `target-platform` to `.*` and lowercases `name`.
 * The primary manifest and the manifests of related extensions embedded
   in `src/extensions`: removes the obsolete `version` attribute from
   `<extension>` and the `<packager>`/`<packagerurl>` tags, sets the
   standard `<author>`, `<authorEmail>`, `<authorUrl>` and `<license>`,
   adds any missing `<name>`, `<description>` or `<copyright>`, and puts
   the header tags in the standard order.
+
+To use a different minimum php version, pass it on the command line.
+A plain version number gets `>=` added in front of it:
+```shell
+phing standards -Dphp=8.3
+```
+
+To leave the `php` requirement unchanged, pass an empty value:
+```shell
+phing standards -Dphp=
+```
 
 ### Debugging
 Add `builder.debug=1` to `build.properties` (or pass `-Dbuilder.debug=1`)

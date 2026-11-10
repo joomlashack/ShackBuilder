@@ -38,6 +38,13 @@ class StandardsFixesTask extends Task
     protected $manifest = null;
 
     /**
+     * Minimum php version for composer.json. Leave empty to keep the current one
+     *
+     * @var string
+     */
+    protected $php = null;
+
+    /**
      * Preferred order of manifest headers
      *
      * @var string[]
@@ -64,6 +71,21 @@ class StandardsFixesTask extends Task
     public function setManifest(string $path)
     {
         $this->manifest = $path;
+    }
+
+    /**
+     * @param string $version
+     *
+     * @return void
+     */
+    public function setPhp(string $version)
+    {
+        $version = trim($version);
+        if (preg_match('/^\d/', $version)) {
+            $version = '>=' . $version;
+        }
+
+        $this->php = $version ?: null;
     }
 
     /**
@@ -107,9 +129,9 @@ class StandardsFixesTask extends Task
             $fixed    = str_replace($match[1], 'GPL-2.0-or-later', $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }
-        if (preg_match('#"php"\s*:\s*"(.*)"#', $composer, $match)) {
+        if ($this->php && preg_match('#"php"\s*:\s*"(.*)"#', $composer, $match)) {
             // Update minimum php version
-            $fixed    = str_replace($match[1], '>=7.4', $match[0]);
+            $fixed    = str_replace($match[1], $this->php, $match[0]);
             $composer = str_replace($match[0], $fixed, $composer);
         }
         if (preg_match('#"target-platform"\s*:\s*"(.*)"#', $composer, $match)) {
