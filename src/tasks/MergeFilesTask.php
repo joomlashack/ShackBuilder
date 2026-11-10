@@ -96,7 +96,7 @@ class MergeFilesTask extends Task
 
         foreach ($files as $file) {
             if (substr_count($file, $this->pattern)) {
-                if (!is_dir($file)) {
+                if (!is_dir($this->basePath . '/' . $file)) {
                     $toMerge[] = $file;
                 }
             }

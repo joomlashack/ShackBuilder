@@ -165,9 +165,12 @@ class StandardsFixesTask extends Task
         $sha1           = sha1($manifestString);
 
         // Remove obsolete version attribute
-        if (preg_match('/<extension.*?(\\s+version.*?\\s+).*/', $manifestString, $version)) {
-            $manifestString = str_replace($version[1], ' ', $manifestString);
-        }
+        $manifestString = preg_replace(
+            '/(<extension[^>]*?)\s+version\s*=\s*("[^"]*"|\'[^\']*\')/',
+            '$1',
+            $manifestString,
+            1
+        );
 
         // Remove unused tags
         $obsoleteTags = [
@@ -186,7 +189,7 @@ class StandardsFixesTask extends Task
             $manifestString = str_replace($obsoleteMatches, '', $manifestString);
         }
 
-        preg_match('/<extension.*>/', $manifestString, $extension);
+        preg_match('/<extension[^>]*>/', $manifestString, $extension);
         $headerStart = strpos($manifestString, $extension[0]) + strlen($extension[0]);
 
         // Set some headers to our current standards and reorder if needed
@@ -266,7 +269,7 @@ class StandardsFixesTask extends Task
 
         $basePath = $this->getProperty('project.source.path');
 
-        $relatedExtensions = explode(',', $this->getProperty('project.relatedExtensions'));
+        $relatedExtensions = array_filter(explode(',', (string)$this->getProperty('project.relatedExtensions')));
         foreach ($relatedExtensions as $relatedExtension) {
             $path = $this->getProperty('project.' . $relatedExtension . '.path');
             if (empty($path)) {

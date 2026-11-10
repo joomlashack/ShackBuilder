@@ -204,7 +204,9 @@ trait TraitShack
                 break;
 
             case 'module':
-                if (strpos($element, 'mod_') !== 0) {
+                if (strpos($element, 'mod_') === 0) {
+                    $baseName = '/' . $element;
+                } else {
                     $baseName = '/mod_' . $element;
                 }
                 break;

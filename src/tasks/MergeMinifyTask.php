@@ -27,9 +27,7 @@ namespace ShackBuilder\Tasks;
 use JShrink\Minifier;
 use Phing\Io\File;
 use Phing\Task;
-use Phing\Task\Ext\JsMin\JsMinTask;
 use Phing\Task\System\AppendTask;
-use Phing\Type\FileSet;
 use Throwable;
 
 class MergeMinifyTask extends Task
@@ -146,28 +144,20 @@ class MergeMinifyTask extends Task
      */
     protected function minify(string $file)
     {
+        if (class_exists(Minifier::class) == false) {
+            $this->throwError('Unable to initialize JShrink');
+        }
+
+        // Phing's jsMin task only logs minify errors, so JShrink is called directly
+        $source = $this->basePath . '/' . $file;
+        $target = preg_replace('/\.js$/', $this->suffix . '.js', $source);
+
         try {
-            if (class_exists(Minifier::class)) {
-                /** @var JsMinTask $minify */
-                $minify = $this->project->createTask('jsMin');
-                $minify->init();
-                $minify->setTargetDir($this->basePath);
-                $minify->setFailonerror(true);
-                $minify->setSuffix($this->suffix);
-
-                $fileset = new FileSet();
-                $fileset->setDir($this->basePath);
-                $fileset->setIncludes($file);
-
-                $minify->addFileSet($fileset);
-                $minify->main();
-
-            } else {
-                $this->throwError('Unable to initialize JShrink');
-            }
+            $this->log('Minifying file ' . $file);
+            file_put_contents($target, Minifier::minify(file_get_contents($source)));
 
         } catch (Throwable $error) {
-            $this->throwError($error->getMessage());
+            $this->throwError(sprintf('Unable to minify %s: %s', $file, $error->getMessage()));
         }
     }
 }

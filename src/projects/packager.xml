@@ -180,7 +180,7 @@ Related extension path property is missing: project.${extension}.path
 
                 <!-- Is the include path set? -->
                 <property name="include.path" value="project.${include}.path"/>
-                <fail unless="include.path">-
+                <fail unless="project.${include}.path">-
 Missing include property: ${include.path}
                 </fail>
 
@@ -360,12 +360,17 @@ Unable to find directory: ${installer.source.path}
                                 </if>
                             </then>
                             <else>
-                                <foreach param="dirname" absparam="absname" target="merge-language-files">
-                                    <fileset dir="${packages.tmp.path}/language/">
-                                        <type type="dir"/>
-                                        <depth max="0" min="0"/>
-                                    </fileset>
-                                </foreach>
+                                <if>
+                                    <available file="${packages.tmp.path}/language" type="dir"/>
+                                    <then>
+                                        <foreach param="dirname" absparam="absname" target="merge-language-files">
+                                            <fileset dir="${packages.tmp.path}/language/">
+                                                <type type="dir"/>
+                                                <depth max="0" min="0"/>
+                                            </fileset>
+                                        </foreach>
+                                    </then>
+                                </if>
                             </else>
                         </if>
                     </then>
