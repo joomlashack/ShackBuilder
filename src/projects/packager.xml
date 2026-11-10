@@ -504,7 +504,8 @@ ${scss.test}
                         <property name="scss.style" value="compressed"/>
                     </else>
                 </if>
-                <foreach target="compile-scss-file" absparam="scss.file.source" param="scss.file.base">
+                <!-- inheritall passes scss.style and scss.destination to the target -->
+                <foreach target="compile-scss-file" absparam="scss.file.source" param="scss.file.base" inheritall="true">
                     <mapper type="glob" from="*.scss" to="*.css"/>
                     <filelist dir="${project.source.path}" files="${manifest.alledia.scss.file}"/>
                 </foreach>
