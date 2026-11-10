@@ -135,11 +135,13 @@ the parent extension's build, so you will not normally run it yourself.
 ShackBuilder's own tests use PHPUnit. Run them from the ShackBuilder folder:
 ```shell
 composer install
+npm install
 composer test
 ```
 
 `composer test:unit` and `composer test:integration` run each half on its
-own. The SCSS tests are skipped if `sass` is not installed.
+own. `npm install` adds the sass package used by the SCSS tests. They are
+skipped if sass is not available.
 
 ## Installing phing
 There are several ways to install phing depending on your preferences and

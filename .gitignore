@@ -57,3 +57,7 @@ vendor
 build.properties
 
 tests/_output/*
+
+# Node modules for the tests #
+###############################
+node_modules

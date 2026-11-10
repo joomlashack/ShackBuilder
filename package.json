@@ -1,0 +1,9 @@
+{
+    "name"           : "shackbuilder",
+    "private"        : true,
+    "description"    : "Node tools for the ShackBuilder test suite",
+    "license"        : "GPL-2.0-or-later",
+    "devDependencies": {
+        "sass": "^1.108.1"
+    }
+}

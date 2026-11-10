@@ -131,7 +131,7 @@ XML,
             'files'   => ['src/media/css/style.scss' => static::SCSS],
         ]);
 
-        // The default test PATH leaves out wherever sass is installed
+        // The default test PATH leaves out node_modules and wherever else sass is installed
         $result = $this->runPhing($path, ['pre-build']);
 
         $this->assertBuildFailed($result, 'sass command is not available');
@@ -176,6 +176,31 @@ XML,
         );
     }
 
+    public function testSeveralScssFiles()
+    {
+        $this->requireSass();
+
+        $path = $this->createExtension('Foo', [
+            'alledia' => <<<XML
+        <scss>
+            <file>media/css/one.scss</file>
+            <file>media/css/two.scss</file>
+        </scss>
+XML,
+            'files'   => [
+                'src/media/css/one.scss' => '.one { color: red; }',
+                'src/media/css/two.scss' => '.two { color: blue; }',
+            ],
+        ]);
+
+        $result = $this->runPhing($path, ['build'], '', true);
+
+        $this->assertBuildSucceeded($result);
+        $package = $path . '/packages/plg_system_foo_free_1.2.3.zip';
+        $this->assertSame('.one{color:red}', trim($this->zipContent($package, 'media/css/one.css')));
+        $this->assertSame('.two{color:blue}', trim($this->zipContent($package, 'media/css/two.css')));
+    }
+
     public function testMissingScssFileFails()
     {
         $this->requireSass();
@@ -208,9 +233,11 @@ XML,
      */
     protected function requireSass()
     {
-        exec('command -v sass', $output, $exitCode);
+        $localSass = static::BUILDER_ROOT . '/node_modules/.bin/sass';
+
+        exec('command -v ' . (is_file($localSass) ? 'node' : 'sass'), $output, $exitCode);
         if ($exitCode !== 0) {
-            $this->markTestSkipped('sass is not installed');
+            $this->markTestSkipped('sass is not installed. Run npm install in ShackBuilder');
         }
     }
 }

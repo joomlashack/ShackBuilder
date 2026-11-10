@@ -239,16 +239,17 @@ XML
      * @param string   $path    Folder holding the build.xml
      * @param string[] $args    Command line arguments
      * @param string   $input   Answers for <input> prompts, one per line
-     * @param bool     $fullPath Keep the full PATH (e.g. to find sass)
+     * @param bool     $withSass Make sass available: ShackBuilder's own node_modules first, then the full PATH
      *
      * @return PhingResult
      */
-    protected function runPhing(string $path, array $args = [], string $input = '', bool $fullPath = false): PhingResult
+    protected function runPhing(string $path, array $args = [], string $input = '', bool $withSass = false): PhingResult
     {
         $root = realpath(static::BUILDER_ROOT);
 
         $searchPath = [$root . '/vendor/bin', dirname(PHP_BINARY)];
-        if ($fullPath) {
+        if ($withSass) {
+            $searchPath[] = $root . '/node_modules/.bin';
             $searchPath[] = getenv('PATH');
         } else {
             $searchPath[] = '/usr/bin:/bin:/usr/sbin:/sbin';
