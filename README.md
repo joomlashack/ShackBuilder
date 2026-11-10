@@ -13,6 +13,15 @@ Common Build Scripts to build Joomlashack extensions.
   * sass
 
 ## Usage
+Run these commands from the root folder of an extension repo, not from
+ShackBuilder itself.
+
+You can see all available targets:
+```shell
+phing -l
+```
+
+### Packaging
 The default target builds and creates an install package using
 the current version number in the primary manifest file:
 ```shell
@@ -23,6 +32,8 @@ or just
 phing
 ```
 
+The package is saved as `./packages/<element>_<license>_<version>.zip`.
+
 To update and create an install package for a new version, use this
 command (Note that version/creation dates for all local related
 extensions will also be updated to the new version):
@@ -30,15 +41,84 @@ extensions will also be updated to the new version):
 phing build-new
 ```
 
+You will be asked for the new version level: `major`, `minor`, `bugfix`,
+`alpha`, `beta`, `rc`, `custom` or `stable`. For `alpha`, `beta` and `rc`
+you will also be asked whether you are starting a new release cycle
+(`major`, `minor`, `bugfix` or `none` to keep the current base version).
+`custom` lets you type the version number yourself.
+
 If you only want to update any minified files or compile the scss files:
 ```shell
 phing pre-build
 ```
 
-You can see all available targets:
+### Versions
+To update the version and creation date the same way as `build-new`,
+without creating a package:
 ```shell
-phing -l
+phing set-version
 ```
+
+To show the current version and creation date from the primary manifest:
+```shell
+phing version
+```
+
+To set the creation date in the primary manifest to today, without
+changing the version:
+```shell
+phing update-creation
+```
+
+### Translations
+To merge the free and pro language files for local development
+(see [Language files](#language-files)):
+```shell
+phing merge-languages
+```
+
+To start a new translation from an existing language:
+```shell
+phing copy-language
+```
+
+You will be asked for the source language code (default `en-GB`) and
+the target code (for example `fr-FR`). Every file whose name contains
+the source code is copied, keeping its folder structure and replacing
+the code in its name, into `./<element-short>.language.<target code>/`.
+File contents are not changed.
+
+### Standards
+To bring `composer.json` and the manifest files up to the current
+Joomlashack standards:
+```shell
+phing standards
+```
+
+This changes the files in place, so review the changes before
+committing them. It updates:
+
+* `composer.json`: replaces dots in `type` with dashes, sets `license` to
+  `GPL-2.0-or-later`, sets the `php` requirement to `>=7.4`, sets
+  `target-platform` to `.*` and lowercases `name`.
+* The primary manifest and the manifests of related extensions embedded
+  in `src/extensions`: removes the obsolete `version` attribute from
+  `<extension>` and the `<packager>`/`<packagerurl>` tags, sets the
+  standard `<author>`, `<authorEmail>`, `<authorUrl>` and `<license>`,
+  adds any missing `<name>`, `<description>` or `<copyright>`, and puts
+  the header tags in the standard order.
+
+### Debugging
+Add `builder.debug=1` to `build.properties` (or pass `-Dbuilder.debug=1`)
+to keep the `./packages/tmp` folder after building. It also writes all
+phing properties to `package.properties` when packaging, or to
+`standards.properties` when running `phing standards`.
+
+### Include-only repos
+Repos that are only pulled into other extensions through an `<include>`
+tag in the manifest's `<alledia>` block use `src/build-include.xml` and
+have a single `copy` target. It is called by
+the parent extension's build, so you will not normally run it yourself.
 
 ## Installing phing
 There are several ways to install phing depending on your preferences and
