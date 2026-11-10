@@ -4,7 +4,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-ShackBuilder is a shared Phing (v3.x, PHP >=8.4) build system for Joomlashack Joomla extensions. It does not build itself. Each extension repo copies `src/clients/build.xml` into its root and adds a `build.properties` with `builder.path=/path/to/ShackBuilder`. Phing then imports `src/build.xml` from this repo. There is no test suite. To exercise a change, run phing inside a client extension repo.
+ShackBuilder is a shared Phing (v3.x, PHP >=8.4) build system for Joomlashack Joomla extensions. It does not build itself. Each extension repo copies `src/clients/build.xml` into its root and adds a `build.properties` with `builder.path=/path/to/ShackBuilder`. Phing then imports `src/build.xml` from this repo.
+
+## Tests (run here)
+
+```shell
+composer install                  # dev dependencies: PHPUnit, JShrink
+composer test                     # whole suite
+composer test:unit                # tests/Unit: tasks run in-process
+composer test:integration         # tests/Integration: real phing runs against fixture repos
+vendor/bin/phpunit --filter Name  # one test or class
+```
+
+- **Unit tests** (`tests/Unit`, base `Support\TaskTestCase`) create a bare Phing `Project` and call each task's setters and `main()` directly. `TraitShack::throwError()` calls `die(1)`, so error paths can't be tested in-process.
+- **Integration tests** (`tests/Integration`, base `Support\PhingTestCase`) build throwaway extension repos with `createExtension()` and run `vendor/bin/phing` in a subprocess with `runPhing()`. `<input>` answers are piped through stdin. Each test gets its own builder copy (symlinks to `src/` and `vendor/`) without `global.properties`, and `vendor/bin` goes first on `PATH`, so recursive builds use the same phing. Error paths for tasks use `createBuildFile()`, a stand-alone build file with every custom task registered.
+- PHP warnings, notices and deprecations fail the suite. SCSS tests are skipped when `sass` isn't installed. Set `SHACKBUILDER_KEEP_TMP=1` to keep each test's temp folder.
 
 ## Commands (run from a client extension repo, not here)
 

@@ -27,5 +27,19 @@
         "psr-4": {
             "ShackBuilder\\Tasks\\": "src/tasks/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12",
+        "tedivm/jshrink": "^1.8"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ShackBuilder\\Tests\\": "tests/"
+        }
+    },
+    "scripts"    : {
+        "test"            : "phpunit",
+        "test:unit"       : "phpunit --testsuite unit",
+        "test:integration": "phpunit --testsuite integration"
     }
 }

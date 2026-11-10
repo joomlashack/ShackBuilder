@@ -131,6 +131,16 @@ tag in the manifest's `<alledia>` block use `src/build-include.xml` and
 have a single `copy` target. It is called by
 the parent extension's build, so you will not normally run it yourself.
 
+## Running the tests
+ShackBuilder's own tests use PHPUnit. Run them from the ShackBuilder folder:
+```shell
+composer install
+composer test
+```
+
+`composer test:unit` and `composer test:integration` run each half on its
+own. The SCSS tests are skipped if `sass` is not installed.
+
 ## Installing phing
 There are several ways to install phing depending on your preferences and
 technical skills. We recommend using composer to make management of your
